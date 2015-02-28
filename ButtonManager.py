@@ -21,15 +21,15 @@ class ButtonManager(QObject):
     def __init__(self, pin):
         super(ButtonManager, self).__init__()
         self.pinNumber = pin
-        initialized = False
+        self.initialized = False
         try:
             IO.setmode(IO.BCM)
             IO.setup(self.pinNumber, IO.IN)
-            initialized = True
+            self.initialized = True
         except Exception:
             print('Raspberry Pi GPIO library not found')
             
-        if(initialized): 
+        if(self.initialized): 
             self.isListening = True
             self.spinupThread()  
             
@@ -49,6 +49,7 @@ class ButtonManager(QObject):
     def dispose(self):
         self.isListening = False
         try:
-            IO.cleanup()
+            if(self.initialized):
+                IO.cleanup()
         except Exception:
             print('Raspberry Pi GPIO library not found')
