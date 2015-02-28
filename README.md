@@ -6,4 +6,4 @@ Designed to be displayed on [320x240 TFT+Touchscreen](https://www.adafruit.com/p
 
 ##Prerequisites ##
 
-*[RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
+* [RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
