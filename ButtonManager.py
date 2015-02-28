@@ -35,7 +35,7 @@ class ButtonManager(QObject):
             
     def listenForPush(self, pin, parent):
         lastInput = -1
-        while self.isListening:
+        while parent.isListening:
             ioinput = IO.input(pin)
             if((not lastInput) and ioinput and lastInput != -1):
                 parent.emit(QtCore.SIGNAL('buttonPressed'))  
