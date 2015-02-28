@@ -9,6 +9,8 @@ from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
+
+
 class PandoraWidget(QtGui.QWidget):
     
     
