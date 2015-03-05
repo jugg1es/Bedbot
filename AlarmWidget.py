@@ -16,7 +16,7 @@ class AlarmWidget(QtGui.QWidget):
     
     configManager = None
     
-    pandoraEnabled = True
+    pandoraEnabled = False
     
     alarmSettings = None
     settingsFilename = "alarmConfig.ini"

@@ -3,106 +3,133 @@ from threading import Thread
 from enum import Enum
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
+from ButtonManager import *
 
+rpiLibraryFound = False
 
 try:
     import RPi.GPIO as IO
+    rpiLibraryFound = True
 except ImportError:
     print('Raspberry Pi GPIO library not found')
     
 
 class MotorManager(QObject):
     
-    pinNumber = None
-    readyToMove = False
+    closeSensor = None
+    openSensor = None
+    angle_delay = 0.009
     
-    enablePin = None
-    coilA1Pin = None
-    coilA2Pin = None
-    coilB1Pin = None
-    coilB2Pin = None
-    tiltPin = None
+    openAngle = 25
+    closeAngle = 190
     
-    positionUp = False
+    currentAngle = None
     
-    stepDelay = .002 #in milliseconds
-    totalSteps = 1028
     
-    def __init__(self, enablePin, a1Pin, a2Pin, b1Pin, b2Pin, tiltPin):
+    isClosed = False
+    isOpen = False
+    
+    def __init__(self, closeSensorPin, openSensorPin):
         super(MotorManager, self).__init__()
-                
         
-        self.enablePin = enablePin
-        self.coilA1Pin = a1Pin
-        self.coilA2Pin = a2Pin
-        self.coilB1Pin = b1Pin
-        self.coilB2Pin = b2Pin
-        #self.tiltPin = tiltPin
-        
-        
-        initialized = False
-        try:
-            IO.setmode(IO.BCM)
-            IO.setup(self.enablePin, IO.OUT)
-            IO.setup(self.coilA1Pin, IO.OUT)
-            IO.setup(self.coilA2Pin, IO.OUT)
-            IO.setup(self.coilB1Pin, IO.OUT)
-            IO.setup(self.coilB2Pin, IO.OUT)
-            #IO.setup(self.tiltPin, IO.IN)
-            initialized = True
-        except Exception:
-            print('Raspberry Pi GPIO library not found')
+        if(rpiLibraryFound):
+            self.closeSensor = ButtonManager(closeSensorPin)            
+            self.connect(self.closeSensor, QtCore.SIGNAL('buttonPressed'), self.closeSensorFired)
             
-        if(initialized): 
-            self.readyToMove = True
-            IO.output(self.enablePin, 1)
+            self.openSensor = ButtonManager(openSensorPin)
+            self.connect(self.openSensor, QtCore.SIGNAL('buttonPressed'), self.openSensorFired)
             
-    def togglePosition(self):
-        if(self.readyToMove):
-            if(self.positionUp):
-                print("going down")
-                self.goDown()
-            else:
-                print("going up")
-                self.goUp()
-            
-    def goUp(self):
-        self.readyToMove = False
-        for i in range(0, self.totalSteps):
-            self.setStep(1, 0, 1, 0)
-            time.sleep(self.stepDelay)
-            self.setStep(0, 1, 1, 0)
-            time.sleep(self.stepDelay)
-            self.setStep(0, 1, 0, 1)
-            time.sleep(self.stepDelay)
-            self.setStep(1, 0, 0, 1)
-            time.sleep(self.stepDelay)
-        self.readyToMove = True
-            
-    def goDown(self):
-        self.readyToMove = False
-        for i in range(0, self.totalSteps):
-            self.setStep(1, 0, 0, 1)
-            time.sleep(self.stepDelay)
-            self.setStep(0, 1, 0, 1)
-            time.sleep(self.stepDelay)
-            self.setStep(0, 1, 1, 0)
-            time.sleep(self.stepDelay)
-            self.setStep(1, 0, 1, 0)
-            time.sleep(self.stepDelay)
-            
-        self.readyToMove = True
-            
-    def setStep(self, w1, w2, w3, w4):
-        IO.output(self.coilA1Pin, w1)
-        IO.output(self.coilA2Pin, w2)
-        IO.output(self.coilB1Pin, w3)
-        IO.output(self.coilB2Pin, w4)
+            self.setServoQuickAngle(self.closeAngle)
+            self.currentAngle = self.closeAngle;
+            self.isClosed = True
     
-            
-    def dispose(self):
-        self.readyToMove = False
-        try:
-            IO.cleanup()
-        except Exception:
-            print('Raspberry Pi GPIO library not found')
+    def closeSensorFired(self):
+        print("lid is closed")
+        self.isClosed = True
+        self.isOpen = False
+        
+    def openSensorFired(self):
+        print("lid is open")
+        self.isOpen = True
+        self.isClosed = False
+
+    def set(self, p, value):
+        if(rpiLibraryFound):
+            try:
+                f = open("/sys/class/rpi-pwm/pwm0/" + p, 'w')
+                f.write(value)
+                f.close()    
+            except:
+                print("Error writing to: " + p + " value: " + value)
+
+
+    def openLid(self):
+        if(rpiLibraryFound):
+            self.isClosed = False
+            self.isOpen = False
+            self.private_doOpenLid(self.currentAngle, self.openAngle)
+            self.currentAngle = self.openAngle
+        
+        
+    def closeLid(self):
+        if(rpiLibraryFound):
+            self.isClosed = False
+            self.isOpen = False
+            self.private_doCloseLid(self.currentAngle, self.closeAngle)
+            self.currentAngle = self.closeAngle
+
+
+
+    def setServoQuickAngle(self, angle):
+        set("delayed", "0")
+        set("servo_max", "190")
+        set("mode", "servo")
+        set("active", "1")
+        #print("set servo to :" + str(angle))
+        set("servo", str(angle))
+        time.sleep(1)
+        set("active", "0")
+
+    def private_doOpenLid(self, current, targetAngle):
+        set("delayed", "0")
+        set("servo_max", "190")
+        set("mode", "servo")
+        set("active", "1")
+        print("current: " + str(current))
+        angleDiff = current - targetAngle
+        for angle in range(angleDiff):
+            current = current - 1
+            set("servo", str(current))
+            time.sleep(self.angle_delay)
+            if(self.isOpen):
+                break
+        time.sleep(1)
+        set("active", "0")
+        self.isOpen = True
+        self.isClosed = False
+
+    def private_doCloseLid(self, current, targetAngle):
+        set("delayed", "0")
+        set("servo_max", "190")
+        set("mode", "servo")
+        set("active", "1")
+        print("current: " + str(current))
+        angleDiff = targetAngle - current
+        for angle in range(angleDiff):
+            current = current + 1
+            set("servo", str(current))
+            print("current now: " + str(current))
+            time.sleep(self.angle_delay)
+            if(self.isClosed):
+                break
+        time.sleep(1)
+        set("active", "0")
+        self.isClosed = True
+        self.isOpen = False
+
+
+
+
+
+
+

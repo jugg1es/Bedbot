@@ -102,7 +102,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
         
         
-        self.motorManager = MotorManager(18,4,17,23,24,19)
+        self.motorManager = MotorManager(21,22)
         
         self.startClockTimer() 
         
