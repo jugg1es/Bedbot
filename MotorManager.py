@@ -53,7 +53,7 @@ class MotorManager(QObject):
         self.isOpen = True
         self.isClosed = False
 
-    def set(self, p, value):
+    def setPWMValue(self, p, value):
         if(rpiLibraryFound):
             try:
                 f = open("/sys/class/rpi-pwm/pwm0/" + p, 'w')
@@ -81,49 +81,49 @@ class MotorManager(QObject):
 
 
     def setServoQuickAngle(self, angle):
-        set("delayed", "0")
-        set("servo_max", "190")
-        set("mode", "servo")
-        set("active", "1")
+        self.setPWMValue("delayed", "0")
+        self.setPWMValue("servo_max", "190")
+        self.setPWMValue("mode", "servo")
+        self.setPWMValue("active", "1")
         #print("set servo to :" + str(angle))
-        set("servo", str(angle))
+        self.setPWMValue("servo", str(angle))
         time.sleep(1)
-        set("active", "0")
+        self.setPWMValue("active", "0")
 
     def private_doOpenLid(self, current, targetAngle):
-        set("delayed", "0")
-        set("servo_max", "190")
-        set("mode", "servo")
-        set("active", "1")
+        self.setPWMValue("delayed", "0")
+        self.setPWMValue("servo_max", "190")
+        self.setPWMValue("mode", "servo")
+        self.setPWMValue("active", "1")
         print("current: " + str(current))
         angleDiff = current - targetAngle
         for angle in range(angleDiff):
             current = current - 1
-            set("servo", str(current))
+            self.setPWMValue("servo", str(current))
             time.sleep(self.angle_delay)
             if(self.isOpen):
                 break
         time.sleep(1)
-        set("active", "0")
+        self.setPWMValue("active", "0")
         self.isOpen = True
         self.isClosed = False
 
     def private_doCloseLid(self, current, targetAngle):
-        set("delayed", "0")
-        set("servo_max", "190")
-        set("mode", "servo")
-        set("active", "1")
+        self.setPWMValue("delayed", "0")
+        self.setPWMValue("servo_max", "190")
+        self.setPWMValue("mode", "servo")
+        self.setPWMValue("active", "1")
         print("current: " + str(current))
         angleDiff = targetAngle - current
         for angle in range(angleDiff):
             current = current + 1
-            set("servo", str(current))
+            self.setPWMValue("servo", str(current))
             print("current now: " + str(current))
             time.sleep(self.angle_delay)
             if(self.isClosed):
                 break
         time.sleep(1)
-        set("active", "0")
+        self.setPWMValue("active", "0")
         self.isClosed = True
         self.isOpen = False
 
