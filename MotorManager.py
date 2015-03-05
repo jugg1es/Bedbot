@@ -7,6 +7,11 @@ from ButtonManager import *
 
 rpiLibraryFound = False
 
+class ScreenState(Enum):
+    CLOSED = 0
+    MOVING =1
+    OPEN =2
+
 try:
     import RPi.GPIO as IO
     rpiLibraryFound = True
@@ -25,9 +30,8 @@ class MotorManager(QObject):
     
     currentAngle = None
     
+    currentState = None
     
-    isClosed = False
-    isOpen = False
     
     def __init__(self, closeSensorPin, openSensorPin):
         super(MotorManager, self).__init__()
@@ -41,17 +45,26 @@ class MotorManager(QObject):
             
             self.setServoQuickAngle(self.closeAngle)
             self.currentAngle = self.closeAngle;
-            self.isClosed = True
+            
+            self.currentState = ScreenState.CLOSED
+    
+    def positionToggled(self):
+        if(rpiLibraryFound and self.currentState != None):
+            if(self.currentState == ScreenState.CLOSED):
+                self.openLid()
+            elif(self.currentState == ScreenState.OPEN):
+                self.closeLid()
+    
+    def getCurrentState(self):
+        return self.currentState
     
     def closeSensorFired(self):
         print("lid is closed")
-        self.isClosed = True
-        self.isOpen = False
+        self.currentState = ScreenState.CLOSED
         
     def openSensorFired(self):
         print("lid is open")
-        self.isOpen = True
-        self.isClosed = False
+        self.currentState = ScreenState.OPEN
 
     def setPWMValue(self, p, value):
         if(rpiLibraryFound):
@@ -64,18 +77,18 @@ class MotorManager(QObject):
 
 
     def openLid(self):
-        if(rpiLibraryFound):
-            self.isClosed = False
-            self.isOpen = False
-            self.private_doOpenLid(self.currentAngle, self.openAngle)
+        if(rpiLibraryFound and self.currentState != ScreenState.MOVING):
+            self.currentState = ScreenState.MOVING
+            t = Thread(target=self.private_doOpenLid, args=(self.currentAngle, self.openAngle, self))
+            t.start()
             self.currentAngle = self.openAngle
         
         
     def closeLid(self):
-        if(rpiLibraryFound):
-            self.isClosed = False
-            self.isOpen = False
-            self.private_doCloseLid(self.currentAngle, self.closeAngle)
+        if(rpiLibraryFound and self.currentState != ScreenState.MOVING):
+            self.currentState = ScreenState.MOVING
+            t = Thread(target=self.private_doCloseLid, args=(self.currentAngle, self.closeAngle, self))
+            t.start()
             self.currentAngle = self.closeAngle
 
 
@@ -89,8 +102,9 @@ class MotorManager(QObject):
         self.setPWMValue("servo", str(angle))
         time.sleep(1)
         self.setPWMValue("active", "0")
+        
 
-    def private_doOpenLid(self, current, targetAngle):
+    def private_doOpenLid(self, current, targetAngle, parent):
         self.setPWMValue("delayed", "0")
         self.setPWMValue("servo_max", "190")
         self.setPWMValue("mode", "servo")
@@ -101,14 +115,13 @@ class MotorManager(QObject):
             current = current - 1
             self.setPWMValue("servo", str(current))
             time.sleep(self.angle_delay)
-            if(self.isOpen):
+            if(parent.currentState == ScreenState.OPEN):
                 break
         time.sleep(1)
         self.setPWMValue("active", "0")
-        self.isOpen = True
-        self.isClosed = False
+        parent.currentState = ScreenState.OPEN
 
-    def private_doCloseLid(self, current, targetAngle):
+    def private_doCloseLid(self, current, targetAngle, parent):
         self.setPWMValue("delayed", "0")
         self.setPWMValue("servo_max", "190")
         self.setPWMValue("mode", "servo")
@@ -120,12 +133,11 @@ class MotorManager(QObject):
             self.setPWMValue("servo", str(current))
             print("current now: " + str(current))
             time.sleep(self.angle_delay)
-            if(self.isClosed):
+            if(parent.currentState == ScreenState.CLOSED):
                 break
         time.sleep(1)
         self.setPWMValue("active", "0")
-        self.isClosed = True
-        self.isOpen = False
+        parent.currentState = ScreenState.CLOSED
 
 
 

@@ -101,8 +101,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraInitialized'), self.pandoraInitializedReceived)
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
         
-        
-        self.motorManager = MotorManager(21,22)
+                
+        self.motorManager = MotorManager(13,19)
         
         self.startClockTimer() 
         
@@ -113,10 +113,11 @@ class PrimaryWidget(QtGui.QWidget):
         
         #self.initializePhysicalButtons()
         
-        self.toggleScreenButton = ButtonManager(self.radioONButtonPin)
+        self.toggleScreenButton = ButtonManager(21)
         self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
         
         QtCore.QMetaObject.connectSlotsByName(self)    
+    
     
     def pandoraSongChange(self, artist,song):
         if(self.pandoraManager.isInitialized()):
@@ -177,8 +178,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.userSnoozeTouched()
         
     def toggleScreenButtonPushed(self):
-        print("SCREEN TOGGLED")  
-        self.motorManager.togglePosition()
+        print("SCREEN TOGGLED")          
+        self.motorManager.positionToggled()
     
     def startClockTimer(self):
         self.clockUpdateTimer = perpetualTimer(1, self.processClockTime)
