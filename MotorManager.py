@@ -20,17 +20,16 @@ except ImportError:
     
 
 class MotorManager(QObject):
-    
+        
+    currentAngle = None    
+    currentState = None
     closeSensor = None
     openSensor = None
-    angle_delay = 0.04
     
     openAngle = 25
     closeAngle = 190
+    angle_delay = 0.01
     
-    currentAngle = None
-    
-    currentState = None
     
     
     def __init__(self, closeSensorPin, openSensorPin):
@@ -51,19 +50,21 @@ class MotorManager(QObject):
     def positionToggled(self):
         if(rpiLibraryFound and self.currentState != None):
             if(self.currentState == ScreenState.CLOSED):
+                print("SCREEN OPENING...")
                 self.openLid()
             elif(self.currentState == ScreenState.OPEN):
+                print("SCREEN CLOSING...")
                 self.closeLid()
     
     def getCurrentState(self):
         return self.currentState
     
     def closeSensorFired(self):
-        print("lid is closed")
+        print("lid sensor says closed")
         self.currentState = ScreenState.CLOSED
         
     def openSensorFired(self):
-        print("lid is open")
+        print("lid sensor says open")
         self.currentState = ScreenState.OPEN
 
     def setPWMValue(self, p, value):
@@ -109,7 +110,6 @@ class MotorManager(QObject):
         self.setPWMValue("servo_max", "190")
         self.setPWMValue("mode", "servo")
         self.setPWMValue("active", "1")
-        print("current: " + str(current))
         angleDiff = current - targetAngle
         for angle in range(angleDiff):
             current = current - 1
@@ -126,12 +126,10 @@ class MotorManager(QObject):
         self.setPWMValue("servo_max", "190")
         self.setPWMValue("mode", "servo")
         self.setPWMValue("active", "1")
-        print("current: " + str(current))
         angleDiff = targetAngle - current
         for angle in range(angleDiff):
             current = current + 1
             self.setPWMValue("servo", str(current))
-            print("current now: " + str(current))
             time.sleep(self.angle_delay)
             if(parent.currentState == ScreenState.CLOSED):
                 break

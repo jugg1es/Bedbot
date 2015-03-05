@@ -177,8 +177,7 @@ class PrimaryWidget(QtGui.QWidget):
         print("SNOOZE pushed")  
         self.userSnoozeTouched()
         
-    def toggleScreenButtonPushed(self):
-        print("SCREEN TOGGLED")          
+    def toggleScreenButtonPushed(self):  
         self.motorManager.positionToggled()
     
     def startClockTimer(self):
