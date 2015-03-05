@@ -23,7 +23,7 @@ class MotorManager(QObject):
     
     closeSensor = None
     openSensor = None
-    angle_delay = 0.009
+    angle_delay = 0.04
     
     openAngle = 25
     closeAngle = 190
@@ -140,7 +140,17 @@ class MotorManager(QObject):
         parent.currentState = ScreenState.CLOSED
 
 
-
+    def dispose(self):
+        try:
+            self.closeSensor.dispose()
+        except Exception:
+            print("Problem disposing of close sensor")
+            
+        try:
+            self.openSensor.dispose()
+        except Exception:
+            print("Problem disposing of open sensor")
+        
 
 
 

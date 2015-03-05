@@ -359,11 +359,22 @@ class PrimaryWidget(QtGui.QWidget):
         self.pandoraManager.dispose()
         try:
             self.radioOnButton.dispose()
+        except Exception:
+            print("Problem disposing of radioon button")
+            
+        try:
             self.radioOffButton.dispose()
+        except Exception:
+            print("Problem disposing of radiooff button")
+        try:
             self.snoozeButton.dispose()
+        except Exception:
+            print("Problem disposing of snooze button")
+            
+        try:
             self.toggleScreenButton.dispose()
         except Exception:
-            print("Problem disposing of buttons")
+            print("Problem disposing of togglescreen")
             
             
         try:
