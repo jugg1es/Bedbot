@@ -8,10 +8,10 @@ from PyQt4 import  QtGui, uic, QtCore
 import time
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
-from TimeWidget import TimeWidget
-from MenuWidget import MenuWidget
+from Widgets import TimeWidget
+from Widgets import MenuWidget
 from PrimaryWidget import PrimaryWidget
-from Communicate import Communicate
+from Controllers import Communicate
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8

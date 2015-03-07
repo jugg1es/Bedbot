@@ -1,5 +1,5 @@
 import rpyc
-from VoiceService import VoiceService
+from Controllers import VoiceService
 import threading
 
 from rpyc.utils.server import OneShotServer

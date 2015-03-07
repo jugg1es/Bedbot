@@ -3,7 +3,7 @@ from threading import Thread
 from enum import Enum
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
-from ButtonManager import *
+from Controllers.ButtonManager import *
 
 rpiLibraryFound = False
 

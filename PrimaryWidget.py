@@ -3,20 +3,21 @@ from PyQt4 import QtCore, QtGui, uic
 import time
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
-from TimeWidget import TimeWidget
-from MenuWidget import MenuWidget
 from clickable import *
-from RadioWidget import RadioWidget
-from AlarmWidget import AlarmWidget
+from Widgets.MenuWidget import *
+from Widgets.PlaybackWidget import *
+from Widgets.TimeWidget import *
+from Widgets.AlarmWidget import *
+from Widgets.RadioWidget import *
+from Widgets.PandoraWidget import *
+from Widgets.PlaybackWidget import PlaybackType
 from perpetualTimer import perpetualTimer
 from alarmSetting import *
-from Radio import *
-from Buzz import *
-from ButtonManager import *
-from MotorManager import *
-from PlaybackWidget import *
-from PandoraWidget import *
-from Pandora import *
+from Controllers.Radio import *
+from Controllers.ButtonManager import *
+from Controllers.MotorManager import *
+from Controllers.Buzz import *
+from Controllers.Pandora import *
 
 class PrimaryWidget(QtGui.QWidget):
     
@@ -36,7 +37,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.resize(320, 240)      
         
         self.menu_widget = MenuWidget(self)
-        self.menu_widget .setGeometry(QtCore.QRect(0, 85, 320, 70))  
+        self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
         self.menu_widget.setVisible(False)
         
         self.menu_widget.showAlarm.connect(self.showAlarmWidget)
