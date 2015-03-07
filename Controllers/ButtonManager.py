@@ -48,6 +48,7 @@ class ButtonManager(QObject):
             
     def dispose(self):
         self.isListening = False
+        time.sleep(0.2)
         try:
             if(self.initialized):
                 IO.cleanup()
