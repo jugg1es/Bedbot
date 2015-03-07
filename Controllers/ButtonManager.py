@@ -35,12 +35,15 @@ class ButtonManager(QObject):
             
     def listenForPush(self, pin, parent):
         lastInput = -1
-        while parent.isListening:
-            ioinput = IO.input(pin)
-            if((not lastInput) and ioinput and lastInput != -1):
-                parent.emit(QtCore.SIGNAL('buttonPressed'))  
-            lastInput = ioinput
-            time.sleep(0.1)
+        try:
+            while parent.isListening:
+                ioinput = IO.input(pin)
+                if((not lastInput) and ioinput and lastInput != -1):
+                    parent.emit(QtCore.SIGNAL('buttonPressed'))  
+                lastInput = ioinput
+                time.sleep(0.1)
+        except Exception:
+            print('Error while listening for button, probably during dispose')
             
     def spinupThread(self):
         self.t = Thread(target=self.listenForPush, args=(self.pinNumber,self))
@@ -48,7 +51,6 @@ class ButtonManager(QObject):
             
     def dispose(self):
         self.isListening = False
-        time.sleep(0.2)
         try:
             if(self.initialized):
                 IO.cleanup()
