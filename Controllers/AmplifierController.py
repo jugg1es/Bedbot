@@ -37,19 +37,19 @@ class AmplifierController(QObject):
             IO.setmode(IO.BCM)
             IO.setup(pin, IO.OUT)
             initialized = True
-        except Exception:
-            print('Raspberry Pi GPIO library not found')
-        
-        if(initialized):
-            IO.output(pin, IO.HIGH)
-            
-            #Continue to send HIGH signal until power is explicitly set to off
-            while parent.isPowerOn:
-                time.sleep(0.5)
+               
+            if(initialized):
+                IO.output(pin, IO.HIGH)
                 
-            #Now that power is turned off, switch the output to low and then dispose of it
-            IO.output(pin, IO.LOW)
-            IO.cleanup()           
+                #Continue to send HIGH signal until power is explicitly set to off
+                while parent.isPowerOn:
+                    time.sleep(0.5)
+                    
+                #Now that power is turned off, switch the output to low and then dispose of it
+                IO.output(pin, IO.LOW)
+                IO.cleanup()       
+        except Exception:
+            print('Raspberry Pi GPIO library not found')    
             
     def dispose(self):
         
