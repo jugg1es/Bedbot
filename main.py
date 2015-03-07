@@ -11,6 +11,7 @@ from PyQt4.Qt import QBrush
 from Widgets.TimeWidget import *
 from Widgets.MenuWidget import *
 from PrimaryWidget import PrimaryWidget
+from Controllers.Communicate import *
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
