@@ -413,6 +413,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         
     def doClose(self):
+        self.screenPower.dispose()
         self.pandoraManager.dispose()
         self.amplifier.dispose()
         try:
