@@ -13,6 +13,7 @@ from clickable import *
 class PlaybackType(Enum):
     RADIO = 0
     PANDORA=1
+    AUX = 2
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -55,6 +56,13 @@ class PlaybackWidget(QtGui.QWidget):
         clickableSender(self.pandoraPlaybackButton).connect(self.setPlaybackType)
         self.horizontalLayout.addWidget(self.pandoraPlaybackButton)
        
+        self.auxPlaybackButton = QtGui.QPushButton(self.horizontalLayoutWidget)
+        self.auxPlaybackButton.name = PlaybackType.AUX
+        self.auxPlaybackButton.setText("AUX")
+        clickableSender(self.auxPlaybackButton).connect(self.setPlaybackType)
+        self.horizontalLayout.addWidget(self.auxPlaybackButton)
+        
+        
         self.updatePlaybackDisplay()
      
         QtCore.QMetaObject.connectSlotsByName(self)  
@@ -69,7 +77,10 @@ class PlaybackWidget(QtGui.QWidget):
     def updatePlaybackDisplay(self):
         self.radioPlaybackButton.setStyleSheet(self.playbackUnselectedStyle)
         self.pandoraPlaybackButton.setStyleSheet(self.playbackUnselectedStyle)
+        self.auxPlaybackButton.setStyleSheet(self.playbackUnselectedStyle)
         if(self.currentPlaybackType == PlaybackType.RADIO):
             self.radioPlaybackButton.setStyleSheet(self.playbackSelectedStyle)
         elif(self.currentPlaybackType == PlaybackType.PANDORA):
             self.pandoraPlaybackButton.setStyleSheet(self.playbackSelectedStyle)
+        elif(self.currentPlaybackType == PlaybackType.AUX):
+            self.auxPlaybackButton.setStyleSheet(self.playbackSelectedStyle)

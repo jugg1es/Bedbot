@@ -10,6 +10,7 @@ from Widgets.TimeWidget import *
 from Widgets.AlarmWidget import *
 from Widgets.RadioWidget import *
 from Widgets.PandoraWidget import *
+from Widgets.AuxWidget import *
 from Widgets.PlaybackWidget import PlaybackType
 from perpetualTimer import perpetualTimer
 from alarmSetting import *
@@ -18,6 +19,20 @@ from Controllers.ButtonManager import *
 from Controllers.MotorManager import *
 from Controllers.Buzz import *
 from Controllers.Pandora import *
+from Controllers.AmplifierController import *
+
+
+#Required pins
+#    Amplifier Power (to transistor)
+#    Screen Toggle
+#    Sound On
+#    Sound Off
+#    Snooze
+#    Servo Control  (must be pin 18)
+#    Open Sensor (servo)
+#    Close Sensor (servo)
+#    OLED pins (6?)
+#    Buzzer
 
 class PrimaryWidget(QtGui.QWidget):
     
@@ -31,10 +46,17 @@ class PrimaryWidget(QtGui.QWidget):
     radioOFFButtonPin = 21
     snoozeButtonPin = 22
     screenToggleButtonPin = 23
+    amplifierControlPin = 26
+    screenOpenSensorPin = 13
+    screenClosedSensorPin = 19
+    buzzerPin = 16
     
     def __init__(self, parent):
         super(PrimaryWidget, self).__init__(parent)
         self.resize(320, 240)      
+        
+        
+        self.amplifier = AmplifierController( self.amplifierControlPin)
         
         self.menu_widget = MenuWidget(self)
         self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
@@ -51,6 +73,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.showMenuButton.clicked.connect(self.userShowMenuTouched)
         
         
+        
+        
         self.offButton = QtGui.QPushButton("OFF", self)        
         self.offButton.setGeometry(QtCore.QRect(115, 210, 90, 30))
         self.offButton.setVisible(False)
@@ -63,6 +87,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.snoozeButton.setVisible(False)
         self.snoozeButton.setStyleSheet(self.snoozeButtonOnStyle)
         self.snoozeButton.clicked.connect(self.userSnoozeTouched)
+        
+        
         
         self.playback_widget = PlaybackWidget(self)
         self.playback_widget.setGeometry(QtCore.QRect(0, 0, 320, 35)) 
@@ -86,6 +112,9 @@ class PrimaryWidget(QtGui.QWidget):
         #self.connect(self.radio_widget, QtCore.SIGNAL('stopRadio'), self.stopRadioReceived)
         #self.connect(self.radio_widget, QtCore.SIGNAL('changeFrequency'), self.radioFrequencyReceived)
         
+        self.aux_widget = AuxWidget(self)
+        self.aux_widget.setGeometry(QtCore.QRect(0, 35, 320, 175)) 
+        self.aux_widget.setVisible(False)
         
         
         self.time_widget = TimeWidget(self)       
@@ -97,13 +126,13 @@ class PrimaryWidget(QtGui.QWidget):
         self.alarm_widget.setVisible(False)    
         
         self.radioManager = Radio()
-        self.buzzManager = Buzz(13)
+        self.buzzManager = Buzz(self.buzzerPin)
         self.pandoraManager = Pandora()   
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraInitialized'), self.pandoraInitializedReceived)
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
         
                 
-        self.motorManager = MotorManager(13,19)
+        self.motorManager = MotorManager(self.screenClosedSensorPin,self.screenOpenSensorPin)
         
         self.startClockTimer() 
         
@@ -112,13 +141,24 @@ class PrimaryWidget(QtGui.QWidget):
         self.connect(self, QtCore.SIGNAL('updateAlarmButtons'), self.updateAlarmButtonState)
         
         
-        #self.initializePhysicalButtons()
+        self.initializePhysicalButtons()
         
-        self.toggleScreenButton = ButtonManager(21)
+        self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
         self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
         
         QtCore.QMetaObject.connectSlotsByName(self)    
     
+    
+    def turnSoundOn(self):
+        self.amplifier.turnOn()
+        
+    def turnSoundOff(self):
+        if(self.radioManager.radioOn):
+            self.radioManager.stopRadio()
+        if(self.pandoraManager.pandoraOn):
+            self.pandoraManager.stopPandora()
+            
+        self.amplifier.turnOff()
     
     def pandoraSongChange(self, artist,song):
         if(self.pandoraManager.isInitialized()):
@@ -165,14 +205,15 @@ class PrimaryWidget(QtGui.QWidget):
         self.radioManager.setFrequency(newFreq)
         
     def radioButtonONPushed(self):
-        print("radio ON pushed")    
-        
-        print("clicked")
-        #self.radioManager.startRadio()
+        print("radio ON pushed")       
+        self.showPlaybackWidget()
+        self.turnSoundOn()
+        if(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
+            self.radioManager.startRadio()
+       
         
     def radioButtonOFFPushed(self):
-        print("radio OFF pushed")  
-        self.radioManager.stopRadio()  
+        self.turnSoundOff()
         
     def snoozeButtonPushed(self):
         print("SNOOZE pushed")  
@@ -199,6 +240,8 @@ class PrimaryWidget(QtGui.QWidget):
             self.radio_widget.setVisible(True)
         elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
             self.pandora_widget.setVisible(True)
+        elif(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
+            self.aux_widget.setVisible(True)
             
         self.playback_widget.setVisible(True)
         
@@ -229,6 +272,9 @@ class PrimaryWidget(QtGui.QWidget):
             
         if(hasattr(self, "alarm_widget") == True):
             self.alarm_widget.setVisible(False)
+            
+        if(hasattr(self, "aux_widget") == True):
+            self.aux_widget.setVisible(False)
             
   
     def autoSwitchToClock(self):
@@ -357,6 +403,7 @@ class PrimaryWidget(QtGui.QWidget):
         
     def doClose(self):
         self.pandoraManager.dispose()
+        self.amplifier.dispose()
         try:
             self.radioOnButton.dispose()
         except Exception:
