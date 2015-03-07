@@ -19,7 +19,7 @@ from Controllers.ButtonManager import *
 from Controllers.MotorManager import *
 from Controllers.Buzz import *
 from Controllers.Pandora import *
-from Controllers.AmplifierController import *
+from Controllers.PowerSwitch import *
 
 
 #Required pins
@@ -49,6 +49,9 @@ class PrimaryWidget(QtGui.QWidget):
     amplifierControlPin = 26
     screenOpenSensorPin = 13
     screenClosedSensorPin = 19
+    screenPowerPin = 25
+    
+    
     buzzerPin = 16
     
     def __init__(self, parent):
@@ -56,7 +59,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.resize(320, 240)      
         
         
-        self.amplifier = AmplifierController( self.amplifierControlPin)
+        self.screenPower = PowerSwitch(self.screenPowerPin)
+        self.amplifier = PowerSwitch( self.amplifierControlPin)
         
         self.menu_widget = MenuWidget(self)
         self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
@@ -133,6 +137,8 @@ class PrimaryWidget(QtGui.QWidget):
         
                 
         self.motorManager = MotorManager(self.screenClosedSensorPin,self.screenOpenSensorPin)
+        self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOn'), self.turnScreenOn)
+        self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOff'), self.turnScreenOff)
         
         self.startClockTimer() 
         
@@ -148,7 +154,12 @@ class PrimaryWidget(QtGui.QWidget):
         
         QtCore.QMetaObject.connectSlotsByName(self)    
     
-    
+    def turnScreenOn(self):
+        self.screenPower.turnOn()
+        
+    def turnScreenOff(self):
+        self.screenPower.turnOff()
+        
     def turnSoundOn(self):
         self.amplifier.turnOn()
         

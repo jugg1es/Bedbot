@@ -79,6 +79,7 @@ class MotorManager(QObject):
 
     def openLid(self):
         if(rpiLibraryFound and self.currentState != ScreenState.MOVING):
+            self.emit(QtCore.SIGNAL('turnScreenOn'))  
             self.currentState = ScreenState.MOVING
             t = Thread(target=self.private_doOpenLid, args=(self.currentAngle, self.openAngle, self))
             t.start()
@@ -87,6 +88,7 @@ class MotorManager(QObject):
         
     def closeLid(self):
         if(rpiLibraryFound and self.currentState != ScreenState.MOVING):
+            self.emit(QtCore.SIGNAL('turnScreenOff')) 
             self.currentState = ScreenState.MOVING
             t = Thread(target=self.private_doCloseLid, args=(self.currentAngle, self.closeAngle, self))
             t.start()

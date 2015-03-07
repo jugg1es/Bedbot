@@ -12,12 +12,12 @@ except ImportError:
     
 
 
-class AmplifierController(QObject):    
+class PowerSwitch(QObject):    
     pinNumber = None    
     isPowerOn = False
     
     def __init__(self, pin):
-        super(AmplifierController, self).__init__()
+        super(PowerSwitch, self).__init__()
         self.pinNumber = pin
         
     def turnOff(self):
@@ -26,7 +26,7 @@ class AmplifierController(QObject):
             
     def turnOn(self):
         if(self.isPowerOn == False):
-            print("Turning Amp ON")
+            print("Turning ON")
             self.isPowerOn = True
             self.t = Thread(target=self.waitForOff, args=(self.pinNumber,self))
             self.t.start()
