@@ -21,7 +21,7 @@ class AlarmWidget(QtGui.QWidget):
     alarmSettings = None
     settingsFilename = "alarmConfig.ini"
     
-    presetUnselectedStyle = "font-size:20px;background-color:#000; color:#4c4c4c;"
+    presetUnselectedStyle = "font-size:20px;background-color:#000; border: 2px solid #000;color:#4c4c4c;"
     presetSelectedStyle = "font-size:20px;border: 2px solid #fff; color:#4c4c4c;"
     presetOnStyle ="color:#fff;"
     currentPreset = None
