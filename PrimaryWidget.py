@@ -39,7 +39,7 @@ from PyQt4.QtSvg import QSvgWidget
 
 class PrimaryWidget(QtGui.QWidget):
     
-    shouldInitializeButtons = False
+    shouldInitializeButtonsAndSensors = False
     
     currentWidget = None    
     clockUpdateTimer = None
@@ -142,7 +142,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
         
                 
-        self.motorManager = MotorManager(self.screenClosedSensorPin,self.screenOpenSensorPin)
+        self.motorManager = MotorManager(self.screenClosedSensorPin,self.screenOpenSensorPin, self.shouldInitializeButtonsAndSensors)
         self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOn'), self.turnScreenOn)
         self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOff'), self.turnScreenOff)
         
@@ -222,7 +222,7 @@ class PrimaryWidget(QtGui.QWidget):
                 self.audioOnIcon.setVisible(True)
     
     def initializePhysicalButtons(self):
-        if(self.shouldInitializeButtons):
+        if(self.shouldInitializeButtonsAndSensors):
             self.radioOnButton = ButtonManager(self.radioONButtonPin)
             self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
             

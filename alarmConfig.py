@@ -36,8 +36,10 @@ class alarmConfig(object):
                 for x in range(0, 3):
                     section = "alarm" + str(x)
                     self.config.add_section(section)
-                    t = datetime.time(0,0,0,0)
-                    self.config.set(section, "time", t.strftime(timeSaveFormat))
+                    t = datetime.datetime(2015,1,1,0,0,0)
+                    defaultTime = t.isoformat()
+                    self.config.set(section, "time", defaultTime)
+                    #self.config.set(section, "time", t.strftime(timeSaveFormat))
                     self.config.set(section, "status", str(AlarmState.OFF.value))      
         self.alarmSettings = []          
         for x in range(0, 3):

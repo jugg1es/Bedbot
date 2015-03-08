@@ -1,5 +1,7 @@
 import datetime
 from enum import Enum
+import re
+
 
 class AlarmState(Enum):
     OFF = 0
@@ -38,7 +40,9 @@ class alarmSetting(object):
             self.timeSetting = datetime.date.today()
             self.state = AlarmState.OFF
         else:
-            self.timeSetting = datetime.datetime.strptime(config.get(settingName, "time"), timeSaveFormat) 
+            s = config.get(settingName, "time")
+            self.timeSetting=datetime.datetime(*map(int, re.split('[^\d]', s)[:-1]))
+            #self.timeSetting = datetime.datetime.strptime(config.get(settingName, "time"), timeSaveFormat) 
             self.state = AlarmState(int(config.get(settingName, "status")))
            
     def setSnoozeTime(self, start):
@@ -89,7 +93,8 @@ class alarmSetting(object):
             return TimeOfDay.PM
         
     def getSaveTimeString(self):
-        return str(self.timeSetting.strftime("%H:%M"))  
+        #return str(self.timeSetting.strftime("%H:%M"))  
+        return self.timeSetting.isoformat()
     
     def getDisplayTimeString(self):
         return str(self.timeSetting.strftime("%I:%M %p"))

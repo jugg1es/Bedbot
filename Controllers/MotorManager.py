@@ -32,15 +32,17 @@ class MotorManager(QObject):
     
     
     
-    def __init__(self, closeSensorPin, openSensorPin):
+    def __init__(self, closeSensorPin, openSensorPin, shouldInitializeSensors):
         super(MotorManager, self).__init__()
         
         if(rpiLibraryFound):
-            self.closeSensor = ButtonManager(closeSensorPin)            
-            self.connect(self.closeSensor, QtCore.SIGNAL('buttonPressed'), self.closeSensorFired)
             
+            self.closeSensor = ButtonManager(closeSensorPin)                        
             self.openSensor = ButtonManager(openSensorPin)
-            self.connect(self.openSensor, QtCore.SIGNAL('buttonPressed'), self.openSensorFired)
+            
+            if(shouldInitializeSensors):
+                self.connect(self.openSensor, QtCore.SIGNAL('buttonPressed'), self.openSensorFired)
+                self.connect(self.closeSensor, QtCore.SIGNAL('buttonPressed'), self.closeSensorFired)
             
             self.setServoQuickAngle(self.closeAngle)
             self.currentAngle = self.closeAngle;
