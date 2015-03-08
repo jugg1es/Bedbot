@@ -19,7 +19,7 @@ from Controllers.ButtonManager import *
 from Controllers.MotorManager import *
 from Controllers.Buzz import *
 from Controllers.Pandora import *
-from Controllers.PowerSwitch import *
+from Controllers.DigiSwitch import *
 
 
 #Required pins
@@ -59,8 +59,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.resize(320, 240)      
         
         
-        self.screenPower = PowerSwitch(self.screenPowerPin)
-        self.amplifier = PowerSwitch( self.amplifierControlPin)
+        self.screenPower = DigiSwitch(self.screenPowerPin)
+        self.amplifier = DigiSwitch( self.amplifierControlPin)
         
         self.menu_widget = MenuWidget(self)
         self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
