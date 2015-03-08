@@ -209,7 +209,8 @@ class AlarmWidget(QtGui.QWidget):
         
         timeFont = QtGui.QFont()
         timeFont.setPointSize(50)
-        
+        timeFont.setStyleStrategy(QtGui.QFont.PreferAntialias)
+        timeFont.setStyleHint(QtGui.QFont.SansSerif)
         
         self.label = QtGui.QLabel(":", self)
         self.label.setGeometry(QtCore.QRect(85, 90, 21, 61))

@@ -93,7 +93,6 @@ class alarmSetting(object):
             return TimeOfDay.PM
         
     def getSaveTimeString(self):
-        #return str(self.timeSetting.strftime("%H:%M"))  
         return self.timeSetting.isoformat()
     
     def getDisplayTimeString(self):
