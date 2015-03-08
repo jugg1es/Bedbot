@@ -20,6 +20,9 @@ from Controllers.MotorManager import *
 from Controllers.Buzz import *
 from Controllers.Pandora import *
 from Controllers.DigiSwitch import *
+from Controllers.OLEDController import *
+from PyQt4 import QtSvg
+from PyQt4.QtSvg import QSvgWidget
 
 
 #Required pins
@@ -58,9 +61,10 @@ class PrimaryWidget(QtGui.QWidget):
         super(PrimaryWidget, self).__init__(parent)
         self.resize(320, 240)      
         
+        self.oled = OLEDController()
         
         self.screenPower = DigiSwitch(self.screenPowerPin)
-        self.amplifier = DigiSwitch( self.amplifierControlPin)
+        self.amplifier = DigiSwitch(self.amplifierControlPin)
         
         self.menu_widget = MenuWidget(self)
         self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
@@ -79,18 +83,18 @@ class PrimaryWidget(QtGui.QWidget):
         
         
         
-        self.offButton = QtGui.QPushButton("OFF", self)        
-        self.offButton.setGeometry(QtCore.QRect(115, 210, 90, 30))
-        self.offButton.setVisible(False)
-        self.offButton.setStyleSheet("font-size:20px; background-color:red; border: 0px solid #fff; color:#000;")
-        self.offButton.clicked.connect(self.userOffTouched)
+        self.playStatus = QtGui.QPushButton("", self)        
+        self.playStatus.setGeometry(QtCore.QRect(115, 210, 90, 30))
+        self.playStatus.setVisible(False)
+        self.playStatus.clicked.connect(self.playStatusTouched)
         
+        self.audioOnIcon = QSvgWidget("icons/volume-low.svg", self)
+        self.audioOnIcon.setGeometry(QtCore.QRect(260, 210, 25, 25))        
+        self.audioOnIcon.setVisible(False)
         
-        self.snoozeButton = QtGui.QPushButton("SNOOZE", self)        
-        self.snoozeButton.setGeometry(QtCore.QRect(230, 210, 90, 30))
-        self.snoozeButton.setVisible(False)
-        self.snoozeButton.setStyleSheet(self.snoozeButtonOnStyle)
-        self.snoozeButton.clicked.connect(self.userSnoozeTouched)
+        self.alarmOnIcon = QSvgWidget("icons/bellSnooze.svg", self)
+        self.alarmOnIcon.setGeometry(QtCore.QRect(260, 210, 25, 25))        
+        self.alarmOnIcon.setVisible(False)
         
         
         
@@ -144,15 +148,18 @@ class PrimaryWidget(QtGui.QWidget):
         
         self.menuTimer = None
         self.clockDisplayTimer = None
-        self.connect(self, QtCore.SIGNAL('updateAlarmButtons'), self.updateAlarmButtonState)
         
         
         self.initializePhysicalButtons()
         
         self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
         self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
+        self.updatePlayStatusDisplay()
         
+        self.oled.start()
         QtCore.QMetaObject.connectSlotsByName(self)    
+    
+    
     
     def turnScreenOn(self):
         self.screenPower.turnOn()
@@ -188,7 +195,29 @@ class PrimaryWidget(QtGui.QWidget):
         
         
     def playbackTypeChanged(self, newType):
+        self.updatePlayStatusDisplay()
         self.showPlaybackWidget()
+        
+    def updatePlayStatusDisplay(self):
+        self.audioOnIcon.setVisible(False)
+        self.alarmOnIcon.setVisible(False)
+        self.playStatus.setVisible(False)
+        
+        if(self.amplifier.isPowerOn):   
+            self.playStatus.setVisible(True)
+            if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
+                self.playStatus.setText("AUX")
+            elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
+                self.playStatus.setText("PANDORA")
+            elif(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
+                self.playStatus.setText("RADIO")
+                
+            if(self.isAlarmOn()):            
+                self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#ff0000;")
+                self.alarmOnIcon.setVisible(True)
+            else:
+                self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#faff00;")
+                self.audioOnIcon.setVisible(True)
     
     def initializePhysicalButtons(self):
         self.radioOnButton = ButtonManager(self.radioONButtonPin)
@@ -198,7 +227,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
         
         self.alarmSnoozeButton = ButtonManager(self.snoozeButtonPin)
-        self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.snoozeButtonPushed)        
+        self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.userSnoozeTouched)        
         
         self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
         self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
@@ -224,11 +253,7 @@ class PrimaryWidget(QtGui.QWidget):
        
         
     def radioButtonOFFPushed(self):
-        self.turnSoundOff()
-        
-    def snoozeButtonPushed(self):
-        print("SNOOZE pushed")  
-        self.userSnoozeTouched()
+        self.userOffTouched()
         
     def toggleScreenButtonPushed(self):  
         self.motorManager.positionToggled()
@@ -325,20 +350,7 @@ class PrimaryWidget(QtGui.QWidget):
     alarmsCurrentlyOn = []
     alarmLengthMin = 60
     
-    
-    def updateAlarmButtonState(self):
-        if(len(self.alarmsCurrentlyOn) > 0):
-            self.snoozeButton.setVisible(True)   
-            self.snoozeButton.setStyleSheet(self.snoozeButtonOnStyle)  
-            self.offButton.setVisible(True)
-        elif(len(self.alarmsSnoozing) > 0):
-            self.snoozeButton.setStyleSheet(self.snoozeButtonStyle)  
-            self.snoozeButton.setVisible(True)        
-            self.offButton.setVisible(True)
-        else:
-            self.snoozeButton.setVisible(False)        
-            self.offButton.setVisible(False)
-        
+            
     def startAlarm(self, alarm):        
         self.alarmsCurrentlyOn.append(alarm)     
         
@@ -349,11 +361,11 @@ class PrimaryWidget(QtGui.QWidget):
             self.buzzManager.startBuzzer()
         elif(alarm.state == AlarmState.RADIO):
             self.radioManager.startRadio()
-            
-        self.emit(QtCore.SIGNAL('updateAlarmButtons'))       
+               
         alarm.setStartTime(datetime.datetime.now())
         
-        
+    def playStatusTouched(self):
+        self.showPlaybackWidget()
             
     def userOffTouched(self):
         for x in range(len(self.alarmsCurrentlyOn)):
@@ -361,7 +373,8 @@ class PrimaryWidget(QtGui.QWidget):
             self.turnAlarmOff(alarm)
         for x in range(len(self.alarmsSnoozing)):
             alarm = self.alarmsSnoozing[x]
-            self.turnAlarmOff(alarm)
+            self.turnAlarmOff(alarm)        
+        self.turnSoundOff()
         
     def turnAlarmOff(self, alarm):
         if(alarm.state == AlarmState.BUZZ):
@@ -376,8 +389,6 @@ class PrimaryWidget(QtGui.QWidget):
         alarm.setStartTime(None)
         alarm.setSnoozeTime(None)
         self.alarmsTurnedOff.append(alarm)
-        self.emit(QtCore.SIGNAL('updateAlarmButtons'))       
-        
         
     def userSnoozeTouched(self):
         for x in range(len(self.alarmsCurrentlyOn)):
@@ -390,10 +401,13 @@ class PrimaryWidget(QtGui.QWidget):
             alarm.setStartTime(None)        
             alarm.setSnoozeTime(datetime.datetime.now())
         
-        self.alarmsCurrentlyOn = []
-        self.emit(QtCore.SIGNAL('updateAlarmButtons'))       
+        self.alarmsCurrentlyOn = []           
+        self.turnSoundOff()  
             
-        
+    def isAlarmOn(self):
+        if(len(self.alarmsCurrentlyOn) > 0):
+            return True
+        return False
     def userShowMenuTouched(self):
         
         if(self.menu_widget.isVisible()):
@@ -413,6 +427,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         
     def doClose(self):
+        self.oled.cancel()
         self.screenPower.dispose()
         self.pandoraManager.dispose()
         self.amplifier.dispose()
