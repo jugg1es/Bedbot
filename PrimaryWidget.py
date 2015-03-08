@@ -39,6 +39,8 @@ from PyQt4.QtSvg import QSvgWidget
 
 class PrimaryWidget(QtGui.QWidget):
     
+    shouldInitializeButtons = False
+    
     currentWidget = None    
     clockUpdateTimer = None
     
@@ -220,17 +222,18 @@ class PrimaryWidget(QtGui.QWidget):
                 self.audioOnIcon.setVisible(True)
     
     def initializePhysicalButtons(self):
-        self.radioOnButton = ButtonManager(self.radioONButtonPin)
-        self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
-        
-        self.radioOffButton = ButtonManager(self.radioOFFButtonPin)
-        self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
-        
-        self.alarmSnoozeButton = ButtonManager(self.snoozeButtonPin)
-        self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.userSnoozeTouched)        
-        
-        self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
-        self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
+        if(self.shouldInitializeButtons):
+            self.radioOnButton = ButtonManager(self.radioONButtonPin)
+            self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
+            
+            self.radioOffButton = ButtonManager(self.radioOFFButtonPin)
+            self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
+            
+            self.alarmSnoozeButton = ButtonManager(self.snoozeButtonPin)
+            self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.userSnoozeTouched)        
+            
+            self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
+            self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
         
         
     def startRadioReceived(self):
