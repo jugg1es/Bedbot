@@ -34,7 +34,8 @@ class alarmSetting(object):
     
     def __init__(self, settingName, config):
         if(config == None):
-            self.timeSetting = datetime.time(0,0,0,0)
+            #self.timeSetting = datetime.time(0,0,0,0)
+            self.timeSetting = datetime.date.today()
             self.state = AlarmState.OFF
         else:
             self.timeSetting = datetime.datetime.strptime(config.get(settingName, "time"), timeSaveFormat) 
