@@ -28,7 +28,7 @@ except AttributeError:
     
 class PlaybackWidget(QtGui.QWidget):
     
-    playbackUnselectedStyle = "font-size:20px;background-color:#000; color:#fff;"
+    playbackUnselectedStyle = "font-size:20px;background-color:#000;border: 2px solid #000; color:#fff;"
     playbackSelectedStyle = "font-size:20px;border: 2px solid #fff; color:#fff;"
     
     currentPlaybackType = PlaybackType.RADIO
