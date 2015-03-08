@@ -232,7 +232,7 @@ class AlarmWidget(QtGui.QWidget):
         
         
         self.verticalLayoutWidget = QtGui.QWidget(self)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(185, 90, 41, 61))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(190, 90, 41, 61))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setMargin(0)
         
