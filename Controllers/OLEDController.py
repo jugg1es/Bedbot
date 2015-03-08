@@ -109,24 +109,11 @@ class OLEDController(QObject):
             availableWidth = width - (padding*2) - 10
         
             # Get drawing object to draw on image.
-            draw = ImageDraw.Draw(image)
-            
-            # Draw a black filled box to clear the image.
-            #draw.rectangle((0,0,width,height), outline=0, fill=0)
-            
-            
-            #print(timeString)
-            
-            
-            # Load default font.
-            #font = ImageFont.load_default()
-            
+            draw = ImageDraw.Draw(image)            
             
             font = ImageFont.truetype("VCR_OSD_MONO.ttf", 35)
             
-            
             size = draw.textsize(timeString, font)
-            
             
             location = (width / 2) - (size[0] /2)
             
