@@ -11,7 +11,6 @@ from PyQt4.Qt import QBrush
 from Widgets.TimeWidget import *
 from Widgets.MenuWidget import *
 from PrimaryWidget import PrimaryWidget
-from Controllers.Communicate import *
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -51,11 +50,7 @@ class MainWindow(QtGui.QMainWindow):
     def closeEvent(self, *args, **kwargs):
         self.primary_widget.doClose()
         #self.comm.stopServer()
-        
-    def startServer(self):
-        self.comm = Communicate()
-        self.comm.startServer()
-        self.comm.sendCommand()
+
         
 class MyApplication(QtGui.QApplication):    
     def __init__(self, args):

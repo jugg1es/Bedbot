@@ -47,14 +47,14 @@ class PrimaryWidget(QtGui.QWidget):
     snoozeButtonOnStyle = "font-size:20px; background-color:yellow; border: 0px solid #fff; color:#000;"
     snoozeButtonStyle = "font-size:20px; background-color:#000; border: 0px solid #fff; color:#fff;"
     
-    radioONButtonPin = 20
-    radioOFFButtonPin = 21
-    snoozeButtonPin = 22
-    screenToggleButtonPin = 23
-    amplifierControlPin = 26
-    screenOpenSensorPin = 13
-    screenClosedSensorPin = 19
-    screenPowerPin = 25
+    radioONButtonPin = 5
+    radioOFFButtonPin = 6
+    snoozeButtonPin = 12
+    screenToggleButtonPin = 22
+    amplifierControlPin = 27
+    audioToggleOne = 4
+    audioToggleTwo = 17
+    screenPowerPin = 27
     
     
     buzzerPin = 16
@@ -142,7 +142,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
         
                 
-        self.motorManager = MotorManager(self.screenClosedSensorPin,self.screenOpenSensorPin, self.shouldInitializeButtonsAndSensors)
+        self.motorManager = MotorManager()
         self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOn'), self.turnScreenOn)
         self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOff'), self.turnScreenOff)
         
@@ -153,9 +153,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         
         self.initializePhysicalButtons()
-        
-        self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
-        self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
+
         self.updatePlayStatusDisplay()
         
         self.oled.start()
