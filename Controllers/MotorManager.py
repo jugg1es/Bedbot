@@ -24,18 +24,18 @@ class MotorManager(QObject):
     
     servo = 18
 
-    moveSpeed = 0.008
+    moveSpeed = 0.02
 
     #ranges from 500-2500 but those may not be safe for the servo    
     bottomRange = 600  
-    topRange = 2300
+    topRange = 2500
 
     #middle is always safe at 1500
     middle = 1500
     pi = None
     
-    openAngle = 50
-    closeAngle = 130
+    openAngle = 60
+    closeAngle = 180
     
     def __init__(self):
         super(MotorManager, self).__init__()
