@@ -33,7 +33,7 @@ class MotorManager(QObject):
 
     #middle is always safe at 1500
     middle = 1500
-    pi = NULL
+    pi = None
     
     openAngle = 50
     closeAngle = 130
