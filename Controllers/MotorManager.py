@@ -44,6 +44,7 @@ class MotorManager(QObject):
             self.pi = pigpio.pi()
             self.setAngle(90)
             self.currentAngle = 90
+            self.openLid()
             
     def getPulseWidth(self, angle):
         above90Range = self.topRange - self.middle

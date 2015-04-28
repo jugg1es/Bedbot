@@ -54,7 +54,6 @@ class PrimaryWidget(QtGui.QWidget):
     amplifierControlPin = 27
     audioToggleOne = 4
     audioToggleTwo = 17
-    screenPowerPin = 27
     
     
     buzzerPin = 16
@@ -65,7 +64,6 @@ class PrimaryWidget(QtGui.QWidget):
         
         self.oled = OLEDController()
         
-        self.screenPower = DigiSwitch(self.screenPowerPin)
         self.amplifier = DigiSwitch(self.amplifierControlPin)
         
         self.menu_widget = MenuWidget(self)
@@ -162,10 +160,10 @@ class PrimaryWidget(QtGui.QWidget):
     
     
     def turnScreenOn(self):
-        self.screenPower.turnOn()
+        print("turn screen on")
         
     def turnScreenOff(self):
-        self.screenPower.turnOff()
+        print("turn screen off")
         
     def turnSoundOn(self):
         self.amplifier.turnOn()
