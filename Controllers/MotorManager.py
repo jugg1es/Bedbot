@@ -1,11 +1,10 @@
 import time
-from threading import Thread
 from enum import Enum
-from PyQt4 import QtCore
-from PyQt4.QtCore import QObject
 from Controllers.ButtonManager import *
+import math
+from _overlapped import NULL
 
-rpiLibraryFound = False
+pigpioLibraryFound = False
 
 class ScreenState(Enum):
     CLOSED = 0
@@ -13,38 +12,73 @@ class ScreenState(Enum):
     OPEN =2
 
 try:
-    import RPi.GPIO as IO
-    rpiLibraryFound = True
+    import pigpio
+    pigpioLibraryFound = True
 except ImportError:
-    print('Raspberry Pi GPIO library not found')
+    print('pigpio library not found or pigpiod not running')
     
 
 class MotorManager(QObject):
         
     currentAngle = None    
     currentState = None
-
-    angle_delay = 0.02
-
-    openAngle = 65
-    closeAngle = 195
-
     
+    servo = 18
+
+    moveSpeed = 0.008
+
+    #ranges from 500-2500 but those may not be safe for the servo    
+    bottomRange = 600  
+    topRange = 2300
+
+    #middle is always safe at 1500
+    middle = 1500
+    pi = NULL
     
+    openAngle = 50
+    closeAngle = 130
     
     def __init__(self):
         super(MotorManager, self).__init__()
         
-        if(rpiLibraryFound):
+        if(pigpioLibraryFound):            
+            self.pi = pigpio.pi()
+            self.setAngle(90)
+            self.currentAngle = 90
             
-            startAngle = self.openAngle + int(round((self.closeAngle - self.openAngle)/2))
-            self.setServoQuickAngle(startAngle)
-            self.currentAngle = startAngle;
-            self.openLid()
-            
+    def getPulseWidth(self, angle):
+        above90Range = self.topRange - self.middle
+        below90Range = self.middle - self.bottomRange
+        mod = self.middle
+        if(angle > 90 and angle <= 180):
+            percent = float((angle - 90)) / 90
+            mod = math.trunc(self.middle + (float(percent) * above90Range))
+        elif(angle < 90 and angle >= 0):
+            percent = float(angle) / 90
+            mod = math.trunc(self.bottomRange + (float(percent) * below90Range))
+        return mod
+    
+    def setAngle(self, angle):
+        mod = self.getPulseWidth(angle)
+        self.pi.set_servo_pulsewidth(self.servo, mod)
+        
+    def move(self, angle):
+        angleDiff = self.currentAngle - angle
+        angleTracker = self.currentAngle
+        angleDir = 0
+        if(angleDiff < 0):
+            angleDir = 1
+        elif(angleDiff > 0):
+            angleDir = -1
+        for angle in range(abs(angleDiff)):
+            angleTracker += angleDir
+            self.setAngle(angleTracker)
+            time.sleep(self.moveSpeed)
+        return angleTracker
+        
     
     def positionToggled(self):
-        if(rpiLibraryFound and self.currentState != None):
+        if(pigpioLibraryFound and self.currentState != None):
             if(self.currentState == ScreenState.CLOSED):
                 print("SCREEN OPENING...")
                 self.openLid()
@@ -55,73 +89,30 @@ class MotorManager(QObject):
     def getCurrentState(self):
         return self.currentState
 
-    def setPWMValue(self, p, value):
-        if(rpiLibraryFound):
-            try:
-                f = open("/sys/class/rpi-pwm/pwm0/" + p, 'w')
-                f.write(value)
-                f.close()    
-            except:
-                print("Error writing to: " + p + " value: " + value)
-
-
     def openLid(self):
-        if(rpiLibraryFound and self.currentState != ScreenState.MOVING):
+        if(pigpioLibraryFound and self.currentState != ScreenState.MOVING):
             self.emit(QtCore.SIGNAL('turnScreenOn'))  
             self.currentState = ScreenState.MOVING
-            t = Thread(target=self.private_doOpenLid, args=(self.currentAngle, self.openAngle, self))
-            t.start()
-            self.currentAngle = self.openAngle
+            self.currentAngle = self.move(self.openAngle)
+            self.currentState = ScreenState.OPEN
+            
         
         
     def closeLid(self):
-        if(rpiLibraryFound and self.currentState != ScreenState.MOVING):
+        if(pigpioLibraryFound and self.currentState != ScreenState.MOVING):
             self.emit(QtCore.SIGNAL('turnScreenOff')) 
             self.currentState = ScreenState.MOVING
-            t = Thread(target=self.private_doCloseLid, args=(self.currentAngle, self.closeAngle, self))
-            t.start()
-            self.currentAngle = self.closeAngle
-
-
-
-    def setServoQuickAngle(self, angle):
-        self.setPWMValue("delayed", "0")
-        self.setPWMValue("servo_max", str(self.closeAngle))
-        self.setPWMValue("mode", "servo")
-        self.setPWMValue("active", "1")
-        #print("set servo to :" + str(angle))
-        self.setPWMValue("servo", str(angle))
-        time.sleep(1)
-        self.setPWMValue("active", "0")
-        
-
-    def private_doOpenLid(self, current, targetAngle, parent):
-        set("delayed", "0")
-        set("servo_max", str(self.closeAngle))
-        set("mode", "servo")
-        set("active", "1")
-        angleDiff = current - targetAngle
-        for angle in range(angleDiff):
-            current = current - 1
-            set("servo", str(current))
-            time.sleep(angle_delay)
-        set("active", "0")
-
-    def private_doCloseLid(self, current, targetAngle, parent):
-        set("delayed", "0")
-        set("servo_max", str(closeAngle))
-        set("mode", "servo")
-        set("active", "1")
-        angleDiff = targetAngle - current
-        for angle in range(angleDiff):
-            current = current + 1
-            set("servo", str(current))
-            time.sleep(angle_delay)
-        set("active", "0")
-
+            
+            self.currentAngle = self.move(self.closeAngle)
+            self.currentState = ScreenState.CLOSED
+                        
 
     def dispose(self):
         print("disposing of motor manager")
+        if(pigpioLibraryFound):
+            self.pi.set_servo_pulsewidth(self.servo, 0)
+            self.pi.stop()
+       
         
 
 

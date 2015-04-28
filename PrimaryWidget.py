@@ -39,7 +39,7 @@ from PyQt4.QtSvg import QSvgWidget
 
 class PrimaryWidget(QtGui.QWidget):
     
-    shouldInitializeButtonsAndSensors = False
+    shouldInitializeButtonsAndSensors = True
     
     currentWidget = None    
     clockUpdateTimer = None
@@ -137,9 +137,9 @@ class PrimaryWidget(QtGui.QWidget):
         
         self.radioManager = Radio()
         self.buzzManager = Buzz(self.buzzerPin)
-        self.pandoraManager = Pandora()   
-        self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraInitialized'), self.pandoraInitializedReceived)
-        self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
+        #self.pandoraManager = Pandora()   
+        #self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraInitialized'), self.pandoraInitializedReceived)
+        #self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
         
                 
         self.motorManager = MotorManager()
@@ -430,7 +430,7 @@ class PrimaryWidget(QtGui.QWidget):
     def doClose(self):
         self.oled.cancel()
         self.screenPower.dispose()
-        self.pandoraManager.dispose()
+        #self.pandoraManager.dispose()
         self.amplifier.dispose()
         try:
             self.radioOnButton.dispose()
