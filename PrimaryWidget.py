@@ -51,7 +51,7 @@ class PrimaryWidget(QtGui.QWidget):
     radioOFFButtonPin = 6
     snoozeButtonPin = 12
     screenToggleButtonPin = 22
-    amplifierControlPin = 27
+    buttonPowerPin = 27
     audioToggleOne = 4
     audioToggleTwo = 17
     
@@ -64,7 +64,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         self.oled = OLEDController()
         
-        self.amplifier = DigiSwitch(self.amplifierControlPin)
+        self.buttonPowerSwitch = DigiSwitch(self.buttonPowerPin)
         
         self.menu_widget = MenuWidget(self)
         self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
@@ -78,7 +78,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.showMenuButton = QtGui.QPushButton("MENU", self)        
         self.showMenuButton.setGeometry(QtCore.QRect(0, 210, 90, 30))
         self.showMenuButton.setStyleSheet("font-size:20px;border: 0px solid #fff; color:#fff;")
-        self.showMenuButton.clicked.connect(self.userShowMenuTouched)
+        #self.showMenuButton.clicked.connect(self.userShowMenuTouched)
         
         
         
@@ -141,8 +141,8 @@ class PrimaryWidget(QtGui.QWidget):
         
                 
         self.motorManager = MotorManager()
-        self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOn'), self.turnScreenOn)
-        self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOff'), self.turnScreenOff)
+        self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOn'), self.screenButtonOn)
+        self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOff'), self.screenButtonOff)
         
         self.startClockTimer() 
         
@@ -159,14 +159,14 @@ class PrimaryWidget(QtGui.QWidget):
     
     
     
-    def turnScreenOn(self):
+    def screenButtonOn(self):
         print("turn screen on")
+        self.buttonPowerSwitch.turnOn()
         
-    def turnScreenOff(self):
+        
+    def screenButtonOff(self):
         print("turn screen off")
-        
-    def turnSoundOn(self):
-        self.amplifier.turnOn()
+        self.buttonPowerSwitch.turnOff()
         
     def turnSoundOff(self):
         if(self.radioManager.radioOn):
@@ -174,7 +174,6 @@ class PrimaryWidget(QtGui.QWidget):
         if(self.pandoraManager.pandoraOn):
             self.pandoraManager.stopPandora()
             
-        self.amplifier.turnOff()
     
     def pandoraSongChange(self, artist,song):
         if(self.pandoraManager.isInitialized()):
@@ -201,21 +200,21 @@ class PrimaryWidget(QtGui.QWidget):
         self.alarmOnIcon.setVisible(False)
         self.playStatus.setVisible(False)
         
-        if(self.amplifier.isPowerOn):   
-            self.playStatus.setVisible(True)
-            if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
-                self.playStatus.setText("AUX")
-            elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
-                self.playStatus.setText("PANDORA")
-            elif(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
-                self.playStatus.setText("RADIO")
-                
-            if(self.isAlarmOn()):            
-                self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#ff0000;")
-                self.alarmOnIcon.setVisible(True)
-            else:
-                self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#faff00;")
-                self.audioOnIcon.setVisible(True)
+        self.playStatus.setVisible(False)
+        if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
+            self.playStatus.setText("AUX")
+        elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
+            self.playStatus.setText("PANDORA")
+        elif(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
+            self.playStatus.setText("RADIO")
+        '''  
+        if(self.isAlarmOn()):            
+            self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#ff0000;")
+            self.alarmOnIcon.setVisible(True)
+        else:
+            self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#faff00;")
+            self.audioOnIcon.setVisible(True)
+            '''
     
     def initializePhysicalButtons(self):
         if(self.shouldInitializeButtonsAndSensors):
@@ -246,7 +245,6 @@ class PrimaryWidget(QtGui.QWidget):
     def radioButtonONPushed(self):
         print("radio ON pushed")       
         self.showPlaybackWidget()
-        self.turnSoundOn()
         if(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
             self.radioManager.startRadio()
        
@@ -427,9 +425,8 @@ class PrimaryWidget(QtGui.QWidget):
         
     def doClose(self):
         self.oled.cancel()
-        self.screenPower.dispose()
         #self.pandoraManager.dispose()
-        self.amplifier.dispose()
+        self.buttonPowerSwitch.dispose()
         try:
             self.radioOnButton.dispose()
         except Exception:
