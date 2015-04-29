@@ -193,6 +193,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         
     def playbackTypeChanged(self, newType):
+        logging.info('playbackTypeChanged')
         self.updatePlayStatusDisplay()
         self.showPlaybackWidget()
         
@@ -244,6 +245,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.radioManager.setFrequency(newFreq)
         
     def radioButtonONPushed(self):
+        logging.info('radioButtonONPushed')
         print("radio ON pushed")       
         self.showPlaybackWidget()
         if(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
@@ -290,7 +292,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.time_widget.setVisible(True) 
                     
     def hideAllWidgets(self):
-        logging.info('hideAllWidgets')
+        
         self.autoCloseMenu()
         if(hasattr(self, "time_widget") == True):
             self.time_widget.setVisible(False)
