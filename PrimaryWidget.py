@@ -221,13 +221,13 @@ class PrimaryWidget(QtGui.QWidget):
     def initializePhysicalButtons(self):
         if(self.shouldInitializeButtonsAndSensors):
             self.radioOnButton = ButtonManager(self.radioONButtonPin)
-            self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
+            #self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
             
             self.radioOffButton = ButtonManager(self.radioOFFButtonPin)
-            self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
+            #self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
             
             self.alarmSnoozeButton = ButtonManager(self.snoozeButtonPin)
-            self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.userSnoozeTouched)        
+            #self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.userSnoozeTouched)        
             
             self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
             self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
