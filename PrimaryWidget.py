@@ -23,7 +23,7 @@ from Controllers.DigiSwitch import *
 from Controllers.OLEDController import *
 from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
-
+import logging
 
 #Required pins
 #    Amplifier Power (to transistor)
@@ -78,7 +78,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.showMenuButton = QtGui.QPushButton("MENU", self)        
         self.showMenuButton.setGeometry(QtCore.QRect(0, 210, 90, 30))
         self.showMenuButton.setStyleSheet("font-size:20px;border: 0px solid #fff; color:#fff;")
-        #self.showMenuButton.clicked.connect(self.userShowMenuTouched)
+        self.showMenuButton.clicked.connect(self.userShowMenuTouched)
         
         
         
@@ -135,6 +135,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         self.radioManager = Radio()
         self.buzzManager = Buzz(self.buzzerPin)
+        
         #self.pandoraManager = Pandora()   
         #self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraInitialized'), self.pandoraInitializedReceived)
         #self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraSongChange'), self.pandoraSongChange)
@@ -264,7 +265,7 @@ class PrimaryWidget(QtGui.QWidget):
         
     def showPlaybackWidget(self):
         self.hideAllWidgets()
-        
+        logging.info('showPlaybackWidget')
         self.currentWidget = self.playback_widget
         
         self.radio_widget.setVisible(False)
@@ -289,7 +290,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.time_widget.setVisible(True) 
                     
     def hideAllWidgets(self):
-        
+        logging.info('hideAllWidgets')
         self.autoCloseMenu()
         if(hasattr(self, "time_widget") == True):
             self.time_widget.setVisible(False)
@@ -362,6 +363,8 @@ class PrimaryWidget(QtGui.QWidget):
         alarm.setStartTime(datetime.datetime.now())
         
     def playStatusTouched(self):
+        
+        logging.info('playStatusTouched')
         self.showPlaybackWidget()
             
     def userOffTouched(self):

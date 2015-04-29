@@ -11,6 +11,7 @@ from PyQt4.Qt import QBrush
 from Widgets.TimeWidget import *
 from Widgets.MenuWidget import *
 from PrimaryWidget import PrimaryWidget
+import logging
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -70,8 +71,8 @@ if __name__ == '__main__':
     
     app = MyApplication(sys.argv)
     
-    
-    
+    logging.basicConfig(filename='bedbot.log', level=logging.INFO)
+    logging.info('--- Launched ---')
     
     win = MainWindow()
     app.setMainWindow(win)

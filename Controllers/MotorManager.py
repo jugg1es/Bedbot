@@ -45,6 +45,7 @@ class MotorManager(QObject):
             self.setAngle(90)
             self.currentAngle = 90
             self.openLid()
+            self.emit(QtCore.SIGNAL('turnScreenOn')) 
             
     def getPulseWidth(self, angle):
         above90Range = self.topRange - self.middle

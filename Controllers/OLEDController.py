@@ -16,7 +16,7 @@ try:
     import ImageFont
     libarariesLoaded = True
 except ImportError:
-    print('Raspberry Pi GPIO library not found')
+    print('Adafruit gpio spi Adafruit_SSD1306 library not found')
     
 
 
