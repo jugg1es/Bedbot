@@ -24,7 +24,7 @@ class ButtonManager(QObject):
         self.initialized = False
         try:
             IO.setmode(IO.BCM)
-            IO.setup(self.pinNumber, IO.IN)
+            IO.setup(self.pinNumber, IO.IN, pull_up_down = IO.PUD_UP)
             self.initialized = True
         except Exception:
             print('Raspberry Pi GPIO library not found')
@@ -34,14 +34,11 @@ class ButtonManager(QObject):
             self.spinupThread()  
             
     def listenForPush(self, pin, parent):
-        lastInput = -1
         try:
             while parent.isListening:
-                ioinput = IO.input(pin)
-                if((not lastInput) and ioinput and lastInput != -1):
-                    parent.emit(QtCore.SIGNAL('buttonPressed'))  
-                lastInput = ioinput
-                time.sleep(0.1)
+                IO.wait_for_edge(pin, IO.RISING)                
+                parent.emit(QtCore.SIGNAL('buttonPressed'))  
+                time.sleep(1)
         except Exception:
             print('Error while listening for button, probably during dispose')
             
