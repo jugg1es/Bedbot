@@ -50,6 +50,8 @@ class MainWindow(QtGui.QMainWindow):
     def closeEvent(self, *args, **kwargs):
         self.primary_widget.doClose()
         #self.comm.stopServer()
+    def gotoNextMenuItem(self):
+        self.primary_widget.gotoNextMenuItem()
 
         
 class MyApplication(QtGui.QApplication):    
@@ -63,6 +65,9 @@ class MyApplication(QtGui.QApplication):
         if(event.type() == QtCore.QEvent.KeyPress):
             if (event.key() == QtCore.Qt.Key_Escape):
                 self.w.close()
+            elif(event.key() == QtCore.Qt.Key_Right):
+                self.w.gotoNextMenuItem()
+                
         return super(MyApplication, self).notify(receiver, event)
   
 if __name__ == '__main__':

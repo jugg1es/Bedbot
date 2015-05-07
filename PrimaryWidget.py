@@ -49,11 +49,12 @@ class PrimaryWidget(QtGui.QWidget):
     
     radioONButtonPin = 5
     radioOFFButtonPin = 6
-    snoozeButtonPin = 12
+    contextButtonPin = 12
     screenToggleButtonPin = 22
     buttonPowerPin = 27
     audioToggleOne = 4
     audioToggleTwo = 17
+    currentWidgetIndex = 2
     
     
     buzzerPin = 16
@@ -74,12 +75,12 @@ class PrimaryWidget(QtGui.QWidget):
         self.menu_widget.showPlayback.connect(self.showPlaybackWidget)
         self.menu_widget.showClock.connect(self.showTimeWidget)
         
-        
+        '''
         self.showMenuButton = QtGui.QPushButton("MENU", self)        
         self.showMenuButton.setGeometry(QtCore.QRect(0, 210, 90, 30))
         self.showMenuButton.setStyleSheet("font-size:20px;border: 0px solid #fff; color:#fff;")
         self.showMenuButton.clicked.connect(self.userShowMenuTouched)
-        
+        '''
         
         
         
@@ -159,7 +160,26 @@ class PrimaryWidget(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(self)    
     
     
-    
+    def gotoNextMenuItem(self):
+       
+        
+        self.currentWidgetIndex += 1
+        
+        if(self.currentWidgetIndex > 2):
+            self.currentWidgetIndex = 0
+        self.showCurrentMenuItem()
+            
+    def showCurrentMenuItem(self):
+        self.hideAllWidgets()
+        self.menu_widget.setVisible(True)
+        if(self.currentWidgetIndex == 0):
+            self.menu_widget.alarmButtonClicked()
+        elif(self.currentWidgetIndex == 1):
+            self.menu_widget.playbackButtonClicked()
+        elif(self.currentWidgetIndex == 2):
+            self.menu_widget.clockButtonClicked()
+            
+            
     def screenButtonOn(self):
         print("turn screen on")
         self.buttonPowerSwitch.turnOn()
@@ -175,6 +195,8 @@ class PrimaryWidget(QtGui.QWidget):
         if(self.pandoraManager.pandoraOn):
             self.pandoraManager.stopPandora()
             
+        self.currentWidgetIndex = 2
+        self.showCurrentMenuItem()
     
     def pandoraSongChange(self, artist,song):
         if(self.pandoraManager.isInitialized()):
@@ -221,13 +243,13 @@ class PrimaryWidget(QtGui.QWidget):
     def initializePhysicalButtons(self):
         if(self.shouldInitializeButtonsAndSensors):
             self.radioOnButton = ButtonManager(self.radioONButtonPin)
-            #self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
+            self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
             
             self.radioOffButton = ButtonManager(self.radioOFFButtonPin)
-            #self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
+            self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
             
-            self.alarmSnoozeButton = ButtonManager(self.snoozeButtonPin)
-            #self.connect(self.alarmSnoozeButton, QtCore.SIGNAL('buttonPressed'), self.userSnoozeTouched)        
+            self.contextButton = ButtonManager(self.contextButtonPin)
+            self.connect(self.contextButton, QtCore.SIGNAL('buttonPressed'), self.contextButtonTouched)        
             
             self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
             self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
@@ -392,41 +414,30 @@ class PrimaryWidget(QtGui.QWidget):
         alarm.setSnoozeTime(None)
         self.alarmsTurnedOff.append(alarm)
         
-    def userSnoozeTouched(self):
-        for x in range(len(self.alarmsCurrentlyOn)):
-            alarm = self.alarmsCurrentlyOn[x]
-            if(alarm.state == AlarmState.BUZZ):
-                self.buzzManager.stopBuzzer()
-            elif(alarm.state == AlarmState.RADIO):
-                self.radioManager.stopRadio()
-            self.alarmsSnoozing.append(alarm)        
-            alarm.setStartTime(None)        
-            alarm.setSnoozeTime(datetime.datetime.now())
+    def contextButtonTouched(self):
         
-        self.alarmsCurrentlyOn = []           
-        self.turnSoundOff()  
+        if(self.isAlarmOn()):
+            for x in range(len(self.alarmsCurrentlyOn)):
+                alarm = self.alarmsCurrentlyOn[x]
+                if(alarm.state == AlarmState.BUZZ):
+                    self.buzzManager.stopBuzzer()
+                elif(alarm.state == AlarmState.RADIO):
+                    self.radioManager.stopRadio()
+                self.alarmsSnoozing.append(alarm)        
+                alarm.setStartTime(None)        
+                alarm.setSnoozeTime(datetime.datetime.now())
+            
+            self.alarmsCurrentlyOn = []           
+            self.turnSoundOff()  
+        else:
+            self.gotoNextMenuItem()
+        
             
     def isAlarmOn(self):
         if(len(self.alarmsCurrentlyOn) > 0):
             return True
         return False
-    def userShowMenuTouched(self):
-        
-        if(self.menu_widget.isVisible()):
-            self.menu_widget.setVisible(False)
-            self.currentWidget.setVisible(True)
-        else:
-            if(self.menuTimer == None):
-                self.menuTimer = QTimer()
-                #self.menuTimer.timeout.connect(self.autoCloseMenu)
-                #self.menuTimer.start(5000)
-           
-            self.hideAllWidgets()
-            self.menu_widget.setVisible(True)
-    
-    def autoCloseMenu(self):
-        self.menu_widget.setVisible(False)  
-        
+
         
     def doClose(self):
         self.oled.cancel()

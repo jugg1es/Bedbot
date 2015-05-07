@@ -40,6 +40,9 @@ class MotorManager(QObject):
     def __init__(self):
         super(MotorManager, self).__init__()
         
+       
+            
+    def initialize(self):
         if(pigpioLibraryFound):            
             self.pi = pigpio.pi()
             self.setAngle(90)
