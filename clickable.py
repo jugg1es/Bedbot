@@ -14,7 +14,7 @@ def clickable(widget):
         def eventFilter(self, obj, event):
             if obj == widget:
                 
-                if event.type() == QEvent.MouseButtonRelease:
+                if event.type() == QEvent.MouseButtonPress:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit()
                         return True
@@ -34,7 +34,7 @@ def clickableSender(widget):
         def eventFilter(self, obj, event):
             if obj == widget:
                 
-                if event.type() == QEvent.MouseButtonRelease:
+                if event.type() == QEvent.MouseButtonPress:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit(obj)
                         return True
