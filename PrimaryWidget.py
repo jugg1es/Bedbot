@@ -44,6 +44,8 @@ class PrimaryWidget(QtGui.QWidget):
     currentWidget = None    
     clockUpdateTimer = None
     
+    useOLED = False
+    
     snoozeButtonOnStyle = "font-size:20px; background-color:yellow; border: 0px solid #fff; color:#000;"
     snoozeButtonStyle = "font-size:20px; background-color:#000; border: 0px solid #fff; color:#fff;"
     
@@ -64,7 +66,8 @@ class PrimaryWidget(QtGui.QWidget):
 
         self.resize(320, 240)      
         
-        self.oled = OLEDController()
+        if(self.useOLED):
+            self.oled = OLEDController()
         
         self.buttonPowerSwitch = DigiSwitch(self.buttonPowerPin)
         
@@ -157,7 +160,10 @@ class PrimaryWidget(QtGui.QWidget):
 
         self.updatePlayStatusDisplay()
         
-        self.oled.start()
+        if(self.useOLED):
+            self.oled.start()
+            
+            
         QtCore.QMetaObject.connectSlotsByName(self)    
     
     
@@ -441,7 +447,10 @@ class PrimaryWidget(QtGui.QWidget):
 
         
     def doClose(self):
-        self.oled.cancel()
+        if(self.useOLED):
+            self.oled.cancel()
+        
+        
         #self.pandoraManager.dispose()
         try:
             self.buttonPowerSwitch.dispose()
@@ -457,8 +466,9 @@ class PrimaryWidget(QtGui.QWidget):
             self.radioOffButton.dispose()
         except Exception:
             print("Problem disposing of radiooff button")
+            
         try:
-            self.snoozeButton.dispose()
+            self.contextButton.dispose()
         except Exception:
             print("Problem disposing of snooze button")
             

@@ -11,13 +11,16 @@ try:
     import Adafruit_GPIO.SPI as SPI
     import Adafruit_SSD1306
     
-    import Image
-    import ImageDraw
-    import ImageFont
     libarariesLoaded = True
 except ImportError:
     print('Adafruit gpio spi Adafruit_SSD1306 library not found')
     
+try:    
+    import Image
+    import ImageDraw
+    import ImageFont
+except ImportError:
+    print('Image libraries not found')
 
 
 class OLEDController(QObject):
