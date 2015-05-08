@@ -37,9 +37,11 @@ class ButtonManager(QObject):
     def listenForPush(self, pin, parent):
         try:
             while parent.isListening:
-                IO.wait_for_edge(pin, IO.RISING)                
-                parent.emit(QtCore.SIGNAL('buttonPressed'))  
-                print("Button pressed at pin: " + str(parent.pinNumber))
+                #IO.wait_for_edge(pin, IO.RISING)           
+                inVal = IO.input(pin)
+                print(str(inVal))     
+                #parent.emit(QtCore.SIGNAL('buttonPressed'))  
+                #print("Button pressed at pin: " + str(parent.pinNumber))
                 time.sleep(1)
         except Exception:
             print('Error while listening for button, probably during dispose')
