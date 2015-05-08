@@ -32,12 +32,14 @@ class ButtonManager(QObject):
         if(self.initialized): 
             self.isListening = True
             self.spinupThread()  
+            print("Initialized button on pin: " + self.pinNumber)
             
     def listenForPush(self, pin, parent):
         try:
             while parent.isListening:
                 IO.wait_for_edge(pin, IO.RISING)                
                 parent.emit(QtCore.SIGNAL('buttonPressed'))  
+                print("Button pressed at pin: " + parent.pinNumber)
                 time.sleep(1)
         except Exception:
             print('Error while listening for button, probably during dispose')

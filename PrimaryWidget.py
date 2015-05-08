@@ -443,7 +443,11 @@ class PrimaryWidget(QtGui.QWidget):
     def doClose(self):
         self.oled.cancel()
         #self.pandoraManager.dispose()
-        self.buttonPowerSwitch.dispose()
+        try:
+            self.buttonPowerSwitch.dispose()
+        except Exception:
+            print("Problem disposing of buttonPowerSwitch button")
+        
         try:
             self.radioOnButton.dispose()
         except Exception:
@@ -468,8 +472,20 @@ class PrimaryWidget(QtGui.QWidget):
             self.motorManager.dispose()
         except Exception:
             print("Problem disposing of motor manager")
+        try:
+            self.stopClockTimer()
+        except Exception:
+            print("Problem disposing of clock timer ")
             
-        self.stopClockTimer()
-        self.buzzManager.stopBuzzer()
-        self.radioManager.stopRadio()
+        try:
+            self.buzzManager.stopBuzzer()
+        except Exception:
+            print("Problem disposing of buzzManager ")
+        
+        try:
+            self.radioManager.stopRadio()
+        except Exception:
+            print("Problem disposing of buzzManager ")
+        
+        
         
