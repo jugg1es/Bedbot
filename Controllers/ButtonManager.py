@@ -24,36 +24,26 @@ class ButtonManager(QObject):
         self.initialized = False
         try:
             IO.setmode(IO.BCM)
-            IO.setup(self.pinNumber, IO.IN, pull_up_down = IO.PUD_UP)
+            IO.setup(self.pinNumber, IO.IN, pull_up_down = IO.PUD_DOWN)
             self.initialized = True
         except Exception:
             print('Raspberry Pi GPIO library not found')
             
         if(self.initialized): 
             self.isListening = True
-            self.spinupThread()  
+            IO.add_event_detect(self.pinNumber, IO.FALLING, callback=self.buttonPressed, bouncetime=300)
             print("Initialized button on pin: " + str(self.pinNumber))
-            
-    def listenForPush(self, pin, parent):
-        try:
-            while parent.isListening:
-                #IO.wait_for_edge(pin, IO.RISING)           
-                inVal = IO.input(pin)
-                print(str(inVal))     
-                #parent.emit(QtCore.SIGNAL('buttonPressed'))  
-                #print("Button pressed at pin: " + str(parent.pinNumber))
-                time.sleep(1)
-        except Exception:
-            print('Error while listening for button, probably during dispose')
-            
-    def spinupThread(self):
-        self.t = Thread(target=self.listenForPush, args=(self.pinNumber,self))
-        self.t.start()
-            
+    
+    def buttonPressed(self, channel):
+        self.emit(QtCore.SIGNAL('buttonPressed'))  
+        print("Button pressed at pin: " + str(self.pinNumber))
+        
     def dispose(self):
         self.isListening = False
-        try:
-            if(self.initialized):
-                IO.cleanup()
+        
+        
+        try:            
+            IO.remove_event_detect(self.pinNumber)
+            IO.cleanup()
         except Exception:
             print('Raspberry Pi GPIO library not found')
