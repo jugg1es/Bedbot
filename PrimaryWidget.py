@@ -61,6 +61,7 @@ class PrimaryWidget(QtGui.QWidget):
     
     def __init__(self, parent):
         super(PrimaryWidget, self).__init__(parent)
+
         self.resize(320, 240)      
         
         self.oled = OLEDController()
@@ -315,7 +316,7 @@ class PrimaryWidget(QtGui.QWidget):
                     
     def hideAllWidgets(self):
         
-        self.autoCloseMenu()
+        self.menu_widget.setVisible(False)
         if(hasattr(self, "time_widget") == True):
             self.time_widget.setVisible(False)
             

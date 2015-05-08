@@ -44,7 +44,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.primary_widget.showTimeWidget()
         
-        self.setCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
+        self.setCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
     
     
     def closeEvent(self, *args, **kwargs):
@@ -57,6 +57,7 @@ class MainWindow(QtGui.QMainWindow):
 class MyApplication(QtGui.QApplication):    
     def __init__(self, args):
         super(MyApplication, self).__init__(args)
+        
   
     def setMainWindow(self, win):
         self.w = win
@@ -74,6 +75,7 @@ if __name__ == '__main__':
     import sys
     
     app = MyApplication(sys.argv)
+    
     
     logging.basicConfig(filename='bedbot.log', level=logging.INFO)
     logging.info('--- Launched ---')
