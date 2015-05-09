@@ -13,7 +13,7 @@ from Widgets.PandoraWidget import *
 from Widgets.AuxWidget import *
 from Widgets.PlaybackWidget import PlaybackType
 from perpetualTimer import perpetualTimer
-from alarmSetting import *
+from Objects.alarmSetting import *
 from Controllers.Radio import *
 from Controllers.ButtonManager import *
 from Controllers.MotorManager import *
@@ -25,6 +25,7 @@ from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
 import logging
 from Controllers.ScreenManager import *
+from Controllers.InternetRadioService import *
 
 
 #Required pins
@@ -70,6 +71,10 @@ class PrimaryWidget(QtGui.QWidget):
         
         if(self.useOLED):
             self.oled = OLEDController()
+            
+            
+        self.internet_radio = InternetRadioService()
+        
         
         self.screen_manager = ScreenManager()
         self.screen_manager.initialize()
@@ -183,11 +188,19 @@ class PrimaryWidget(QtGui.QWidget):
     def userShowMenuPressed(self):
         self.hideAllWidgets()
         self.menu_widget.setVisible(True)
+        self.menuTimer = QTimer()
+        self.menuTimer.timeout.connect(self.autoHideMenu)
+        self.menuTimer.start(10000)
     
+    def killMenuTimer(self):
+        if(self.menuTimer != None and self.menuTimer.isActive()):            
+            self.menuTimer.stop()
+        
+    def autoHideMenu(self):
+        self.menuTimer.stop()
+        self.showTimeWidget()   
     
     def gotoNextMenuItem(self):
-       
-        
         self.currentWidgetIndex += 1
         
         if(self.currentWidgetIndex > 2):
@@ -270,7 +283,7 @@ class PrimaryWidget(QtGui.QWidget):
     
     def initializePhysicalButtons(self):
         if(self.shouldInitializeButtonsAndSensors):
-            '''
+            
             self.radioOnButton = ButtonManager(self.radioONButtonPin)
             self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
             
@@ -279,7 +292,6 @@ class PrimaryWidget(QtGui.QWidget):
             
             self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
             self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
-            '''
             
             self.contextButton = ButtonManager(self.contextButtonPin)
             self.connect(self.contextButton, QtCore.SIGNAL('buttonPressed'), self.contextButtonTouched)        
@@ -317,6 +329,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.clockUpdateTimer.cancel()        
         
     def showPlaybackWidget(self):
+        self.currentWidgetIndex = 1
         self.hideAllWidgets()
         logging.info('showPlaybackWidget')
         self.currentWidget = self.playback_widget
@@ -333,17 +346,19 @@ class PrimaryWidget(QtGui.QWidget):
         self.playback_widget.setVisible(True)
         
     def showAlarmWidget(self):
+        self.currentWidgetIndex = 0
         self.hideAllWidgets()
         self.currentWidget = self.alarm_widget
         self.alarm_widget.setVisible(True)
             
     def showTimeWidget(self):
+        self.currentWidgetIndex = 2
         self.hideAllWidgets()        
         self.currentWidget = self.time_widget
         self.time_widget.setVisible(True) 
                     
     def hideAllWidgets(self):
-        
+        self.killMenuTimer()
         self.menu_widget.setVisible(False)
         if(hasattr(self, "time_widget") == True):
             self.time_widget.setVisible(False)

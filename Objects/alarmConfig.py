@@ -3,7 +3,7 @@ import datetime
 import time
 from configparser import SafeConfigParser
 import os.path
-from alarmSetting import *
+from Objects.alarmSetting import *
 
 
 class alarmConfig(object):

@@ -7,8 +7,8 @@ from configparser import SafeConfigParser
 from clickable import *
 from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
-from alarmSetting import *
-from alarmConfig import *
+from Objects.alarmSetting import *
+from Objects.alarmConfig import *
     
 
     

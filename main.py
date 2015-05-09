@@ -25,11 +25,27 @@ except AttributeError:
     
 
 
+'''
+Pressing the escape key will properly dispose and exit
 
+pressing the right arrow key will scan through menu options
+
+
+'''
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
+        
+        
+        screen_rect = app.desktop().screenGeometry()
+        if(screen_rect.width() == 320):
+            self.setCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
+        else:
+            self.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        
+        
+        
         
         self.resize(320,240)
         self.move(0,0)
@@ -45,12 +61,14 @@ class MainWindow(QtGui.QMainWindow):
         
         self.primary_widget.showTimeWidget()
         
-        self.setCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
+        
+        
     
     
     def closeEvent(self, *args, **kwargs):
         self.primary_widget.doClose()
-        #self.comm.stopServer()
+        
+        
     def gotoNextMenuItem(self):
         self.primary_widget.gotoNextMenuItem()
 
@@ -85,7 +103,6 @@ if __name__ == '__main__':
     
     
     logging.basicConfig(filename='bedbot.log', level=logging.INFO)
-    logging.info('--- Launched ---')
     
     win = MainWindow()
     app.setMainWindow(win)
