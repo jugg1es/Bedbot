@@ -12,6 +12,7 @@ from Widgets.TimeWidget import *
 from Widgets.MenuWidget import *
 from PrimaryWidget import PrimaryWidget
 import logging
+import os
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -73,6 +74,12 @@ class MyApplication(QtGui.QApplication):
   
 if __name__ == '__main__':
     import sys
+    
+    #sets the current directory as the working directory
+    launchDir = str(os.path.dirname(os.path.realpath(__file__)));
+    os.chdir(launchDir)
+    print("Setting working directory to:" + launchDir)
+    
     
     app = MyApplication(sys.argv)
     
