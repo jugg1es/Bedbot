@@ -32,7 +32,7 @@ class ScreenManager:
         if(self.initalized):
             fullCommand = "sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""
             print(fullCommand)      
-            os.system.Popen(fullCommand)   
+            os.system(fullCommand)   
         
     
     
