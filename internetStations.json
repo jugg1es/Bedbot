@@ -1,0 +1,19 @@
+{
+	"Stations": [
+		
+		{
+			"name": "NPR (WYPR)",
+			"type": "m3u",
+			"url": "http://live.str3am.com:2410/wypr.m3u" 
+			
+		},
+		{
+			"name": "NPR (WAMU)",
+			"type": "m3u",
+			"url": "http://wamu.org/streams/live/1/live.m3u" 
+			
+		}
+	
+	]
+
+}
