@@ -1,5 +1,4 @@
-import shlex
-import subprocess
+import os
 
 
 class ScreenManager:
@@ -13,9 +12,8 @@ class ScreenManager:
     def initialize(self):  
         try:
             fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""
-            print(fullCommand)
-            #arr = shlex.split(fullCommand)        
-            subprocess.Popen(fullCommand)      
+            print(fullCommand)    
+            os.system(fullCommand)      
             self.initalized = True
         except Exception:
             print("Problem initializing screen manager ")          
@@ -33,9 +31,8 @@ class ScreenManager:
     def _changeState(self, state):
         if(self.initalized):
             fullCommand = "sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""
-            print(fullCommand)
-            #arr = shlex.split(fullCommand)        
-            subprocess.Popen(fullCommand)   
+            print(fullCommand)      
+            os.system.Popen(fullCommand)   
         
     
     
