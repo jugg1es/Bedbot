@@ -154,6 +154,7 @@ class PrimaryWidget(QtGui.QWidget):
         self.motorManager = MotorManager()
         self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOn'), self.screenButtonOn)
         self.connect(self.motorManager, QtCore.SIGNAL('turnScreenOff'), self.screenButtonOff)
+        self.motorManager.initialize()
         
         self.startClockTimer() 
         
