@@ -24,6 +24,8 @@ from Controllers.OLEDController import *
 from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
 import logging
+from Controllers.ScreenManager import *
+
 
 #Required pins
 #    Amplifier Power (to transistor)
@@ -68,6 +70,9 @@ class PrimaryWidget(QtGui.QWidget):
         
         if(self.useOLED):
             self.oled = OLEDController()
+        
+        self.screen_manager = ScreenManager()
+        self.screen_manager.initialize()
         
         self.buttonPowerSwitch = DigiSwitch(self.buttonPowerPin)
         
@@ -190,11 +195,14 @@ class PrimaryWidget(QtGui.QWidget):
     def screenButtonOn(self):
         print("turn screen on")
         self.buttonPowerSwitch.turnOn()
+        self.screen_manager.turnOn()
+        
         
         
     def screenButtonOff(self):
         print("turn screen off")
         self.buttonPowerSwitch.turnOff()
+        self.screen_manager.turnOff()
         
     def turnSoundOff(self):
         if(self.radioManager.radioOn):

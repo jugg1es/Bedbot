@@ -48,7 +48,7 @@ class MotorManager(QObject):
             self.setAngle(90)
             self.currentAngle = 90
             self.openLid()
-            self.emit(QtCore.SIGNAL('turnScreenOn')) 
+        self.emit(QtCore.SIGNAL('turnScreenOn')) 
             
     def getPulseWidth(self, angle):
         above90Range = self.topRange - self.middle
@@ -82,7 +82,7 @@ class MotorManager(QObject):
         return angleTracker
         
     
-    def positionToggled(self):
+    def positionToggled(self):        
         if(pigpioLibraryFound and self.currentState != None):
             if(self.currentState == ScreenState.CLOSED):
                 print("SCREEN OPENING...")
