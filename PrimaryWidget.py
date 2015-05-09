@@ -80,16 +80,23 @@ class PrimaryWidget(QtGui.QWidget):
         self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
         self.menu_widget.setVisible(False)
         
+        
+        self.connect(self.menu_widget, QtCore.SIGNAL('showAlarm'), self.showAlarmWidget)
+        self.connect(self.menu_widget, QtCore.SIGNAL('showPlayback'), self.showPlaybackWidget)
+        self.connect(self.menu_widget, QtCore.SIGNAL('showClock'), self.showTimeWidget)
+        '''
         self.menu_widget.showAlarm.connect(self.showAlarmWidget)
         self.menu_widget.showPlayback.connect(self.showPlaybackWidget)
         self.menu_widget.showClock.connect(self.showTimeWidget)
+        '''
+        
         
         
         self.showMenuButton = QtGui.QPushButton("MENU", self)        
         self.showMenuButton.setGeometry(QtCore.QRect(0, 210, 90, 30))
         self.showMenuButton.setStyleSheet("font-size:20px;border: 0px solid #fff; color:#fff;")    
         clickable(self.showMenuButton).connect(self.userShowMenuPressed)    
-        self.showMenuButton.clicked.connect(self.userShowMenuTouched)
+        #self.showMenuButton.clicked.connect(self.userShowMenuTouched)
         
         
         
@@ -174,10 +181,9 @@ class PrimaryWidget(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(self)    
     
     def userShowMenuPressed(self):
-        logging.info('userShowMenuPressed')
+        self.hideAllWidgets()
+        self.menu_widget.setVisible(True)
     
-    def userShowMenuTouched(self):
-        logging.info('userShowMenuTouched')
     
     def gotoNextMenuItem(self):
        

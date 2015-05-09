@@ -20,9 +20,9 @@ except AttributeError:
     
 class MenuWidget(QtGui.QWidget):
     
-    showAlarm = pyqtSignal()
-    showPlayback = pyqtSignal()
-    showClock = pyqtSignal()
+    #showAlarm = pyqtSignal()
+    #showPlayback = pyqtSignal()
+    #showClock = pyqtSignal()
     
     def __init__(self, parent):
         super(MenuWidget, self).__init__(parent)
@@ -31,17 +31,17 @@ class MenuWidget(QtGui.QWidget):
         self.setAutoFillBackground(True)
         self.alarmButton = QSvgWidget("icons/bell.svg", self)
         self.alarmButton.setGeometry(QtCore.QRect(10, 0, 70, 65))
-        pressable(self.alarmButton).connect(self.alarmButtonClicked)
+        clickable(self.alarmButton).connect(self.alarmButtonClicked)
         
         
         self.playbackButton = QSvgWidget("icons/connection.svg", self)
         self.playbackButton.setGeometry(QtCore.QRect(125, 0, 70, 65))
-        pressable(self.playbackButton).connect(self.playbackButtonClicked)
+        clickable(self.playbackButton).connect(self.playbackButtonClicked)
         
         
         self.clockButton = QSvgWidget("icons/clockSelected.svg", self)
         self.clockButton.setGeometry(QtCore.QRect(240, 0, 65, 65))
-        pressable(self.clockButton).connect(self.clockButtonClicked)
+        clickable(self.clockButton).connect(self.clockButtonClicked)
         
         
         
@@ -60,7 +60,8 @@ class MenuWidget(QtGui.QWidget):
         print("clock")
         
     def doShowClock(self):
-        self.showClock.emit() 
+        self.emit(QtCore.SIGNAL('showClock'))
+        #self.showClock.emit() 
         self.t.stop() 
         
     def alarmButtonClicked(self):  
@@ -71,7 +72,8 @@ class MenuWidget(QtGui.QWidget):
         self.t.start(500)      
         
     def doShowAlarm(self):
-        self.showAlarm.emit()
+        self.emit(QtCore.SIGNAL('showAlarm'))
+        #self.showAlarm.emit()
         self.t.stop()
         
         
@@ -83,7 +85,8 @@ class MenuWidget(QtGui.QWidget):
         self.t.start(500)
         
     def doShowPlayback(self):
-        self.showPlayback.emit()   
+        self.emit(QtCore.SIGNAL('showPlayback'))
+        #self.showPlayback.emit()   
         self.t.stop()     
         
         
