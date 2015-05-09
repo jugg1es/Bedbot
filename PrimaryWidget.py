@@ -84,12 +84,13 @@ class PrimaryWidget(QtGui.QWidget):
         self.menu_widget.showPlayback.connect(self.showPlaybackWidget)
         self.menu_widget.showClock.connect(self.showTimeWidget)
         
-        '''
+        
         self.showMenuButton = QtGui.QPushButton("MENU", self)        
         self.showMenuButton.setGeometry(QtCore.QRect(0, 210, 90, 30))
-        self.showMenuButton.setStyleSheet("font-size:20px;border: 0px solid #fff; color:#fff;")
+        self.showMenuButton.setStyleSheet("font-size:20px;border: 0px solid #fff; color:#fff;")    
+        clickable(self.showMenuButton).connect(self.userShowMenuPressed)    
         self.showMenuButton.clicked.connect(self.userShowMenuTouched)
-        '''
+        
         
         
         
@@ -172,6 +173,11 @@ class PrimaryWidget(QtGui.QWidget):
             
         QtCore.QMetaObject.connectSlotsByName(self)    
     
+    def userShowMenuPressed(self):
+        logging.info('userShowMenuPressed')
+    
+    def userShowMenuTouched(self):
+        logging.info('userShowMenuTouched')
     
     def gotoNextMenuItem(self):
        
