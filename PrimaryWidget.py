@@ -11,6 +11,7 @@ from Widgets.AlarmWidget import *
 from Widgets.RadioWidget import *
 from Widgets.PandoraWidget import *
 from Widgets.AuxWidget import *
+from Widgets.InternetRadioWidget import *
 from Widgets.PlaybackWidget import PlaybackType
 from perpetualTimer import perpetualTimer
 from Objects.alarmSetting import *
@@ -61,6 +62,7 @@ class PrimaryWidget(QtGui.QWidget):
     audioToggleTwo = 17
     currentWidgetIndex = 2
     
+    pandoraEnabled = False
     
     buzzerPin = 16
     
@@ -74,7 +76,8 @@ class PrimaryWidget(QtGui.QWidget):
             
             
         self.internet_radio = InternetRadioService()
-        
+        self.connect(self.internet_radio, QtCore.SIGNAL('internetRadioPlay'), self.internetRadioOn)
+        self.connect(self.internet_radio, QtCore.SIGNAL('internetRadioStop'), self.internetRadioOff)
         
         self.screen_manager = ScreenManager()
         self.screen_manager.initialize()
@@ -126,12 +129,20 @@ class PrimaryWidget(QtGui.QWidget):
         self.playback_widget.setVisible(False)
         self.connect(self.playback_widget, QtCore.SIGNAL('changePlayback'), self.playbackTypeChanged)
         
+        
+        self.internet_radio_widget = InternetRadioWidget(self,self.internet_radio)
+        self.internet_radio_widget.setGeometry(QtCore.QRect(0, 35, 320, 175)) 
+        self.internet_radio_widget.setVisible(False)
+        
+        
         self.radio_widget = RadioWidget(self)       
         self.radio_widget.setGeometry(QtCore.QRect(0, 35, 320, 175)) 
         self.radio_widget.setVisible(False)
         #self.connect(self.radio_widget, QtCore.SIGNAL('startRadio'), self.startRadioReceived)
         #self.connect(self.radio_widget, QtCore.SIGNAL('stopRadio'), self.stopRadioReceived)
         self.connect(self.radio_widget, QtCore.SIGNAL('changeFrequency'), self.radioFrequencyReceived)
+        
+        
         
         self.pandora_widget = PandoraWidget(self)       
         self.pandora_widget.setGeometry(QtCore.QRect(0, 35, 320, 175)) 
@@ -217,7 +228,13 @@ class PrimaryWidget(QtGui.QWidget):
         elif(self.currentWidgetIndex == 2):
             self.menu_widget.clockButtonClicked()
             
-            
+    def internetRadioOn(self):
+        print("interet radio turned on")
+        
+    def internetRadioOff(self):
+        print("interet radio turned off")
+        
+        
     def screenButtonOn(self):
         print("turn screen on")
         self.buttonPowerSwitch.turnOn()
@@ -265,13 +282,14 @@ class PrimaryWidget(QtGui.QWidget):
         self.alarmOnIcon.setVisible(False)
         self.playStatus.setVisible(False)
         
-        self.playStatus.setVisible(False)
         if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
             self.playStatus.setText("AUX")
         elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
             self.playStatus.setText("PANDORA")
         elif(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
             self.playStatus.setText("RADIO")
+        elif(self.playback_widget.currentPlaybackType == PlaybackType.WWWSTREAM):
+            self.playStatus.setText("STREAM")
         '''  
         if(self.isAlarmOn()):            
             self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#ff0000;")
@@ -342,6 +360,8 @@ class PrimaryWidget(QtGui.QWidget):
             self.pandora_widget.setVisible(True)
         elif(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
             self.aux_widget.setVisible(True)
+        elif(self.playback_widget.currentPlaybackType == PlaybackType.WWWSTREAM):
+            self.internet_radio_widget.setVisible(True)
             
         self.playback_widget.setVisible(True)
         
@@ -377,6 +397,9 @@ class PrimaryWidget(QtGui.QWidget):
             
         if(hasattr(self, "aux_widget") == True):
             self.aux_widget.setVisible(False)
+            
+        if(hasattr(self, "internet_radio_widget") == True):
+            self.internet_radio_widget.setVisible(False)
             
   
     def autoSwitchToClock(self):
@@ -487,7 +510,12 @@ class PrimaryWidget(QtGui.QWidget):
         if(self.useOLED):
             self.oled.cancel()
         
-        
+        try:
+            self.internet_radio.dispose()
+        except Exception:
+            print("Problem disposing of internet radio service button")
+            
+            
         #self.pandoraManager.dispose()
         try:
             self.buttonPowerSwitch.dispose()
