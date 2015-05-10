@@ -30,6 +30,7 @@ class InternetRadioService(QObject):
         print("playing stream at: " + station.url)   
         fullCommand = "mpc add " + station.url
         os.system(fullCommand)    
+        os.system("mpc play")    
         self.isPlaying = True
         self.emit(QtCore.SIGNAL('internetRadioPlay'))  
         
