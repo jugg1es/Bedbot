@@ -1,6 +1,7 @@
 
 import datetime
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore
+from PyQt4.QtCore import QObject
 import time
 import json
 import os.path
@@ -8,7 +9,7 @@ import os
 from Objects.internetStation import *
 
 
-class InternetRadioService(object):
+class InternetRadioService(QObject):
     config = None
     
     settingsFilename = "internetStations.json"
@@ -18,6 +19,7 @@ class InternetRadioService(object):
     stations = []
     
     def __init__(self):
+        super(InternetRadioService, self).__init__()
         print("initializing Internet radio service")   
         self.loadFromJSON()     
         
