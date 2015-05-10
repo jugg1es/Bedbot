@@ -22,46 +22,38 @@ class DigiSwitch(QObject):
         self.pinNumber = pin
         self.isPowerOn = False
         
-        self.t = Thread(target=self.switchOperation, args=(self.pinNumber,self))
-        self.t.start()
+        self.initialized = False
+        
+        try:
+            IO.setmode(IO.BCM)
+            IO.setup(pin, IO.OUT)
+            self.initialized = True
+            self.turnOff()
+            
+        except Exception:
+            print('Cannot initialize button power switch')   
+            
+        
         
         
     def turnOff(self):
         self.isPowerOn = False
+        if(self.initialized):
+            IO.output(self.pinNumber, IO.LOW)            
         
             
     def turnOn(self):        
         self.isPowerOn = True
+        if(self.initialized):
+            IO.output(self.pinNumber, IO.HIGH)    
             
-    def switchOperation(self, pin, parent):
-        initialized = False
-        try:
-            IO.setmode(IO.BCM)
-            IO.setup(pin, IO.OUT)
-            initialized = True
-            
-            IO.output(pin, IO.LOW)
-            currentState = 0
-            
-            if(initialized):
-                while(parent.disposing == False):
-                    if(currentState == 0 and parent.isPowerOn == True):
-                        #if power is set to ON and previous state is OFF, set to HIGH
-                        IO.output(pin, IO.HIGH)
-                        currentState = 1
-                    elif(currentState == 1 and parent.isPowerOn == False):
-                        #if power is set to OFF and previous state is ON, set to HIGH
-                        IO.output(pin, IO.LOW)
-                        currentState = 0
-                    time.sleep(0.1)
-                    
-                #When the disposing flag is set to True, it will break and cleanup
-                IO.output(pin, IO.LOW)
-                IO.cleanup()       
-        except Exception:
-            print('Raspberry Pi GPIO library not found')    
-            
+
     def dispose(self):        
         self.isPowerOn = False
         self.disposing = True
+        try:
+            IO.output(self.pinNumber, IO.LOW) 
+            IO.cleanup()            
+        except Exception:
+            print('Raspberry Pi GPIO library not found')    
         

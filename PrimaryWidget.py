@@ -53,8 +53,8 @@ class PrimaryWidget(QtGui.QWidget):
     snoozeButtonOnStyle = "font-size:20px; background-color:yellow; border: 0px solid #fff; color:#000;"
     snoozeButtonStyle = "font-size:20px; background-color:#000; border: 0px solid #fff; color:#fff;"
     
-    radioONButtonPin = 5
-    radioOFFButtonPin = 6
+    audioOnButtonPin = 5
+    audioOffButtonPin = 6
     contextButtonPin = 12
     screenToggleButtonPin = 22
     buttonPowerPin = 27
@@ -168,7 +168,9 @@ class PrimaryWidget(QtGui.QWidget):
         self.alarm_widget.setVisible(False)    
         
         self.radioManager = Radio()
-        self.buzzManager = Buzz(self.buzzerPin)
+        
+        
+        #self.buzzManager = Buzz(self.buzzerPin)
         
         #self.pandoraManager = Pandora()   
         #self.connect(self.pandoraManager, QtCore.SIGNAL('pandoraInitialized'), self.pandoraInitializedReceived)
@@ -240,18 +242,19 @@ class PrimaryWidget(QtGui.QWidget):
         self.buttonPowerSwitch.turnOn()
         self.screen_manager.turnOn()
         
-        
-        
     def screenButtonOff(self):
         print("turn screen off")
         self.buttonPowerSwitch.turnOff()
         self.screen_manager.turnOff()
+        self.turnSoundOff()
         
     def turnSoundOff(self):
         if(self.radioManager.radioOn):
             self.radioManager.stopRadio()
         if(self.pandoraManager.pandoraOn):
             self.pandoraManager.stopPandora()
+        if(self.internet_radio.isPlaying):
+            self.internet_radio.stop()
             
         self.currentWidgetIndex = 2
         self.showCurrentMenuItem()
@@ -280,7 +283,7 @@ class PrimaryWidget(QtGui.QWidget):
     def updatePlayStatusDisplay(self):
         self.audioOnIcon.setVisible(False)
         self.alarmOnIcon.setVisible(False)
-        self.playStatus.setVisible(False)
+        self.playStatus.setVisible(True)
         
         if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
             self.playStatus.setText("AUX")
@@ -302,11 +305,11 @@ class PrimaryWidget(QtGui.QWidget):
     def initializePhysicalButtons(self):
         if(self.shouldInitializeButtonsAndSensors):
             
-            self.radioOnButton = ButtonManager(self.radioONButtonPin)
-            self.connect(self.radioOnButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonONPushed)
+            self.audioOnButton = ButtonManager(self.audioOnButtonPin)
+            self.connect(self.audioOnButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOnPushed)
             
-            self.radioOffButton = ButtonManager(self.radioOFFButtonPin)
-            self.connect(self.radioOffButton, QtCore.SIGNAL('buttonPressed'), self.radioButtonOFFPushed)
+            self.audioOffButton = ButtonManager(self.audioOffButtonPin)
+            self.connect(self.audioOffButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOffPressed)
             
             self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
             self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
@@ -325,15 +328,15 @@ class PrimaryWidget(QtGui.QWidget):
     def radioFrequencyReceived(self, newFreq):
         self.radioManager.setFrequency(newFreq)
         
-    def radioButtonONPushed(self):
-        logging.info('radioButtonONPushed')
+    def audioButtonOnPushed(self):
+        logging.info('audioButtonOnPushed')
         print("radio ON pushed")       
         self.showPlaybackWidget()
         if(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
             self.radioManager.startRadio()
        
         
-    def radioButtonOFFPushed(self):
+    def audioButtonOffPressed(self):
         self.userOffTouched()
         
     def toggleScreenButtonPushed(self):  
@@ -523,12 +526,12 @@ class PrimaryWidget(QtGui.QWidget):
             print("Problem disposing of buttonPowerSwitch button")
         
         try:
-            self.radioOnButton.dispose()
+            self.audioOnButton.dispose()
         except Exception:
             print("Problem disposing of radioon button")
             
         try:
-            self.radioOffButton.dispose()
+            self.audioOffButton.dispose()
         except Exception:
             print("Problem disposing of radiooff button")
             
