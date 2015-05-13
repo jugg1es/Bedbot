@@ -64,6 +64,8 @@ class PrimaryWidget(QtGui.QWidget):
     
     pandoraEnabled = False
     
+    isSoundOn = False
+    
     buzzerPin = 16
     
     def __init__(self, parent):
@@ -232,9 +234,13 @@ class PrimaryWidget(QtGui.QWidget):
             
     def internetRadioOn(self):
         print("interet radio turned on")
+        self.isSoundOn = True
+        self.updatePlayStatusDisplay()
         
     def internetRadioOff(self):
         print("interet radio turned off")
+        self.isSoundOn = False
+        self.updatePlayStatusDisplay()
         
         
     def screenButtonOn(self):
@@ -249,6 +255,8 @@ class PrimaryWidget(QtGui.QWidget):
         self.turnSoundOff()
         
     def turnSoundOff(self):
+        
+        self.isSoundOn = False
         if(self.radioManager.radioOn):
             self.radioManager.stopRadio()
         if(self.pandoraManager.pandoraOn):
@@ -283,16 +291,22 @@ class PrimaryWidget(QtGui.QWidget):
     def updatePlayStatusDisplay(self):
         self.audioOnIcon.setVisible(False)
         self.alarmOnIcon.setVisible(False)
-        self.playStatus.setVisible(True)
+        self.playStatus.setVisible(False)
         
-        if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
-            self.playStatus.setText("AUX")
-        elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
-            self.playStatus.setText("PANDORA")
-        elif(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
-            self.playStatus.setText("RADIO")
-        elif(self.playback_widget.currentPlaybackType == PlaybackType.WWWSTREAM):
-            self.playStatus.setText("STREAM")
+        if(self.isSoundOn):            
+            self.playStatus.setVisible(True)
+            
+            if(self.playback_widget.currentPlaybackType == PlaybackType.AUX):
+                self.playStatus.setText("AUX")
+            elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
+                self.playStatus.setText("PANDORA")
+            elif(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
+                self.playStatus.setText("RADIO")
+            elif(self.playback_widget.currentPlaybackType == PlaybackType.WWWSTREAM):
+                self.playStatus.setText("STREAM")
+            elif(self.playback_widget.currentPlaybackType == PlaybackType.NONE):
+                self.playStatus.setText("")
+                self.playStatus.setVisible(False)
         '''  
         if(self.isAlarmOn()):            
             self.playStatus.setStyleSheet("font-size:20px; border: 0px solid #fff; color:#ff0000;")
@@ -357,7 +371,7 @@ class PrimaryWidget(QtGui.QWidget):
         
         self.radio_widget.setVisible(False)
         self.pandora_widget.setVisible(False)
-        if(self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
+        if(self.playback_widget.currentPlaybackType == PlaybackType.NONE or self.playback_widget.currentPlaybackType == PlaybackType.RADIO):
             self.radio_widget.setVisible(True)
         elif(self.playback_widget.currentPlaybackType == PlaybackType.PANDORA):
             self.pandora_widget.setVisible(True)

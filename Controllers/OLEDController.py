@@ -27,6 +27,7 @@ class OLEDController(QObject):
     timeString = ""
     
     
+    
     def __init__(self):
         super(OLEDController, self).__init__()
         self.t = 1
@@ -39,25 +40,36 @@ class OLEDController(QObject):
         #print(self.timeString)
         self.thread = Timer(self.t, self.handle_function)
         self.thread.start()
+        
+        
     def start(self):
-        if(libarariesLoaded):
-            self.thread.start()
+        #if(libarariesLoaded):
+        #    self.thread.start()
+        self.thread.start()
+            
+            
     def cancel(self):
         self.thread.cancel()
 
 
-    def updateTime(self, previousTime):
+    def updateTime(self, previousTime, RST, CS, CLK, DC, DIN):
     
         n = datetime.datetime.now()
         timeString = n.strftime("%I:%M").lstrip("0")
         
         if(timeString != previousTime):
             # Raspberry Pi pin configuration:
-            RST = 21
+            #RST = 21
             # Note the following are only used with SPI:
-            DC = 20
-            SPI_PORT = 0
-            SPI_DEVICE = 0
+            #DC = 20
+            #SPI_PORT = 0
+            #SPI_DEVICE = 0
+            
+            RST = 21
+            CS = 20
+            CLK = 19
+            DC = 16
+            DIN = 13
             
             # Beaglebone Black pin configuration:
             # RST = 'P9_12'
@@ -88,7 +100,7 @@ class OLEDController(QObject):
             # Alternatively you can specify a software SPI implementation by providing
             # digital GPIO pin numbers for all the required display pins.  For example
             # on a Raspberry Pi with the 128x32 display you might use:
-            disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST, dc=DC, sclk=16, din=19, cs=26)
+            disp = Adafruit_SSD1306.SSD1306_128_32(rst=RST, dc=DC, sclk=CLK, din=DIN, cs=CS)
             
             # Initialize library.
             disp.begin()

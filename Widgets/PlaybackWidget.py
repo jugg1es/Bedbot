@@ -16,7 +16,8 @@ class PlaybackType(Enum):
     RADIO = 0
     PANDORA=1
     AUX = 2,
-    WWWSTREAM = 3
+    WWWSTREAM = 3,
+    NONE = 4
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -34,7 +35,7 @@ class PlaybackWidget(QtGui.QWidget):
     playbackUnselectedStyle = "font-size:20px;background-color:#000;border: 2px solid #000; color:#fff;"
     playbackSelectedStyle = "font-size:20px;border: 2px solid #fff; color:#fff;"
     
-    currentPlaybackType = PlaybackType.RADIO
+    currentPlaybackType = PlaybackType.NONE
     
     def __init__(self, parent):
         super(PlaybackWidget, self).__init__(parent)
@@ -112,7 +113,7 @@ class PlaybackWidget(QtGui.QWidget):
         if(self.parent().pandoraEnabled):
             self.pandoraPlaybackButton.setStyleSheet(self.playbackUnselectedStyle)
             
-        if(self.currentPlaybackType == PlaybackType.RADIO):
+        if(self.currentPlaybackType == PlaybackType.NONE or self.currentPlaybackType == PlaybackType.RADIO):
             self.radioPlaybackButton.setStyleSheet(self.playbackSelectedStyle)
         elif(self.currentPlaybackType == PlaybackType.AUX):
             self.auxPlaybackButton.setStyleSheet(self.playbackSelectedStyle)
