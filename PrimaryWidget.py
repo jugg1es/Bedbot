@@ -48,7 +48,7 @@ class PrimaryWidget(QtGui.QWidget):
     currentWidget = None    
     clockUpdateTimer = None
     
-    useOLED = False
+    useOLED = True
     
     snoozeButtonOnStyle = "font-size:20px; background-color:yellow; border: 0px solid #fff; color:#000;"
     snoozeButtonStyle = "font-size:20px; background-color:#000; border: 0px solid #fff; color:#fff;"
