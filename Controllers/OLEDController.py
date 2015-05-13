@@ -31,28 +31,28 @@ class OLEDController(QObject):
     def __init__(self):
         super(OLEDController, self).__init__()
         self.t = 1
-        self.hFunction = self.updateTime
-        self.thread = Timer(self.t, self.handle_function)
+        self.thread = Timer(self.t, self.handle_function, ["0"])
         
             
-    def handle_function(self):
-        self.timeString = self.hFunction(self.timeString)
+    def handle_function(self, prev):
+        prev = self.updateTime(prev)
         #print(self.timeString)
-        self.thread = Timer(self.t, self.handle_function)
+        self.thread = Timer(self.t, self.handle_function, [prev])
         self.thread.start()
         
         
     def start(self):
         #if(libarariesLoaded):
         #    self.thread.start()
-        self.thread.start()
+        #self.thread.start()
+        print("started")
             
             
     def cancel(self):
         self.thread.cancel()
 
 
-    def updateTime(self, previousTime, RST, CS, CLK, DC, DIN):
+    def updateTime(self, previousTime):
     
         n = datetime.datetime.now()
         timeString = n.strftime("%I:%M").lstrip("0")
