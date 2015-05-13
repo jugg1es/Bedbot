@@ -30,8 +30,9 @@ class OLEDController(QObject):
     
     def __init__(self):
         super(OLEDController, self).__init__()
-        self.t = 1
-        self.thread = Timer(self.t, self.handle_function, ["0"])
+        #self.t = 1
+        #self.thread = Timer(self.t, self.handle_function, ["0"])
+        self.updateTime("0")
         
             
     def handle_function(self, prev):
