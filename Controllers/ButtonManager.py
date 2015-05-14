@@ -20,7 +20,7 @@ class ButtonManager(QObject):
     def buttonPressed(self, channel):
         self.emit(QtCore.SIGNAL('buttonPressed'))  
         print("Button pressed at pin: " + str(self.pinNumber))
-        IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed, bouncetime=200)
+        IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed)
     
     def __init__(self, pin):
         super(ButtonManager, self).__init__()
@@ -35,7 +35,7 @@ class ButtonManager(QObject):
             
         if(self.initialized): 
             self.isListening = True
-            IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed, bouncetime=200)
+            IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed)
             print("Initialized button on pin: " + str(self.pinNumber))
     
     
