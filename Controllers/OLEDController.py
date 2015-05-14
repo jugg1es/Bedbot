@@ -34,14 +34,14 @@ class OLEDController(QObject):
         #self.thread = Timer(self.t, self.handle_function, ["0"])
         #self.updateTime("0")
         if(libarariesLoaded):
-            self.thread = Timer(self.t, self.handle_function, ["0"])
+            self.thread = Timer(1, self.handle_function, ["0"])
             self.thread.start()
         
             
     def handle_function(self, prev):
         prev = self.updateTime(prev)
         #print(self.timeString)
-        self.thread = Timer(self.t, self.handle_function, [prev])
+        self.thread = Timer(1, self.handle_function, [prev])
         self.thread.start()
         
         
