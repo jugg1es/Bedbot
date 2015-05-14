@@ -355,8 +355,9 @@ class PrimaryWidget(QtGui.QWidget):
         self.userOffTouched()
         
     def toggleScreenButtonPushed(self):  
-        print("screen toggled")
-        #self.motorManager.positionToggled()
+        print("screen toggled before")
+        self.motorManager.positionToggled()
+        print("screen toggled after")
     
     def startClockTimer(self):
         self.clockUpdateTimer = perpetualTimer(1, self.processClockTime)
