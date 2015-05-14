@@ -18,9 +18,8 @@ class ButtonManager(QObject):
     isListening = False
     
     def buttonPressed(self, channel):
-        self.emit(QtCore.SIGNAL('buttonPressed'))  
         print("Button pressed at pin: " + str(self.pinNumber))
-        IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed)
+        self.emit(QtCore.SIGNAL('buttonPressed'))  
     
     def __init__(self, pin):
         super(ButtonManager, self).__init__()
