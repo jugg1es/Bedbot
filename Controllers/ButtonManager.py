@@ -17,6 +17,9 @@ class ButtonManager(QObject):
     pinNumber = None
     isListening = False
     
+    def buttonPressed(self, channel):
+        self.emit(QtCore.SIGNAL('buttonPressed'))  
+        print("Button pressed at pin: " + str(self.pinNumber))
     
     def __init__(self, pin):
         super(ButtonManager, self).__init__()
@@ -31,16 +34,13 @@ class ButtonManager(QObject):
             
         if(self.initialized): 
             self.isListening = True
-            IO.add_event_detect(self.pinNumber, IO.FALLING, callback=self.buttonPressed, bouncetime=300)
+            IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed, bouncetime=200)
             print("Initialized button on pin: " + str(self.pinNumber))
     
-    def buttonPressed(self, channel):
-        self.emit(QtCore.SIGNAL('buttonPressed'))  
-        print("Button pressed at pin: " + str(self.pinNumber))
+    
         
     def dispose(self):
-        self.isListening = False
-        
+        self.isListening = False        
         
         try:            
             IO.remove_event_detect(self.pinNumber)
