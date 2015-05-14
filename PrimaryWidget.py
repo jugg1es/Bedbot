@@ -326,7 +326,7 @@ class PrimaryWidget(QtGui.QWidget):
             self.audioOffButton = ButtonManager(self.audioOffButtonPin, 200)
             self.connect(self.audioOffButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOffPressed)
             
-            self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin, 5000)
+            self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin, 4000)
             self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
             
             self.contextButton = ButtonManager(self.contextButtonPin, 200)
