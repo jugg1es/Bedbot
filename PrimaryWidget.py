@@ -259,8 +259,9 @@ class PrimaryWidget(QtGui.QWidget):
         self.isSoundOn = False
         if(self.radioManager.radioOn):
             self.radioManager.stopRadio()
-        if(self.pandoraManager.pandoraOn):
-            self.pandoraManager.stopPandora()
+        if(hasattr(self, "pandoraManager") == True):
+            if(self.pandoraManager.pandoraOn):
+                self.pandoraManager.stopPandora()
         if(self.internet_radio.isPlaying):
             self.internet_radio.stop()
             
