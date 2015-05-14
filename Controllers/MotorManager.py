@@ -35,7 +35,7 @@ class MotorManager(QObject):
     pi = None
     
     openAngle = 60
-    closeAngle = 170
+    closeAngle = 180
     
     #openAngle = 90
     #closeAngle = 110
