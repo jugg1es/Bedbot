@@ -246,12 +246,12 @@ class PrimaryWidget(QtGui.QWidget):
     def screenButtonOn(self):
         print("turn screen on")
         self.buttonPowerSwitch.turnOn()
-        self.screen_manager.turnOn()
+        #self.screen_manager.turnOn()
         
     def screenButtonOff(self):
         print("turn screen off")
         self.buttonPowerSwitch.turnOff()
-        self.screen_manager.turnOff()
+        #self.screen_manager.turnOff()
         self.turnSoundOff()
         
     def turnSoundOff(self):
