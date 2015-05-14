@@ -101,6 +101,7 @@ class MotorManager(QObject):
             self.currentState = ScreenState.MOVING
             self.currentAngle = self.move(self.openAngle)
             self.currentState = ScreenState.OPEN
+            print("screen opened")
             
         
         
@@ -109,6 +110,7 @@ class MotorManager(QObject):
             self.currentState = ScreenState.MOVING            
             self.currentAngle = self.move(self.closeAngle)
             self.currentState = ScreenState.CLOSED
+            print("screen closed")
                         
 
     def dispose(self):
