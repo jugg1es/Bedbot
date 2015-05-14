@@ -34,10 +34,11 @@ class MotorManager(QObject):
     middle = 1500
     pi = None
     
-    #openAngle = 60
-    #closeAngle = 180
-    openAngle = 90
-    closeAngle = 110
+    openAngle = 60
+    closeAngle = 170
+    
+    #openAngle = 90
+    #closeAngle = 110
     
     def __init__(self):
         super(MotorManager, self).__init__()
