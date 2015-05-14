@@ -83,7 +83,8 @@ class MotorManager(QObject):
         return angleTracker
         
     
-    def positionToggled(self):        
+    def positionToggled(self):     
+        print("position toggled   state: " + str(self.currentState))   
         if(pigpioLibraryFound and self.currentState != None):
             if(self.currentState == ScreenState.CLOSED):
                 self.emit(QtCore.SIGNAL('turnScreenOn')) 
