@@ -56,10 +56,14 @@ class MainWindow(QtGui.QMainWindow):
         p.setColor(self.backgroundRole(), QtCore.Qt.black)
         self.setPalette(p)
         
-        self.primary_widget = PrimaryWidget(self)
-        self.setCentralWidget(self.primary_widget)
-        
-        self.primary_widget.showTimeWidget()
+        try:
+            self.primary_widget = PrimaryWidget(self)
+            self.setCentralWidget(self.primary_widget)
+            
+            self.primary_widget.showTimeWidget()
+        except Exception as e:
+            logging.info('ERROR: %s\n' % str(e))
+            self.primary_widget.doClose()
         
         
         
