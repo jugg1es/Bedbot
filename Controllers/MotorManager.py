@@ -34,8 +34,10 @@ class MotorManager(QObject):
     middle = 1500
     pi = None
     
-    openAngle = 60
-    closeAngle = 180
+    #openAngle = 60
+    #closeAngle = 180
+    openAngle = 90
+    closeAngle = 110
     
     def __init__(self):
         super(MotorManager, self).__init__()
@@ -79,7 +81,7 @@ class MotorManager(QObject):
             self.setAngle(angleTracker)
             time.sleep(self.moveSpeed)
         print("finished moving")
-        self.pi.set_servo_pulsewidth(self.servo, 0)
+        #self.pi.set_servo_pulsewidth(self.servo, 0)
         return angleTracker
         
     
