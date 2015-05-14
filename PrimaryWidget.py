@@ -48,7 +48,7 @@ class PrimaryWidget(QtGui.QWidget):
     currentWidget = None    
     clockUpdateTimer = None
     
-    useOLED = False
+    useOLED = True
     
     snoozeButtonOnStyle = "font-size:20px; background-color:yellow; border: 0px solid #fff; color:#000;"
     snoozeButtonStyle = "font-size:20px; background-color:#000; border: 0px solid #fff; color:#fff;"
@@ -246,12 +246,12 @@ class PrimaryWidget(QtGui.QWidget):
     def screenButtonOn(self):
         print("turn screen on")
         self.buttonPowerSwitch.turnOn()
-        #self.screen_manager.turnOn()
+        self.screen_manager.turnOn()
         
     def screenButtonOff(self):
         print("turn screen off")
         self.buttonPowerSwitch.turnOff()
-        #self.screen_manager.turnOff()
+        self.screen_manager.turnOff()
         self.turnSoundOff()
         
     def turnSoundOff(self):

@@ -62,8 +62,8 @@ class MainWindow(QtGui.QMainWindow):
             
             self.primary_widget.showTimeWidget()
         except Exception as e:
-            logging.info('ERROR: %s\n' % str(e))
-            self.primary_widget.doClose()
+            fullCommand = "wall " + str(e)
+            os.system(fullCommand)    
         
         
         
