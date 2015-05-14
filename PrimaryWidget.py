@@ -321,16 +321,16 @@ class PrimaryWidget(QtGui.QWidget):
         if(self.shouldInitializeButtonsAndSensors):
             
             self.audioOnButton = ButtonManager(self.audioOnButtonPin)
-            self.connect(self.audioOnButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOnPushed)
+            self.connect(self.audioOnButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOnPushed, 200)
             
             self.audioOffButton = ButtonManager(self.audioOffButtonPin)
-            self.connect(self.audioOffButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOffPressed)
+            self.connect(self.audioOffButton, QtCore.SIGNAL('buttonPressed'), self.audioButtonOffPressed, 200)
             
             self.toggleScreenButton = ButtonManager(self.screenToggleButtonPin)
-            self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed)
+            self.connect(self.toggleScreenButton, QtCore.SIGNAL('buttonPressed'), self.toggleScreenButtonPushed, 1000)
             
             self.contextButton = ButtonManager(self.contextButtonPin)
-            self.connect(self.contextButton, QtCore.SIGNAL('buttonPressed'), self.contextButtonTouched)        
+            self.connect(self.contextButton, QtCore.SIGNAL('buttonPressed'), self.contextButtonTouched, 200)        
         
     def startRadioReceived(self):
         #self.radioManager.startRadio()
