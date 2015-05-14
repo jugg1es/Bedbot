@@ -85,9 +85,10 @@ class MotorManager(QObject):
     def positionToggled(self):        
         if(pigpioLibraryFound and self.currentState != None):
             if(self.currentState == ScreenState.CLOSED):
-                print("SCREEN OPENING...")
+                self.emit(QtCore.SIGNAL('turnScreenOn')) 
                 self.openLid()
             elif(self.currentState == ScreenState.OPEN):
+                self.emit(QtCore.SIGNAL('turnScreenOff')) 
                 print("SCREEN CLOSING...")
                 self.closeLid()
     
@@ -95,8 +96,7 @@ class MotorManager(QObject):
         return self.currentState
 
     def openLid(self):
-        if(pigpioLibraryFound and self.currentState != ScreenState.MOVING):
-            self.emit(QtCore.SIGNAL('turnScreenOn'))  
+        if(pigpioLibraryFound and self.currentState != ScreenState.MOVING):             
             self.currentState = ScreenState.MOVING
             self.currentAngle = self.move(self.openAngle)
             self.currentState = ScreenState.OPEN
@@ -105,9 +105,7 @@ class MotorManager(QObject):
         
     def closeLid(self):
         if(pigpioLibraryFound and self.currentState != ScreenState.MOVING):
-            self.emit(QtCore.SIGNAL('turnScreenOff')) 
-            self.currentState = ScreenState.MOVING
-            
+            self.currentState = ScreenState.MOVING            
             self.currentAngle = self.move(self.closeAngle)
             self.currentState = ScreenState.CLOSED
                         
