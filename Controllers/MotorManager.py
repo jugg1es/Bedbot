@@ -78,6 +78,7 @@ class MotorManager(QObject):
             angleTracker += angleDir
             self.setAngle(angleTracker)
             time.sleep(self.moveSpeed)
+        print("finished moving")
         self.pi.set_servo_pulsewidth(self.servo, 0)
         return angleTracker
         
