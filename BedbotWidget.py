@@ -76,9 +76,9 @@ class BedbotWidget(QtGui.QWidget):
 
     def logEvent(self, evtStr):
         print(str)
-        logging.info(str(evtStr))  
+        #logging.info(str(evtStr))  
        
-        os.system("echo \"" + str(evtStr) + "\" | wall")  
+        #os.system("echo \"" + str(evtStr) + "\" | wall")  
         
 
 
@@ -119,6 +119,7 @@ class BedbotWidget(QtGui.QWidget):
             self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
 
     def pinEventCallback(self, channel):
+        print("pin callback for channel: " + str(channel))
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "processPinEvent")):
                 m.processPinEvent(channel)
