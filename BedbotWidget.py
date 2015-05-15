@@ -75,7 +75,7 @@ class BedbotWidget(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(self)    
 
     def logEvent(self, evtStr):
-        print(str)
+        print(evtStr)
         #logging.info(str(evtStr))  
        
         #os.system("echo \"" + str(evtStr) + "\" | wall")  

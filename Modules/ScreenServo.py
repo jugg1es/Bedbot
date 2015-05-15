@@ -53,6 +53,7 @@ class ScreenServo(QObject):
             print("pin pressed")
 
     def processPinEvent(self, pinNum):
+        print("screen servo processing pin: " + str(pinNum))
         if(self.servo == pinNum):
             self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
             self.positionToggled()
