@@ -60,7 +60,7 @@ class BedbotWidget(QtGui.QWidget):
     def logEvent(self, evtStr):
         print(str)
         try:
-            os.system("wall " + str(evtStr))  
+            os.system("echo \"" + str(evtStr) + "\" | wall")  
         except Exception:
             logging.info(str(evtStr))  
 
