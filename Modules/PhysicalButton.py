@@ -21,6 +21,14 @@ class PhysicalButton(QObject):
     def buttonPressed(self, channel):
         self.emit(QtCore.SIGNAL('buttonPressed'))  
         self.emit(QtCore.SIGNAL('logEvent'),"Button pressed at pin: " + str(self.pinNumber)) 
+        IO.remove_event_detect(self.pinNumber)
+        self.t = QTimer()
+        self.t.timeout.connect(self.setupEventDetect)
+        self.t.start(self.bounceTime)
+        
+    def setupEventDetect(self):
+        self.t.stop()
+        IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed)
     
     def __init__(self):
         super(PhysicalButton, self).__init__()
@@ -38,7 +46,7 @@ class PhysicalButton(QObject):
             
         if(self.initialized): 
             self.isListening = True
-            IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed, bouncetime=self.bounceTime)
+            self.setupEventDetect()
             self.emit(QtCore.SIGNAL('logEvent'),"Initialized button on pin: " + str(self.pinNumber)) 
     
     
