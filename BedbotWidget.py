@@ -12,6 +12,9 @@ from enum import Enum
 import json
 import os
 
+
+
+
 #Required pins
 #    Amplifier Power (to transistor)
 #    Screen Toggle
@@ -30,6 +33,16 @@ class BedbotWidget(QtGui.QWidget):
 
     currentWidget = None        
     currentWidgetIndex = 2
+
+    listenToButtons = True
+
+    hasIOLibraries = False
+
+    try:
+        import RPi.GPIO as IO
+        hasIOLibraries = True
+    except ImportError:
+        print('Raspberry Pi GPIO library not found')
 
 
     pinConfig = {}
@@ -101,24 +114,35 @@ class BedbotWidget(QtGui.QWidget):
         if(hasattr(w, "ListenForPinEvent") == True and w.ListenForPinEvent == True):
             self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
 
-    def pinEventCallback(self, pin):
+    def pinEventCallback(self, channel):
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "processPinEvent")):
-                m.processPinEvent(pin)
+                m.processPinEvent(channel)
 
     def loadPinConfig(self):      
         
         with open("pinConfig.json") as data_file:    
             data = json.load(data_file)    
         self.pinConfig = {}
-        
+
+        if(self.hasIOLibraries):
+            IO.setmode(IO.BCM)
+
         for x in range(0, len(data["pins"])):
             p = data["pins"][x]
             self.pinConfig[p["type"]] = p["pin"]
+            if(self.hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
+                IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN, bouncetime=300)
+                IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback)
 
 
 
     def doClose(self):        
+        try:
+            IO.cleanup()
+        except BaseException:
+            print("problem cleaning up IO")
+
         for m in self.loadedModules:
             try:
                 m.dispose()

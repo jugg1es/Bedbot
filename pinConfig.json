@@ -2,11 +2,13 @@
     "pins": [
         {
             "type": "SERVO",
-            "pin": 18
+            "pin": 18,
+            "listenForPress":  false
         },
         {
             "type": "SCREEN_TOGGLE",
-            "pin": 27
+            "pin": 27,
+            "listenForPress":  true
         }
 
     ]

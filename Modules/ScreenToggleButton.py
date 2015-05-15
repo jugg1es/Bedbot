@@ -7,7 +7,7 @@ from Modules.PhysicalButton import *
 
 class ScreenToggleButton(QObject):
 
-    Enabled = True
+    Enabled = False
 
     ListenForPinEvent = True
 
