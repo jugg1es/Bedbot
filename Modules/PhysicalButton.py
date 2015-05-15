@@ -17,6 +17,7 @@ class PhysicalButton(QObject):
     pinNumber = None
     isListening = False
     bounceTime = 300
+
     
     def buttonPressed(self, channel):
         self.emit(QtCore.SIGNAL('buttonPressed'))  
@@ -27,7 +28,8 @@ class PhysicalButton(QObject):
         self.t.start(self.bounceTime)
         
     def setupEventDetect(self):
-        self.t.stop()
+        if(hasattr(self, "t") == True):
+            self.t.stop()
         IO.add_event_detect(self.pinNumber, IO.RISING, callback=self.buttonPressed)
     
     def __init__(self):
@@ -39,7 +41,7 @@ class PhysicalButton(QObject):
         self.bounceTime = bounceTime
         try:
             IO.setmode(IO.BCM)
-            IO.setup(self.pinNumber, IO.IN, pull_up_down = IO.PUD_DOWN)
+            IO.setup(self.pinNumber, IO.IN, pull_up_down = IO.PUD_DOWN, bouncetime=100)
             self.initialized = True
         except Exception:
             self.emit(QtCore.SIGNAL('logEvent'),"Raspberry Pi GPIO library not found") 
