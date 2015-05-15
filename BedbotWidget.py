@@ -13,6 +13,14 @@ import json
 import os
 
 
+hasIOLibraries = False
+
+
+try:
+    import RPi.GPIO as IO
+    hasIOLibraries = True
+except ImportError:
+    print('Raspberry Pi GPIO library not found')
 
 
 #Required pins
@@ -38,11 +46,7 @@ class BedbotWidget(QtGui.QWidget):
 
     hasIOLibraries = False
 
-    try:
-        import RPi.GPIO as IO
-        hasIOLibraries = True
-    except ImportError:
-        print('Raspberry Pi GPIO library not found')
+    
 
 
     pinConfig = {}
@@ -125,13 +129,13 @@ class BedbotWidget(QtGui.QWidget):
             data = json.load(data_file)    
         self.pinConfig = {}
 
-        if(self.hasIOLibraries):
+        if(hasIOLibraries):
             IO.setmode(IO.BCM)
 
         for x in range(0, len(data["pins"])):
             p = data["pins"][x]
             self.pinConfig[p["type"]] = p["pin"]
-            if(self.hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
+            if(hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
                 IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN, bouncetime=300)
                 IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback)
 
