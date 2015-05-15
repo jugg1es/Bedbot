@@ -22,7 +22,7 @@ except ImportError:
 class ScreenServo(QObject):
 
     Enabled = True
-    servoPin = None
+    servo = None
 
 
     currentAngle = None    
@@ -45,15 +45,15 @@ class ScreenServo(QObject):
         super(ScreenServo, self).__init__()
 
     def setPin(self, pinConfig):
-        self.servoPin = pinConfig["SERVO"]
+        self.servo = pinConfig["SERVO"]
         self.initialize()
 
     def pinPressed(self, pinNum):        
-        if(self.servoPin == pinNum):
+        if(self.servo == pinNum):
             print("pin pressed")
 
     def processPinEvent(self, pinNum):
-        if(self.servoPin == pinNum):
+        if(self.servo == pinNum):
             self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
             self.positionToggled()
 
