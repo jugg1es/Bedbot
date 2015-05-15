@@ -1,0 +1,15 @@
+{
+    "pins": [
+        {
+            "type": "SERVO",
+            "pin": 18
+        },
+        {
+            "type": "SCREEN_TOGGLE",
+            "pin": 27
+        }
+
+    ]
+
+
+}
