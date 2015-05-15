@@ -21,10 +21,12 @@ class ScreenToggleButton(QObject):
     def setPin(self, pinConfig):
         self.screenToggleButton = pinConfig["SCREEN_TOGGLE"]
         self.initialize()
+        self.emit(QtCore.SIGNAL('logEvent'),"Set screen toggle pin") 
 
     def initialize(self):
         self.btnManager = PhysicalButton()
         self.btnManager.configure(self.screenToggleButton, 1000)
+        self.emit(QtCore.SIGNAL('logEvent'),"initialized screen toggle pin and configured") 
         self.connect(self.btnManager, QtCore.SIGNAL('logEvent'), self.logEvent)
         self.connect(self.btnManager, QtCore.SIGNAL('buttonPressed'), self.screenToggleButtonPressed)
 
