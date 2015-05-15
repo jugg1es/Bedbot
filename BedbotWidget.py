@@ -46,8 +46,8 @@ class BedbotWidget(QtGui.QWidget):
         self.initializeMenu()
 
         for m in self.loadedModules:
-            if(hasattr(m, "Enabled") == True and m.Enabled == True):
-                self.connect(m, QtCore.SIGNAL('logEvent'), self.logEvent)
+            self.connect(m, QtCore.SIGNAL('logEvent'), self.logEvent)
+            if(hasattr(m, "Enabled") == True and m.Enabled == True):                
                 if(self.moduleHasFunction(m, "addMenuWidget")):
                     self.addMainWidget(m)
                 if(self.moduleHasFunction(m, "setPin")):
@@ -59,10 +59,10 @@ class BedbotWidget(QtGui.QWidget):
 
     def logEvent(self, evtStr):
         print(str)
-        try:
-            os.system("echo \"" + str(evtStr) + "\" | wall")  
-        except Exception:
-            logging.info(str(evtStr))  
+        logging.info(str(evtStr))  
+       
+        os.system("echo \"" + str(evtStr) + "\" | wall")  
+        
 
 
     def initializeMenu(self):
