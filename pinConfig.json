@@ -7,7 +7,7 @@
         },
         {
             "type": "SCREEN_TOGGLE",
-            "pin": 27,
+            "pin": 22,
             "listenForPress":  true
         }
 

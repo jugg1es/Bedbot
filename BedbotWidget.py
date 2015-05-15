@@ -76,9 +76,12 @@ class BedbotWidget(QtGui.QWidget):
 
     def logEvent(self, evtStr):
         print(evtStr)
-        #logging.info(str(evtStr))  
+        logging.info(str(evtStr))  
        
-        #os.system("echo \"" + str(evtStr) + "\" | wall")  
+        try:
+            os.system("echo \"" + str(evtStr) + "\" | wall")  
+        except Exception:
+            print("no wall command")
         
 
 
@@ -119,7 +122,7 @@ class BedbotWidget(QtGui.QWidget):
             self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
 
     def pinEventCallback(self, channel):
-        print("pin callback for channel: " + str(channel))
+        self.logEvent("pin callback for channel: " + str(channel))
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "processPinEvent")):
                 m.processPinEvent(channel)
@@ -130,6 +133,8 @@ class BedbotWidget(QtGui.QWidget):
             data = json.load(data_file)    
         self.pinConfig = {}
 
+        self.logEvent("IO libraries initialized: " + str(hasIOLibraries))
+
         if(hasIOLibraries):
             IO.setmode(IO.BCM)
 
@@ -137,9 +142,9 @@ class BedbotWidget(QtGui.QWidget):
             p = data["pins"][x]
             self.pinConfig[p["type"]] = p["pin"]
             if(hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
-                print("adding event to pin: " + str(p["pin"]))
+                self.logEvent("adding event to pin: " + str(p["pin"]))
                 IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN)
-                IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback, bouncetime=4000)
+                IO.add_event_detect(p["pin"], IO.FALLING, callback=self.pinEventCallback, bouncetime=4000)
 
 
 
