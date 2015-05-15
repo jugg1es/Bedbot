@@ -31,15 +31,21 @@ class ScreenServo(QObject):
     moveSpeed = 0.02
 
     #ranges from 500-2500 but those may not be safe for the servo    
-    bottomRange = 600  
-    topRange = 2400
+    #bottomRange = 600  
+    #topRange = 2400
+
+    bottomRange = 800  
+    topRange = 2200
 
     #middle is always safe at 1500
     middle = 1500
     pi = None
     
-    openAngle = 60
-    closeAngle = 180
+    openAngle = 80
+    closeAngle = 160
+
+    #openAngle = 60
+    #closeAngle = 180
     
 
     def __init__(self):
