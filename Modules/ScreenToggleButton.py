@@ -3,7 +3,7 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 
 from threading import Timer,Thread,Event
-from Modules.Controllers.PhysicalButton import *
+from Modules.PhysicalButton import *
 
 class ScreenToggleButton(QObject):
 
@@ -23,7 +23,8 @@ class ScreenToggleButton(QObject):
         self.initialize()
 
     def initialize(self):
-        self.btnManager = PhysicalButton(self.screenToggleButton, 1000)
+        self.btnManager = PhysicalButton()
+        self.btnManager.configure(self.screenToggleButton, 1000)
         self.connect(self.btnManager, QtCore.SIGNAL('logEvent'), self.logEvent)
         self.connect(self.btnManager, QtCore.SIGNAL('buttonPressed'), self.screenToggleButtonPressed)
 

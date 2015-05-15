@@ -22,8 +22,10 @@ class PhysicalButton(QObject):
         self.emit(QtCore.SIGNAL('buttonPressed'))  
         self.emit(QtCore.SIGNAL('logEvent'),"Button pressed at pin: " + str(self.pinNumber)) 
     
-    def __init__(self, pin, bounceTime):
+    def __init__(self):
         super(PhysicalButton, self).__init__()
+
+    def configure(self, pin, bounceTime):
         self.pinNumber = pin
         self.initialized = False
         self.bounceTime = bounceTime
