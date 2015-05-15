@@ -144,7 +144,7 @@ class BedbotWidget(QtGui.QWidget):
             if(hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
                 self.logEvent("adding event to pin: " + str(p["pin"]))
                 IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN)
-                IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback, bouncetime=4000)
+                IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback, bouncetime=3000)
 
 
 
