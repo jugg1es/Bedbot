@@ -23,6 +23,7 @@ class ScreenServo(QObject):
 
     Enabled = True
     servo = None
+    togglePin = None
 
 
     currentAngle = None    
@@ -46,6 +47,7 @@ class ScreenServo(QObject):
 
     def setPin(self, pinConfig):
         self.servo = pinConfig["SERVO"]
+        self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.initialize()
 
     def pinPressed(self, pinNum):        
@@ -53,8 +55,8 @@ class ScreenServo(QObject):
             print("pin pressed")
 
     def processPinEvent(self, pinNum):
-        print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.servo))
-        if(self.servo == pinNum):
+        print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.togglePin))
+        if(self.togglePin == pinNum):
             self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
             self.positionToggled()
 
