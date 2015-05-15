@@ -8,7 +8,7 @@ from Modules.Widgets.ClockWidget import *
 
 class Playback(QObject):
 
-    isMainWidget = True    
+    Enabled = True    
     menuOrder = 1
 
     def __init__(self):
@@ -21,7 +21,7 @@ class Playback(QObject):
         print("hiding playback")
         self.playback_widget.setVisible(False)
 
-    def addWidget(self, parent):
+    def addMenuWidget(self, parent):
         self.playback_widget = ClockWidget(parent)       
         self.playback_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.playback_widget.setVisible(False)

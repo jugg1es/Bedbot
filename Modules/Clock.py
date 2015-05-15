@@ -8,7 +8,7 @@ from Modules.Widgets.ClockWidget import *
 
 class Clock(QObject):
 
-    isMainWidget = True
+    Enabled = True
     menuOrder = 2
 
     def __init__(self):
@@ -23,7 +23,7 @@ class Clock(QObject):
         print("hiding clock")
         self.time_widget.setVisible(False)
 
-    def addWidget(self, parent):
+    def addMenuWidget(self, parent):
         self.time_widget = ClockWidget(parent)       
         self.time_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.time_widget.setVisible(False)

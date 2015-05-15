@@ -8,7 +8,7 @@ from Modules.Widgets.ClockWidget import *
 
 class Alarm(QObject):
 
-    isMainWidget = True
+    Enabled = True
     
     menuOrder = 0
 
@@ -23,7 +23,7 @@ class Alarm(QObject):
         print("hiding alarm")
         self.alarm_widget.setVisible(False)
 
-    def addWidget(self, parent):
+    def addMenuWidget(self, parent):
         self.alarm_widget = ClockWidget(parent)       
         self.alarm_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.alarm_widget.setVisible(False)

@@ -403,7 +403,7 @@ class PrimaryWidget(QtGui.QWidget):
         if(hasattr(self, "time_widget") == True):
             self.time_widget.setVisible(False)
             
-        if(hasattr(self, "radio_widget") == True):
+        if(hasattr(self, "radio_widget") == True ):
             self.radio_widget.setVisible(False)
             
         if(hasattr(self, "playback_widget") == True):
