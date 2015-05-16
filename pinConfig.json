@@ -21,6 +21,26 @@
             "type": "CONTEXT_BUTTON",
             "pin": 12,
             "listenForPress":  true
+        },
+        {
+            "type": "ON_BUTTON",
+            "pin": 5,
+            "listenForPress":  true
+        },
+        {
+            "type": "OFF_BUTTON",
+            "pin": 6,
+            "listenForPress":  true
+        },
+        {
+            "type": "AUDIO_ONE_SWITCH",
+            "pin": 4,
+            "listenForPress":  false
+        },
+        {
+            "type": "AUDIO_TWO_SWITCH",
+            "pin": 17,
+            "listenForPress":  false
         }
 
     ]
