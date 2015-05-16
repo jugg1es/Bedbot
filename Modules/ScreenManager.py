@@ -107,8 +107,8 @@ class ScreenManager(QObject):
             self.setCurrentLidState(ScreenState.OPEN)
 
 
-        #fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio508/direction\""
-        #os.system(fullCommand)
+        fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio508/direction\""
+        os.system(fullCommand)
         
 
         
