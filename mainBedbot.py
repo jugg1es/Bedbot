@@ -2,8 +2,6 @@ from PyQt4 import  QtGui, uic, QtCore
 import time
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
-from Widgets.TimeWidget import *
-from Widgets.MenuWidget import *
 from BedbotWidget import BedbotWidget
 import logging
 import os
@@ -63,8 +61,11 @@ class MainWindow(QtGui.QMainWindow):
                 loaded_mod = __import__(path+"."+mod_name, fromlist=[mod_name])
                 # Load class from imported module
                 # class_name = mod_name
-                loaded_class = getattr(loaded_mod, mod_name)
-                loadedModules.append(loaded_class())
+                try:
+                    loaded_class = getattr(loaded_mod, mod_name)
+                    loadedModules.append(loaded_class())
+                except Exception:
+                    print("problem loading " + str(mod_name))
 
         self.primary_widget = BedbotWidget(self,loadedModules)
         self.setCentralWidget(self.primary_widget)

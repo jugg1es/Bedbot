@@ -22,3 +22,6 @@ INFO:root:Raspberry Pi GPIO library not found
 INFO:root:disposing of motor manager
 INFO:root:Problem disposing of screen toggle button
 INFO:root:disposing of motor manager
+INFO:root:IO libraries initialized: False
+INFO:root:disposing of motor manager
+INFO:root:IO libraries initialized: False
