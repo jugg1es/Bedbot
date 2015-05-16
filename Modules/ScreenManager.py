@@ -61,7 +61,7 @@ class ScreenManager(QObject):
     #topRange = 2400
 
     bottomRange = 700  
-    topRange = 2500
+    topRange = 2400
 
     #middle is always safe at 1500
     middle = 1500
