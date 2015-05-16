@@ -4,7 +4,7 @@ import math
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 from threading import Timer,Thread,Event
-
+import os
 
 
 class ScreenState(Enum):
@@ -46,7 +46,9 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-
+    screenGPIO = 508 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenIsOn = None
+    screenGPIOInitialized = False
 
     currentAngle = None    
     currentState = None
@@ -104,6 +106,10 @@ class ScreenManager(QObject):
             self.currentAngle = 90
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
+
+
+        fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""
+        os.system(fullCommand)
         
 
         
@@ -112,15 +118,23 @@ class ScreenManager(QObject):
         self.currentState = state
         if(self.currentState == ScreenState.OPEN):
             self.toggleButtonPower(True)
+            self.changeScreenState(True)
         elif(self.currentState == ScreenState.CLOSED):
             self.toggleButtonPower(False)
+            self.changeScreenState(False)
 
     def toggleButtonPower(self, isOn):
         if(isOn):
             IO.output(self.buttonPowerPin, IO.HIGH)
         else:
             IO.output(self.buttonPowerPin, IO.LOW)
-        
+
+    def changeScreenState(self, isOn):
+        state = 0
+        if(isOn):
+            state = 1
+        fullCommand = "sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""
+        os.system(fullCommand)  
 
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
