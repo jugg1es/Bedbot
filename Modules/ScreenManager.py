@@ -84,7 +84,7 @@ class ScreenManager(QObject):
         self.initialize()
 
     def processPinEvent(self, pinNum):
-        print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.togglePin))
+        #print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.togglePin))
         if(self.togglePin == pinNum):
             if(self.currentState != ScreenState.MOVING):
                 self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
