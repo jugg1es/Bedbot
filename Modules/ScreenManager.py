@@ -84,10 +84,11 @@ class ScreenManager(QObject):
         self.initialize()
 
     def processPinEvent(self, pinNum):
-        #print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.togglePin))
+        print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.togglePin))
         if(self.togglePin == pinNum):
             if(self.currentState != ScreenState.MOVING):
-                self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
+                print("servo pressed")
+                #self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
                 #self.positionToggled()
 
 
@@ -119,7 +120,7 @@ class ScreenManager(QObject):
             self.toggleButtonPower(False)
 
     def toggleButtonPower(self, isOn):
-        self.emit(QtCore.SIGNAL('logEvent'),"Turning button LEDs on? " + str(isOn)) 
+        #self.emit(QtCore.SIGNAL('logEvent'),"Turning button LEDs on? " + str(isOn)) 
         
         if(isOn):
             IO.output(self.buttonPowerPin, IO.HIGH)
