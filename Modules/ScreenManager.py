@@ -89,7 +89,7 @@ class ScreenManager(QObject):
             if(self.currentState != ScreenState.MOVING):
                 print("servo pressed")
                 #self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
-                #self.positionToggled()
+                self.positionToggled()
 
 
     def initialize(self):
@@ -99,7 +99,7 @@ class ScreenManager(QObject):
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
         
-        '''
+        
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
             self.pi = pigpio.pi()
@@ -108,7 +108,7 @@ class ScreenManager(QObject):
             self.currentAngle = 90
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
-        '''
+        
 
         
 
@@ -164,10 +164,10 @@ class ScreenManager(QObject):
          print("position toggled   state: " + str(self.currentState))   
          if(pigpioLibraryFound and self.currentState != None):
              if(self.currentState == ScreenState.CLOSED):
-                 self.emit(QtCore.SIGNAL('logEvent'),"screen opening")
+                 #self.emit(QtCore.SIGNAL('logEvent'),"screen opening")
                  self.openLid()
              elif(self.currentState == ScreenState.OPEN):
-                 self.emit(QtCore.SIGNAL('logEvent'),"screen closing")
+                 #self.emit(QtCore.SIGNAL('logEvent'),"screen closing")
                  self.closeLid()
      
     def getCurrentState(self):
