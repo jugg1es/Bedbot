@@ -14,7 +14,13 @@
         {
             "type": "BUTTON_LED_POWER",
             "pin": 27,
-            "listenForPress":  false
+            "listenForPress": false
+        }
+        ,
+        {
+            "type": "CONTEXT_BUTTON",
+            "pin": 12,
+            "listenForPress":  true
         }
 
     ]
