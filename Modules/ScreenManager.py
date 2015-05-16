@@ -80,15 +80,11 @@ class ScreenManager(QObject):
         self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
-        print("button power pin: " + str(self.buttonPowerPin))
         self.initialize()
 
     def processPinEvent(self, pinNum):
-        print("screen servo processing pin: " + str(pinNum) + " servo: " + str(self.togglePin))
         if(self.togglePin == pinNum):
             if(self.currentState != ScreenState.MOVING):
-                print("servo pressed")
-                #self.emit(QtCore.SIGNAL('logEvent'),"servo button pressed") 
                 self.positionToggled()
 
 
@@ -120,8 +116,6 @@ class ScreenManager(QObject):
             self.toggleButtonPower(False)
 
     def toggleButtonPower(self, isOn):
-        #self.emit(QtCore.SIGNAL('logEvent'),"Turning button LEDs on? " + str(isOn)) 
-        
         if(isOn):
             IO.output(self.buttonPowerPin, IO.HIGH)
         else:
@@ -156,7 +150,7 @@ class ScreenManager(QObject):
              angleTracker += angleDir
              self.setAngle(angleTracker)
              time.sleep(self.moveSpeed)
-         #self.pi.set_servo_pulsewidth(self.servo, 0)
+         self.pi.set_servo_pulsewidth(self.servo, 0)
          return angleTracker
          
      
@@ -164,10 +158,8 @@ class ScreenManager(QObject):
          print("position toggled   state: " + str(self.currentState))   
          if(pigpioLibraryFound and self.currentState != None):
              if(self.currentState == ScreenState.CLOSED):
-                 #self.emit(QtCore.SIGNAL('logEvent'),"screen opening")
                  self.openLid()
              elif(self.currentState == ScreenState.OPEN):
-                 #self.emit(QtCore.SIGNAL('logEvent'),"screen closing")
                  self.closeLid()
      
     def getCurrentState(self):
