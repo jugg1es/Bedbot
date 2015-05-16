@@ -38,8 +38,13 @@ class ScreenManager(QObject):
     Enabled = True
     ListenForPinEvent = True
     servo = None
+    servoInitialized = False
+
     togglePin = None
+    toggleInitialized = False
+
     buttonPowerPin = None
+    btnPowerInitialized = False
 
     currentAngle = None    
     currentState = None
@@ -85,13 +90,15 @@ class ScreenManager(QObject):
 
 
     def initialize(self):
-        if(hasIOLibraries):
+        if(hasIOLibraries and self.btnPowerInitialized == False):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
+            self.btnPowerInitialized = True
 
-        if(pigpioLibraryFound):           
+        if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
             self.pi = pigpio.pi()
+            self.servoInitialized = True
             self.setAngle(90)
             self.currentAngle = 90
             self.openLid()
