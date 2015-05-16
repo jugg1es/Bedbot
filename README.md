@@ -10,3 +10,4 @@ Designed to be displayed on [320x240 TFT+Touchscreen](https://www.adafruit.com/p
 * [PyQT4](http://www.riverbankcomputing.com/software/pyqt/download)
 * [RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
 * [PIGPIO](http://abyz.co.uk/rpi/pigpio/)
+* [MPC/MPD](http://www.musicpd.org/clients/mpc/)
