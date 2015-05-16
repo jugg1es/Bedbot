@@ -30,6 +30,8 @@ class DynamicMenu(QtGui.QWidget):
         horizPadding = 10
         possibleWidth = self.width() - (horizPadding *2)
 
+        if(len(self.menuItems) == 0):
+            return
         iconWidth = possibleWidth / len(self.menuItems)
         xTracker = horizPadding
 

@@ -104,7 +104,18 @@ if __name__ == '__main__':
     os.chdir(launchDir)
     print("Setting working directory to:" + launchDir)
     
-    
+   
+    def myexcepthook(exctype, value, traceback):
+        logging.info(str(traceback))  
+        logging.info(str(value))         
+        try:
+            os.system("echo \"" + str(traceback) + "\" | wall")  
+        except Exception:
+            print("no wall command")
+
+    sys.excepthook = myexcepthook
+
+
     app = MyApplication(sys.argv)
     
     
@@ -112,6 +123,8 @@ if __name__ == '__main__':
     
     win = MainWindow()
     app.setMainWindow(win)
+
+
     win.show()
     
         
