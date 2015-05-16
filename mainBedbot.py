@@ -109,13 +109,14 @@ if __name__ == '__main__':
     def myexcepthook(exctype, msg, error_traceback):
         import traceback
         trace = ''.join(traceback.format_tb(error_traceback))
+        logging.info(str(exctype))  
         logging.info(trace)  
         logging.info(str(msg))         
-        try:
-            os.system("echo \"" + trace + "\" | wall")  
-            os.system("echo \"" + msg + "\" | wall")  
-        except Exception:
-            print("no wall command")
+        
+        os.system("echo \"" + str(exctype) + "\" | wall")  
+        os.system("echo \"" + trace + "\" | wall")  
+        os.system("echo \"" + str(msg) + "\" | wall")  
+        
 
     sys.excepthook = myexcepthook
     '''

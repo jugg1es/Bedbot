@@ -5,13 +5,14 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 from threading import Timer,Thread,Event
 
-hasIOLibraries = False
+
 
 class ScreenState(Enum):
     CLOSED = 0
     MOVING = 1
     OPEN = 2
 
+hasIOLibraries = False
 
 try:
     import RPi.GPIO as IO
@@ -44,7 +45,8 @@ class ScreenManager(QObject):
     currentState = None
     moveSpeed = 0.02
 
-    #Setting angleTestMode to True will skip the slow movement and just set the angles quickly
+    #Setting angleTestMode to True will skip the slow movement and just set the
+    #angles quickly
     angleTestMode = False
 
     #ranges from 500-2500 but those may not be safe for the servo
@@ -71,6 +73,7 @@ class ScreenManager(QObject):
         self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
+        print("button power pin: " + str(self.buttonPowerPin))
         self.initialize()
 
     def processPinEvent(self, pinNum):
@@ -82,6 +85,10 @@ class ScreenManager(QObject):
 
 
     def initialize(self):
+        if(hasIOLibraries):
+            IO.setmode(IO.BCM)
+            IO.setup(self.buttonPowerPin, IO.OUT)
+
         if(pigpioLibraryFound):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
             self.pi = pigpio.pi()
@@ -89,9 +96,9 @@ class ScreenManager(QObject):
             self.currentAngle = 90
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
-        if(hasIOLibraries):
-            IO.setmode(IO.BCM)
-            IO.setup(self.buttonPowerPin, IO.OUT)
+
+
+        
 
     def setCurrentLidState(self, state):
         self.currentState = state
@@ -174,8 +181,14 @@ class ScreenManager(QObject):
                          
   
     def dispose(self):
+         
          self.emit(QtCore.SIGNAL('logEvent'),"disposing of motor manager")
          if(pigpioLibraryFound):
              self.pi.set_servo_pulsewidth(self.servo, 0)
              self.pi.stop()
+
+         try: 
+             IO.cleanup()
+         except Exception:
+             self.emit(QtCore.SIGNAL('logEvent'),"Problem disposing of IO in screen manager")
 
