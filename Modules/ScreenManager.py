@@ -46,6 +46,8 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
+
+
     currentAngle = None    
     currentState = None
     moveSpeed = 0.02
@@ -77,7 +79,7 @@ class ScreenManager(QObject):
     def setPin(self, pinConfig):
         self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
-        self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
+        #self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
         print("button power pin: " + str(self.buttonPowerPin))
         self.initialize()
 
@@ -90,10 +92,12 @@ class ScreenManager(QObject):
 
 
     def initialize(self):
+        '''
         if(hasIOLibraries and self.btnPowerInitialized == False):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
+        '''
 
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
@@ -116,10 +120,12 @@ class ScreenManager(QObject):
 
     def toggleButtonPower(self, isOn):
         self.emit(QtCore.SIGNAL('logEvent'),"Turning button LEDs on? " + str(isOn)) 
+        '''
         if(isOn):
             IO.output(self.buttonPowerPin, IO.HIGH)
         else:
             IO.output(self.buttonPowerPin, IO.LOW)
+        '''
 
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
