@@ -92,7 +92,7 @@ class InternetRadio(QObject):
         buffer = StringIO()
         c = pycurl.Curl()
         c.setopt(c.URL, url)
-        #c.setopt(c.WRITEDATA, buffer)
+        c.setopt(c.FOLLOWLOCATION, 1)
         c.setopt(c.WRITEFUNCTION, buffer.write)
         c.perform()
         c.close()
