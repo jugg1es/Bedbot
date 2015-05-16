@@ -8,7 +8,7 @@ from Modules.Widgets.ClockWidget import *
 
 class Playback(QObject):
 
-    Enabled = True    
+    Enabled = False    
     menuOrder = 1
 
     def __init__(self):

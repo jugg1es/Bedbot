@@ -8,7 +8,7 @@ from Modules.Widgets.ClockWidget import *
 
 class Alarm(QObject):
 
-    Enabled = True
+    Enabled = False
     
     menuOrder = 0
 

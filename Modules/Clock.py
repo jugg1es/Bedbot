@@ -8,7 +8,7 @@ from Modules.Widgets.ClockWidget import *
 
 class Clock(QObject):
 
-    Enabled = True
+    Enabled = False
     menuOrder = 2
 
     def __init__(self):
