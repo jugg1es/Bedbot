@@ -58,7 +58,6 @@ class InternetRadioWidget(QtGui.QWidget):
         self.deselectAllStations()
         obj.setStyleSheet(self.stationSelectedListingStyle)
         self.emit(QtCore.SIGNAL('stationSelected'), obj.tag)  
-        #self.radioService.playStation(obj.name)
         
        
     def deselectAllStations(self):

@@ -16,13 +16,18 @@ import os
 
 class InternetRadio(QObject):
 
+    UsesAudio = True
+
     Enabled = True    
+    audioStatusDisplay = ""
     menuOrder = 4
 
     settingsFilename = "internetStations.json"
     stations = []
 
     currentPlaylist = []
+
+
 
     def __init__(self):
         super(InternetRadio, self).__init__()
@@ -62,10 +67,14 @@ class InternetRadio(QObject):
             station = self.stations[stationID]
             self.currentPlaylist = self.retrievePlaylist(station.url)           
             self.play()
+            self.audioStatusDisplay = station.name
+            self.emit(QtCore.SIGNAL('audioStarted'), self)
 
+    def getAudioStatusDisplay(self):
+        return self.audioStatusDisplay
 
     def play(self):
-        self.stop()
+        self.reset()
         if(self.currentPlaylist != None):
             try:
                 for pl in self.currentPlaylist:
@@ -74,9 +83,9 @@ class InternetRadio(QObject):
                 os.system("mpc play")      
             except:
                 print("mpc failed")
+        
 
-
-    def stop(self):
+    def reset(self):
         try:
             print("stopping playback of internet stream")
             os.system("mpc stop")      
@@ -84,6 +93,9 @@ class InternetRadio(QObject):
         except:
             print("mpc failed")
 
+    def stop(self):
+        self.reset()
+        self.inetradio_widget.deselectAllStations()
 
     def retrievePlaylist(self, url):       
         url = url.strip() 

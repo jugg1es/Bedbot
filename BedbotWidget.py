@@ -49,7 +49,7 @@ class BedbotWidget(QtGui.QWidget):
     
     autoCloseTimer = None
 
-
+    currentAudioModule = None
     pinConfig = {}
 
     def __init__(self, parent,modules):
@@ -76,6 +76,10 @@ class BedbotWidget(QtGui.QWidget):
                 if(self.moduleHasFunction(m, "setPin")):
                     self.addPinBasedObject(m)
 
+                if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
+                    self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
+
+
         for i in range(0,len(menuWidgets)):
             menuWidgets[i].menuOrder = i
             self.addMainWidget(menuWidgets[i])
@@ -83,6 +87,20 @@ class BedbotWidget(QtGui.QWidget):
         self.menu_widget.configureMenu()          
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)    
+        
+
+    def audioStartedCallback(self, sourceModule):
+        self.currentAudioModule = sourceModule
+        self.stopAllAudio(self.currentAudioModule)
+        self.statusDisplay.setText("")
+        if(self.moduleHasFunction(self.currentAudioModule, "getAudioStatusDisplay")):
+            self.statusDisplay.setText(self.currentAudioModule.getAudioStatusDisplay())
+
+    def stopAllAudio(self, ignoredModule):
+        for m in self.loadedModules:
+            if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True and m != ignoredModule):
+                m.stop()
+
 
     def logEvent(self, evtStr):
         print(evtStr)
@@ -107,6 +125,16 @@ class BedbotWidget(QtGui.QWidget):
         self.menuButton.setGeometry(QtCore.QRect(10,200,30,35))
         clickableSender(self.menuButton).connect(self.menuButtonPressed)
         self.menuButton.setVisible(False)
+
+
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.statusDisplay = QtGui.QLabel(self)
+        self.statusDisplay.setGeometry(QtCore.QRect(50, 200, 260, 35))
+        self.statusDisplay.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.statusDisplay.setStyleSheet('color: #eaf736')
+        self.statusDisplay.setFont(font)
+        clickableSender(self.statusDisplay).connect(self.menuButtonPressed)
 
     def toggleMainMenu(self, showMenu):
         if(showMenu):
