@@ -72,7 +72,7 @@ class BedbotWidget(QtGui.QWidget):
                     if(hasattr(m, "menuOrder") == True): 
                         menuWidgets.insert(m.menuOrder, m)   
                     else:
-                        menuWidgets.append(m)
+                       menuWidgets.insert(len(menuWidgets), m)
                 if(self.moduleHasFunction(m, "setPin")):
                     self.addPinBasedObject(m)
 

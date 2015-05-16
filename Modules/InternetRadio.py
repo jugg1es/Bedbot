@@ -10,7 +10,8 @@ from Modules.Objects.internetStation import *
 from Modules.Widgets.InternetRadioWidget import *
 import pycurl
 import json
-from StringIO import StringIO
+
+from StringIO import StringIO 
 import os
 
 class InternetRadio(QObject):
@@ -84,7 +85,9 @@ class InternetRadio(QObject):
             print("mpc failed")
 
 
-    def retrievePlaylist(self, url):
+    def retrievePlaylist(self, url):       
+        url = url.strip() 
+        url = url.encode(encoding='UTF-8',errors='strict')
         print("retreiving playlist from: " + str(url))
         buffer = StringIO()
         c = pycurl.Curl()
@@ -94,6 +97,8 @@ class InternetRadio(QObject):
         c.perform()
         c.close()
 
+        playlist = []
+        
         allLines = buffer.buflist      
         playlist = []
         for line in allLines:
@@ -101,7 +106,7 @@ class InternetRadio(QObject):
             if(line[0] != '#'):
                 print("found stream: " + line)
                 playlist.append(line)
-            
+        
         return playlist
     
 
