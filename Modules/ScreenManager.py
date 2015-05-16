@@ -103,9 +103,9 @@ class ScreenManager(QObject):
     def toggleButtonPower(self, isOn):
         self.emit(QtCore.SIGNAL('logEvent'),"Turning button LEDs on? " + str(isOn)) 
         if(isOn):
-            IO.output(self.buttonPowerPin, True)
+            IO.output(self.buttonPowerPin, IO.HIGH)
         else:
-            IO.output(self.buttonPowerPin, False)
+            IO.output(self.buttonPowerPin, IO.LOW)
 
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
