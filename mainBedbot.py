@@ -86,6 +86,9 @@ class MyApplication(QtGui.QApplication):
   
     def setMainWindow(self, win):
         self.w = win
+
+    def doClose(self):
+        self.w.closeEvent()
         
     def notify(self, receiver, event):
         if(event.type() == QtCore.QEvent.KeyPress):
@@ -103,30 +106,34 @@ if __name__ == '__main__':
     launchDir = str(os.path.dirname(os.path.realpath(__file__)));
     os.chdir(launchDir)
     print("Setting working directory to:" + launchDir)
-    
-    logging.basicConfig(filename='bedbot.log', level=logging.INFO)
-    '''
-    def myexcepthook(exctype, msg, error_traceback):
-        import traceback
-        trace = ''.join(traceback.format_tb(error_traceback))
-        logging.info(str(exctype))  
-        logging.info(trace)  
-        logging.info(str(msg))         
-        
-        os.system("echo \"" + str(exctype) + "\" | wall")  
-        os.system("echo \"" + trace + "\" | wall")  
-        os.system("echo \"" + str(msg) + "\" | wall")  
-        
-
-    sys.excepthook = myexcepthook
-    '''
-
     app = MyApplication(sys.argv)
     
     
-    
-    
     win = MainWindow()
+    
+    logging.basicConfig(filename='bedbot.log', level=logging.INFO)
+    
+    def myexcepthook(exctype, msg, error_traceback):
+        import traceback
+        if (exctype == KeyboardInterrupt):
+            win.doClose()
+        else:
+            trace = ''.join(traceback.format_tb(error_traceback))
+            logging.info(str(exctype))  
+            logging.info(trace)  
+            logging.info(str(msg))         
+        
+            os.system("echo \"" + str(exctype) + "\" | wall")  
+            os.system("echo \"" + trace + "\" | wall")  
+            os.system("echo \"" + str(msg) + "\" | wall")  
+        
+
+    sys.excepthook = myexcepthook
+    
+
+    
+    
+   
     app.setMainWindow(win)
 
 
