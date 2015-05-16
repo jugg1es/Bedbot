@@ -105,7 +105,7 @@ if __name__ == '__main__':
     print("Setting working directory to:" + launchDir)
     
     logging.basicConfig(filename='bedbot.log', level=logging.INFO)
-
+    '''
     def myexcepthook(exctype, msg, error_traceback):
         import traceback
         trace = ''.join(traceback.format_tb(error_traceback))
@@ -118,7 +118,7 @@ if __name__ == '__main__':
             print("no wall command")
 
     sys.excepthook = myexcepthook
-
+    '''
 
     app = MyApplication(sys.argv)
     
