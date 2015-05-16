@@ -85,10 +85,12 @@ class InternetRadio(QObject):
 
 
     def retrievePlaylist(self, url):
+        print("retreiving playlist from: " + str(url))
         buffer = StringIO()
         c = pycurl.Curl()
         c.setopt(c.URL, url)
-        c.setopt(c.WRITEDATA, buffer)
+        #c.setopt(c.WRITEDATA, buffer)
+        c.setopt(c.WRITEFUNCTION, buffer.write)
         c.perform()
         c.close()
 
@@ -97,6 +99,7 @@ class InternetRadio(QObject):
         for line in allLines:
             line = line.strip()
             if(line[0] != '#'):
+                print("found stream: " + line)
                 playlist.append(line)
             
         return playlist
