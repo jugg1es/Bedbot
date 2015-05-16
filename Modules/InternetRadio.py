@@ -42,7 +42,6 @@ class InternetRadio(QObject):
         self.inetradio_widget = InternetRadioWidget(parent)       
         self.inetradio_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.inetradio_widget.setVisible(False)
-        
         self.initialize()
 
     def getMenuIcon(self):

@@ -55,11 +55,18 @@ class DynamicMenu(QtGui.QWidget):
         w.setGeometry(QtCore.QRect(iconPosition, yTracker, w.tag.getMenuIconWidth(), w.tag.getMenuIconHeight()))
         clickableSender(w).connect(self.menuButtonClicked)
         
+    def setMenuItemSelected(self, m):
+        for w in self.menuItems:
+            if(w.tag == m):
+                self.setIconSelected(w)
+
+    def setIconSelected(self, obj):
+        self.deselectAll()
+        obj.load(obj.tag.getMenuIconSelected())
+        self.currentItem = obj
 
     def menuButtonClicked(self, sender):
-        self.deselectAll()
-        sender.load(sender.tag.getMenuIconSelected())
-        self.currentItem = sender
+        self.setIconSelected(sender)
         self.t = QTimer()
         self.t.timeout.connect(self.doShowWidget)
         self.t.start(500)

@@ -134,7 +134,12 @@ class BedbotWidget(QtGui.QWidget):
         self.statusDisplay.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.statusDisplay.setStyleSheet('color: #eaf736')
         self.statusDisplay.setFont(font)
-        clickableSender(self.statusDisplay).connect(self.menuButtonPressed)
+        clickableSender(self.statusDisplay).connect(self.audioStatusPressed)
+
+    def audioStatusPressed(self, obj):
+        if(self.currentAudioModule != None):
+            self.menu_widget.setMenuItemSelected(self.currentAudioModule)
+            self.showWidgetCallback(self.currentAudioModule)
 
     def toggleMainMenu(self, showMenu):
         if(showMenu):
