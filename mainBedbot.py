@@ -106,11 +106,14 @@ if __name__ == '__main__':
     
     logging.basicConfig(filename='bedbot.log', level=logging.INFO)
 
-    def myexcepthook(exctype, value, traceback):
-        logging.info(str(traceback))  
+    def myexcepthook(exctype, value, error_traceback):
+        import traceback
+        trace = ''.join(traceback.format_tb(error_traceback))
+        logging.info(trace)  
         logging.info(str(value))         
         try:
-            os.system("echo \"" + str(traceback) + "\" | wall")  
+            os.system("echo \"" + trace + "\" | wall")  
+            os.system("echo \"" + value + "\" | wall")  
         except Exception:
             print("no wall command")
 
