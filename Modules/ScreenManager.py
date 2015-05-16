@@ -46,7 +46,7 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 508 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     currentAngle = None    
@@ -106,9 +106,11 @@ class ScreenManager(QObject):
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
 
-
-        fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio508/direction\""
-        os.system(fullCommand)
+        try:
+            fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""
+            os.system(fullCommand)
+        except:
+            pring("problem initializing screen power")
         
 
         
