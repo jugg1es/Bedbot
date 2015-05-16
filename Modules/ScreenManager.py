@@ -93,7 +93,7 @@ class ScreenManager(QObject):
 
 
     def initialize(self):
-        
+        print("has IO libraries (screen manager): " + str(hasIOLibraries))
         if(hasIOLibraries and self.btnPowerInitialized == False):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
