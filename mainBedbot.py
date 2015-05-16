@@ -104,7 +104,8 @@ if __name__ == '__main__':
     os.chdir(launchDir)
     print("Setting working directory to:" + launchDir)
     
-   
+    logging.basicConfig(filename='bedbot.log', level=logging.INFO)
+
     def myexcepthook(exctype, value, traceback):
         logging.info(str(traceback))  
         logging.info(str(value))         
@@ -119,7 +120,7 @@ if __name__ == '__main__':
     app = MyApplication(sys.argv)
     
     
-    logging.basicConfig(filename='bedbot.log', level=logging.INFO)
+    
     
     win = MainWindow()
     app.setMainWindow(win)
