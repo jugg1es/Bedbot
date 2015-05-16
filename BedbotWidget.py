@@ -47,6 +47,7 @@ class BedbotWidget(QtGui.QWidget):
     hasIOLibraries = False
 
     
+    autoCloseTimer = None
 
 
     pinConfig = {}
@@ -62,16 +63,25 @@ class BedbotWidget(QtGui.QWidget):
 
         self.initializeMenu()
 
+        menuWidgets = []
         for m in self.loadedModules:
             self.connect(m, QtCore.SIGNAL('logEvent'), self.logEvent)
-            if(hasattr(m, "Enabled") == True and m.Enabled == True):                
+
+            if(hasattr(m, "Enabled") == True and m.Enabled == True):     
                 if(self.moduleHasFunction(m, "addMenuWidget")):
-                    self.addMainWidget(m)
+                    if(hasattr(m, "menuOrder") == True): 
+                        menuWidgets.insert(m.menuOrder, m)   
+                    else:
+                        menuWidgets.append(m)
                 if(self.moduleHasFunction(m, "setPin")):
                     self.addPinBasedObject(m)
 
+        for i in range(0,len(menuWidgets)):
+            menuWidgets[i].menuOrder = i
+            self.addMainWidget(menuWidgets[i])
 
-        self.menu_widget.configureMenu()            
+        self.menu_widget.configureMenu()          
+        self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)    
 
     def logEvent(self, evtStr):
@@ -89,17 +99,45 @@ class BedbotWidget(QtGui.QWidget):
 
     def initializeMenu(self):
         self.menu_widget = DynamicMenu(self)
-        self.menu_widget.setGeometry(QtCore.QRect(0, 85, 320, 70))  
+        self.menu_widget.setGeometry(QtCore.QRect(10, 10, 320, 190))  
         self.menu_widget.setVisible(True)
         self.connect(self.menu_widget, QtCore.SIGNAL('showWidget'), self.showWidgetCallback)
+
+        self.menuButton = QSvgWidget("icons/three-bars.svg", self)
+        self.menuButton.setGeometry(QtCore.QRect(10,200,30,35))
+        clickableSender(self.menuButton).connect(self.menuButtonPressed)
+        self.menuButton.setVisible(False)
+
+    def toggleMainMenu(self, showMenu):
+        if(showMenu):
+            self.hideMainWidgets()
+            self.autoCloseTimer = QTimer()
+            self.autoCloseTimer.timeout.connect(self.autoCloseMainMenu)
+            self.autoCloseTimer.start(5000)
+        self.menuButton.setVisible(not showMenu)
+        self.menu_widget.setVisible(showMenu)
+
+    def autoCloseMainMenu(self):
+        if(self.currentWidget != None):
+            self.showWidgetCallback(self.currentWidget)
+        
+
+    def menuButtonPressed(self, obj):
+        self.toggleMainMenu(True)
+
 
     def contextButtonPressed(self):
         print("context button pressed")
 
     
     def showWidgetCallback(self, w):
+        if(self.autoCloseTimer != None):
+            self.autoCloseTimer.stop()
+            self.autoCloseTimer = None
         self.hideMainWidgets()
         w.showWidget()
+        self.currentWidget = w
+        self.toggleMainMenu(False)
 
     def hideMainWidgets(self):
         for m in self.loadedModules:

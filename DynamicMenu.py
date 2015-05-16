@@ -16,7 +16,7 @@ class DynamicMenu(QtGui.QWidget):
 
     def __init__(self, parent):
         super(DynamicMenu, self).__init__(parent)
-        self.resize(320, 70)
+        self.resize(320, 190)
                 
         self.setAutoFillBackground(True)
 
@@ -27,25 +27,34 @@ class DynamicMenu(QtGui.QWidget):
         self.menuItems.append(menuButton)
 
     def configureMenu(self):
-        horizPadding = 10
-        possibleWidth = self.width() - (horizPadding *2)
-
         if(len(self.menuItems) == 0):
             return
-        iconWidth = possibleWidth / len(self.menuItems)
-        xTracker = horizPadding
 
-        for i in range(0,len(self.menuItems)):
-            xTracker = self.configureMenuItem(i,iconWidth,xTracker)
+        padding = 10
+        possibleWidth = self.width() - (padding *2)
 
-    def configureMenuItem(self, order, iconWidth, xTracker):
-        for w in self.menuItems:
-            if(w.tag.menuOrder == order):
-                iconPosition = xTracker + ((iconWidth / 2 ) - (w.tag.getMenuIconWidth() /2))
-                w.setGeometry(QtCore.QRect(iconPosition, 0, w.tag.getMenuIconWidth(), w.tag.getMenuIconHeight()))
-                clickableSender(w).connect(self.menuButtonClicked)
-                xTracker += iconWidth
-        return xTracker
+        maxPerRow = 3
+        if(len(self.menuItems) < maxPerRow):
+            maxPerRow = len(self.menuItems)
+        
+        iconWidth = possibleWidth / maxPerRow
+        iconHeight = 80
+
+        xTracker = padding
+        yTracker = padding
+
+        for i in range(0,len(self.menuItems)):    
+            self.configureMenuItem(self.menuItems[i],iconWidth,xTracker,yTracker)
+            xTracker += iconWidth
+            if(i > 0 and (i +1) % maxPerRow == 0):
+                yTracker += iconHeight
+                xTracker = padding
+
+    def configureMenuItem(self, w, iconWidth, xTracker,yTracker):
+        iconPosition = xTracker + ((iconWidth / 2 ) - (w.tag.getMenuIconWidth() /2))
+        w.setGeometry(QtCore.QRect(iconPosition, yTracker, w.tag.getMenuIconWidth(), w.tag.getMenuIconHeight()))
+        clickableSender(w).connect(self.menuButtonClicked)
+        
 
     def menuButtonClicked(self, sender):
         self.deselectAll()

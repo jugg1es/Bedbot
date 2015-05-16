@@ -10,7 +10,7 @@ class Alarm(QObject):
 
     Enabled = True
     
-    menuOrder = 0
+    menuOrder = 1
 
     ListenForPinEvent = True
 

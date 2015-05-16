@@ -7,9 +7,8 @@ from threading import Timer,Thread,Event
 from Modules.Widgets.ClockWidget import *
 
 class Clock(QObject):
-
+    menuOrder = 0
     Enabled = True
-    menuOrder = 2
 
     def __init__(self):
         super(Clock, self).__init__()
