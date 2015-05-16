@@ -17,6 +17,8 @@ import os
 class InternetRadio(QObject):
 
     UsesAudio = True
+    ListenForPinEvent = True
+    offButton = None
 
     Enabled = True    
     audioStatusDisplay = ""
@@ -27,10 +29,18 @@ class InternetRadio(QObject):
 
     currentPlaylist = []
 
+    isPlaying = False
 
 
     def __init__(self):
         super(InternetRadio, self).__init__()
+
+    def setPin(self, pinConfig):
+        self.offButton = pinConfig["OFF_BUTTON"]
+
+    def processPinEvent(self, pinNum):
+        if(self.offButton == pinNum and self.isPlaying == True):
+            self.stop()
 
     def showWidget(self):
         self.inetradio_widget.setVisible(True)
@@ -80,8 +90,10 @@ class InternetRadio(QObject):
                     fullCommand = "mpc add " + pl
                     os.system(fullCommand)    
                 os.system("mpc play")      
+                
             except:
                 print("mpc failed")
+        self.isPlaying = True
         
 
     def reset(self):
@@ -93,8 +105,10 @@ class InternetRadio(QObject):
             print("mpc failed")
 
     def stop(self):
-        self.reset()
-        self.inetradio_widget.deselectAllStations()
+        if(self.isPlaying):
+            self.reset()        
+            self.isPlaying = False
+            self.inetradio_widget.deselectAllStations()
 
     def retrievePlaylist(self, url):       
         url = url.strip() 

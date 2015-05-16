@@ -78,6 +78,7 @@ class BedbotWidget(QtGui.QWidget):
 
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
+                    self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
 
 
         for i in range(0,len(menuWidgets)):
@@ -88,6 +89,11 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)    
         
+    def audioStoppedCallback(self, sourceModule):
+        print("audio stopped")
+        self.currentAudioModule = None
+        self.stopAllAudio(self.currentAudioModule)
+        self.statusDisplay.setText("")
 
     def audioStartedCallback(self, sourceModule):
         self.currentAudioModule = sourceModule
@@ -98,7 +104,7 @@ class BedbotWidget(QtGui.QWidget):
 
     def stopAllAudio(self, ignoredModule):
         for m in self.loadedModules:
-            if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True and m != ignoredModule):
+            if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True and (ignoredModule == None or (ignoredModule != None and m != ignoredModule))):
                 m.stop()
 
 
