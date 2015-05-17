@@ -20,6 +20,8 @@ class InternetRadio(QObject):
     UsesAudio = True
     ListenForPinEvent = True
     offButton = None
+    audioRelayPin = None
+
 
     Enabled = True    
     audioStatusDisplay = ""
@@ -38,6 +40,7 @@ class InternetRadio(QObject):
 
     def setPin(self, pinConfig):
         self.offButton = pinConfig["OFF_BUTTON"]
+        self.audioRelayPin = pinConfig["AUDIO_ONE_SWITCH"]
 
     def processPinEvent(self, pinNum):
         if(self.offButton == pinNum and self.isPlaying == True):
@@ -79,6 +82,7 @@ class InternetRadio(QObject):
             self.play()
             self.audioStatusDisplay = station.name
             self.emit(QtCore.SIGNAL('audioStarted'), self)
+            self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
 
     def getAudioStatusDisplay(self):
         return self.audioStatusDisplay

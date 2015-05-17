@@ -79,6 +79,7 @@ class BedbotWidget(QtGui.QWidget):
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
+                    self.connect(m, QtCore.SIGNAL('pinRequested'), self.pinRequestedCallback)
 
 
         for i in range(0,len(menuWidgets)):
@@ -87,8 +88,13 @@ class BedbotWidget(QtGui.QWidget):
 
         self.menu_widget.configureMenu()          
         self.toggleMainMenu(True)
-        QtCore.QMetaObject.connectSlotsByName(self)    
-        
+        QtCore.QMetaObject.connectSlotsByName(self)   
+
+
+    def pinRequestedCallback(self, pin):
+        self.pinEventCallback(pin)
+
+
     def audioStoppedCallback(self, sourceModule):
         print("audio stopped")
         self.currentAudioModule = None
