@@ -107,13 +107,13 @@ class ScreenManager(QObject):
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
 
-        '''
+        
         try:
             fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""
             os.system(fullCommand)
         except:
             print("problem initializing screen power")
-        '''
+        
         
 
     def initPigpio(self):
@@ -145,10 +145,10 @@ class ScreenManager(QObject):
         state = 0
         if(isOn):
             state = 1
-        '''
+        
         fullCommand = "sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""
         os.system(fullCommand)  
-        '''
+        
 
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
