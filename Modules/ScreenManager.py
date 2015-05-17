@@ -5,7 +5,9 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 from threading import Timer,Thread,Event
 import os
-
+import subprocess
+import sys
+import shlex
 
 class ScreenState(Enum):
     CLOSED = 0
@@ -100,7 +102,7 @@ class ScreenManager(QObject):
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
             self.servoInitialized = True
-
+            self.pi = pigpio.pi()
             
             self.setAngle(90)
             self.currentAngle = 90
@@ -110,20 +112,11 @@ class ScreenManager(QObject):
         
         try:
             fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""
-            os.system(fullCommand)
+            cmd = shlex.split(fullCommand)
+            subprocess.call(cmd)
         except:
             print("problem initializing screen power")
         
-        
-
-    def initPigpio(self):
-        self.pi = pigpio.pi()
-
-    def closePigpio(self):
-        if(self.pi != None):
-            self.pi.set_servo_pulsewidth(self.servo, 0)
-            self.pi.stop()
-            self.pi = None
         
 
     def setCurrentLidState(self, state):
@@ -147,7 +140,9 @@ class ScreenManager(QObject):
             state = 1
         
         fullCommand = "sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""
-        os.system(fullCommand)  
+        cmd = shlex.split(fullCommand)
+        subprocess.call(cmd)
+         
         
 
     def getPulseWidth(self, angle):
@@ -183,7 +178,6 @@ class ScreenManager(QObject):
              self.setAngle(angleTracker)
              time.sleep(self.moveSpeed)
          self.pi.set_servo_pulsewidth(self.servo, 0)
-         self.closePigpio()
          return angleTracker
          
      
@@ -222,12 +216,12 @@ class ScreenManager(QObject):
     def dispose(self):
          
          self.emit(QtCore.SIGNAL('logEvent'),"disposing of motor manager")
-         '''
+       
          if(pigpioLibraryFound):
              self.pi.set_servo_pulsewidth(self.servo, 0)
              self.pi.stop()
 
-         '''
+         
 
          try: 
              IO.cleanup()
