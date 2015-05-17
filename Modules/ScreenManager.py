@@ -62,7 +62,7 @@ class ScreenManager(QObject):
     #topRange = 2400
 
     bottomRange = 700  
-    topRange = 2300
+    topRange = 2400
 
     #middle is always safe at 1500
     middle = 1500
@@ -99,8 +99,9 @@ class ScreenManager(QObject):
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
-            self.pi = pigpio.pi()
             self.servoInitialized = True
+
+            
             self.setAngle(90)
             self.currentAngle = 90
             self.openLid()
@@ -115,6 +116,13 @@ class ScreenManager(QObject):
         '''
         
 
+    def initPigpio(self):
+        self.pi = pigpio.pi()
+
+    def closePigpio(self):
+        if(self.pi != None):
+            self.pi.stop()
+            self.pi = None
         
 
     def setCurrentLidState(self, state):
@@ -154,10 +162,14 @@ class ScreenManager(QObject):
          return mod
      
     def setAngle(self, angle):
+         if(self.pi == None):
+             self.initPigpio()
          mod = self.getPulseWidth(angle)
          self.pi.set_servo_pulsewidth(self.servo, mod)
          
     def move(self, angle):
+         if(self.pi == None):
+            self.initPigpio()
          angleDiff = self.currentAngle - angle
          angleTracker = self.currentAngle
          angleDir = 0
@@ -170,6 +182,7 @@ class ScreenManager(QObject):
              self.setAngle(angleTracker)
              time.sleep(self.moveSpeed)
          self.pi.set_servo_pulsewidth(self.servo, 0)
+         self.closePigpio()
          return angleTracker
          
      
@@ -208,9 +221,12 @@ class ScreenManager(QObject):
     def dispose(self):
          
          self.emit(QtCore.SIGNAL('logEvent'),"disposing of motor manager")
+         '''
          if(pigpioLibraryFound):
              self.pi.set_servo_pulsewidth(self.servo, 0)
              self.pi.stop()
+
+         '''
 
          try: 
              IO.cleanup()
