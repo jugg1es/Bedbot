@@ -110,15 +110,7 @@ class BedbotWidget(QtGui.QWidget):
 
     def logEvent(self, evtStr):
         print(evtStr)
-        
         logging.info(str(evtStr))  
-       
-        try:
-            subprocess.call(shlex.split("echo \"" + str(evtStr) + "\" | wall")) 
-        except Exception:
-            print("no wall command")
-        
-        
 
 
     def initializeMenu(self):
