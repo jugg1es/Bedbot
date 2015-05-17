@@ -48,7 +48,7 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = 508 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     currentAngle = None    
@@ -217,7 +217,6 @@ class ScreenManager(QObject):
          self.emit(QtCore.SIGNAL('logEvent'),"disposing of motor manager")
        
          if(pigpioLibraryFound):
-             self.pi.set_servo_pulsewidth(self.servo, 0)
              self.pi.stop()
 
          
