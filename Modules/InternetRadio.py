@@ -9,8 +9,9 @@ from threading import Timer,Thread,Event
 from Modules.Objects.internetStation import *
 from Modules.Widgets.InternetRadioWidget import *
 import pycurl
+import shlex
 import json
-
+import subprocess
 from StringIO import StringIO 
 import os
 
@@ -87,10 +88,8 @@ class InternetRadio(QObject):
         if(self.currentPlaylist != None):
             try:
                 for pl in self.currentPlaylist:
-                    fullCommand = "mpc add " + pl
-                    os.system(fullCommand)    
-                os.system("mpc play")      
-                
+                    subprocess.call(shlex.split("mpc add " + pl)) 
+                    subprocess.call(shlex.split("mpc play")) 
             except:
                 print("mpc failed")
         self.isPlaying = True
@@ -99,8 +98,8 @@ class InternetRadio(QObject):
     def reset(self):
         try:
             print("stopping playback of internet stream")
-            os.system("mpc stop")      
-            os.system("mpc clear")     
+            subprocess.call(shlex.split("mpc stop")) 
+            subprocess.call(shlex.split("mpc clear")) 
         except:
             print("mpc failed")
 

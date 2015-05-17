@@ -10,8 +10,8 @@ import logging
 from DynamicMenu import *
 from enum import Enum
 import json
-import os
-
+import shlex 
+import subprocess
 
 hasIOLibraries = False
 
@@ -114,7 +114,7 @@ class BedbotWidget(QtGui.QWidget):
         #logging.info(str(evtStr))  
        
         try:
-            os.system("echo \"" + str(evtStr) + "\" | wall")  
+            subprocess.call(shlex.split("echo \"" + str(evtStr) + "\" | wall")) 
         except Exception:
             print("no wall command")
         '''

@@ -111,9 +111,7 @@ class ScreenManager(QObject):
 
         
         try:
-            fullCommand = "sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""
-            cmd = shlex.split(fullCommand)
-            subprocess.call(cmd)
+            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")) 
         except:
             print("problem initializing screen power")
         
@@ -138,13 +136,9 @@ class ScreenManager(QObject):
         state = 0
         if(isOn):
             state = 1
-        
-        fullCommand = "sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""
-        cmd = shlex.split(fullCommand)
-        subprocess.call(cmd)
-         
-        
 
+        subprocess.call(shlex.split("sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
+                   
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
          below90Range = self.middle - self.bottomRange
