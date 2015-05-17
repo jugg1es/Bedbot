@@ -121,6 +121,7 @@ class ScreenManager(QObject):
 
     def closePigpio(self):
         if(self.pi != None):
+            self.pi.set_servo_pulsewidth(self.servo, 0)
             self.pi.stop()
             self.pi = None
         
