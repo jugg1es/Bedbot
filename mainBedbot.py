@@ -112,7 +112,7 @@ if __name__ == '__main__':
     win = MainWindow()
     
     logging.basicConfig(filename='bedbot.log', level=logging.INFO)
-    '''
+    
     def myexcepthook(exctype, msg, error_traceback):
         import traceback
         if (exctype == KeyboardInterrupt):
@@ -122,14 +122,14 @@ if __name__ == '__main__':
             logging.info(str(exctype))  
             logging.info(trace)  
             logging.info(str(msg))         
-        
-            os.system("echo \"" + str(exctype) + "\" | wall")  
-            os.system("echo \"" + trace + "\" | wall")  
-            os.system("echo \"" + str(msg) + "\" | wall")  
+            subprocess.call(shlex.split("echo \"" + str(exctype) + "\" | wall")) 
+            subprocess.call(shlex.split("echo \"" + trace + "\" | wall")) 
+            subprocess.call(shlex.split("echo \"" + str(msg) + "\" | wall")) 
+           
         
 
     sys.excepthook = myexcepthook
-    '''
+    
 
     
     
