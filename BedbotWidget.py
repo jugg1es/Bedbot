@@ -110,7 +110,7 @@ class BedbotWidget(QtGui.QWidget):
 
     def logEvent(self, evtStr):
         print(evtStr)
-        logging.info(str(evtStr))  
+        #logging.info(str(evtStr))  
 
 
     def initializeMenu(self):
