@@ -97,24 +97,24 @@ class ScreenManager(QObject):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
-        
+
+        try:
+            subprocess.call(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
+            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")) 
+        except: 
+            print(" no subprocess module")
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
             self.servoInitialized = True
-            self.pi = pigpio.pi()
-            
+            self.pi = pigpio.pi()            
             self.setAngle(90)
             self.currentAngle = 90
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
 
         
-        try:
-            subprocess.call(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
-            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")) 
-        except: 
-            print(" no subprocess module")
+        
         
         
         
@@ -138,6 +138,7 @@ class ScreenManager(QObject):
         state = 0
         if(isOn):
             state = 1
+        
         try:
             subprocess.call(shlex.split("sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
         except: 
