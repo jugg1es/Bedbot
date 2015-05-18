@@ -34,12 +34,12 @@
         },
         {
             "type": "AUDIO_ONE_SWITCH",
-            "pin": 4,
+            "pin": 17,
             "listenForPress":  false
         },
         {
             "type": "AUDIO_TWO_SWITCH",
-            "pin": 17,
+            "pin": 4,
             "listenForPress":  false
         }
 
