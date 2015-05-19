@@ -59,7 +59,7 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 508 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     currentAngle = None    
