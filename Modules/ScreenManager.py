@@ -110,7 +110,6 @@ class ScreenManager(QObject):
             self.btnPowerInitialized = True
 
         t = Thread(target=initializeScreenToggle, args=(self.screenGPIO,))
-        threads.append(t)
         t.start()
 
         
@@ -146,11 +145,9 @@ class ScreenManager(QObject):
     def changeScreenState(self, isOn):
         if(isOn):
             t = Thread(target=turnScreenOn, args=(self.screenGPIO,))
-            threads.append(t)
             t.start()
         else:
             t = Thread(target=turnScreenOff, args=(self.screenGPIO,))
-            threads.append(t)
             t.start()
         
                    
