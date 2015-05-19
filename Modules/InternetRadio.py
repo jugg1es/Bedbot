@@ -15,6 +15,20 @@ import subprocess
 from StringIO import StringIO 
 import os
 
+def stopInternetRadio():
+    import subprocess
+    import shlex
+    subprocess.call(shlex.split("mpc stop")) 
+    subprocess.call(shlex.split("mpc clear")) 
+
+def playInternetRadio(playlist):
+    import subprocess
+    import shlex
+    for pl in currentPlaylist:
+        subprocess.call(shlex.split("mpc add " + pl)) 
+        subprocess.call(shlex.split("mpc play"))  
+
+
 class InternetRadio(QObject):
 
     UsesAudio = True
@@ -90,29 +104,21 @@ class InternetRadio(QObject):
     def play(self):
         self.reset()
         if(self.currentPlaylist != None):
-            try:
-                for pl in self.currentPlaylist:
-                    subprocess.call(shlex.split("mpc add " + pl)) 
-                    subprocess.call(shlex.split("mpc play")) 
-            except:
-                print("mpc failed")
+            t = Thread(target=playInternetRadio, args=(self.currentPlaylist,))
+            t.start()            
         self.isPlaying = True
         
 
     def reset(self):
-        try:
-            print("stopping playback of internet stream")
-            subprocess.call(shlex.split("mpc stop")) 
-            subprocess.call(shlex.split("mpc clear")) 
-        except:
-            print("mpc failed")
+        t = Thread(target=stopInternetRadio)
+        t.start()        
 
     def stop(self):
         if(self.isPlaying):
-            self.reset()        
-            self.isPlaying = False
+            self.reset()   
             self.inetradio_widget.deselectAllStations()
             self.emit(QtCore.SIGNAL('audioStopped'), self)
+        self.isPlaying = False
 
     def retrievePlaylist(self, url):       
         url = url.strip() 

@@ -8,8 +8,8 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 from threading import Timer,Thread,Event
 import os
-import subprocess
 import sys
+import subprocess
 import shlex
 
 class ScreenState(Enum):
@@ -35,14 +35,20 @@ except ImportError:
     print('pigpio library not found or pigpiod not running')
 
 
-def initializeScreenToggle(screenGPIO):
+def initializeScreenToggle(screenGPIO):    
+    import subprocess
+    import shlex
     subprocess.call(shlex.split("sudo sh -c \"echo " + str(screenGPIO) + " > /sys/class/gpio/export\"")) 
     subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(screenGPIO) + "/direction\"")) 
     
 def turnScreenOff(screenGPIO):
+    import subprocess
+    import shlex
     subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(screenGPIO) + "/value\"")) 
 
 def turnScreenOn(screenGPIO):
+    import subprocess
+    import shlex
     subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(screenGPIO) + "/value\"")) 
 
 
