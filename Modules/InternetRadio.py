@@ -112,6 +112,7 @@ class InternetRadio(QObject):
             self.reset()        
             self.isPlaying = False
             self.inetradio_widget.deselectAllStations()
+            self.emit(QtCore.SIGNAL('audioStopped'), self)
 
     def retrievePlaylist(self, url):       
         url = url.strip() 

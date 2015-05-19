@@ -97,7 +97,6 @@ class BedbotWidget(QtGui.QWidget):
 
 
     def audioStoppedCallback(self, sourceModule):
-        print("audio stopped")
         self.currentAudioModule = None
         self.stopAllAudio(self.currentAudioModule)
         self.statusDisplay.setText("")
