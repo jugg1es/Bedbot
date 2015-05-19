@@ -17,11 +17,11 @@ class ScreenState(Enum):
     MOVING = 1
     OPEN = 2
 
-hasIOLibraries = False
+hasIOLibraries_screen = False
 
 try:
     import RPi.GPIO as IO
-    hasIOLibraries = True
+    hasIOLibraries_screen = True
 except ImportError:
     print('Raspberry Pi GPIO library not found')
 
@@ -103,8 +103,8 @@ class ScreenManager(QObject):
 
 
     def initialize(self):
-        print("has IO libraries (screen manager): " + str(hasIOLibraries))
-        if(hasIOLibraries and self.btnPowerInitialized == False):
+        print("has IO libraries (screen manager): " + str(hasIOLibraries_screen))
+        if(hasIOLibraries_screen and self.btnPowerInitialized == False):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True

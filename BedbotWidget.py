@@ -210,9 +210,7 @@ class BedbotWidget(QtGui.QWidget):
         with open("pinConfig.json") as data_file:    
             data = json.load(data_file)    
         self.pinConfig = {}
-
-        self.logEvent("IO libraries initialized: " + str(hasIOLibraries))
-
+        
         if(hasIOLibraries):
             IO.setmode(IO.BCM)
 
