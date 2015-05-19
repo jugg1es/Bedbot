@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject

@@ -1,3 +1,6 @@
+#!/usr/bin/python
+
+
 import time
 from enum import Enum
 import math
@@ -32,8 +35,16 @@ except ImportError:
     print('pigpio library not found or pigpiod not running')
 
 
-
+def initializeScreenToggle(screenGPIO):
+    subprocess.call(shlex.split("sudo sh -c \"echo " + str(screenGPIO) + " > /sys/class/gpio/export\"")) 
+    subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(screenGPIO) + "/direction\"")) 
     
+def turnScreenOff(screenGPIO):
+    subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(screenGPIO) + "/value\"")) 
+
+def turnScreenOn(screenGPIO):
+    subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(screenGPIO) + "/value\"")) 
+
 
 class ScreenManager(QObject):
 
@@ -98,11 +109,10 @@ class ScreenManager(QObject):
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
 
-        #try:
-            subprocess.call(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
-            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")) 
-        #except: 
-        #    print(" no subprocess module")
+        t = Thread(target=initializeScreenToggle, args=(self.screenGPIO,))
+        threads.append(t)
+        t.start()
+
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
@@ -116,8 +126,7 @@ class ScreenManager(QObject):
         
         
         
-        
-        
+    
 
     def setCurrentLidState(self, state):
         self.currentState = state
@@ -135,14 +144,15 @@ class ScreenManager(QObject):
             IO.output(self.buttonPowerPin, IO.LOW)
 
     def changeScreenState(self, isOn):
-        state = 0
         if(isOn):
-            state = 1
+            t = Thread(target=turnScreenOn, args=(self.screenGPIO,))
+            threads.append(t)
+            t.start()
+        else:
+            t = Thread(target=turnScreenOff, args=(self.screenGPIO,))
+            threads.append(t)
+            t.start()
         
-        #try:
-            subprocess.call(shlex.split("sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
-        #except: 
-        #    print(" no subprocess module")
                    
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle

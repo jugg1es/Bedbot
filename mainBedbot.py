@@ -1,3 +1,6 @@
+#!/usr/bin/python
+
+
 from PyQt4 import  QtGui, uic, QtCore
 import time
 from threading import Timer,Thread,Event
