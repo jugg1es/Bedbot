@@ -25,3 +25,5 @@ INFO:root:disposing of motor manager
 INFO:root:IO libraries initialized: False
 INFO:root:disposing of motor manager
 INFO:root:IO libraries initialized: False
+INFO:root:disposing of motor manager
+INFO:root:Problem disposing of IO in screen manager

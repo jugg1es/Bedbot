@@ -14,3 +14,19 @@ Traceback (most recent call last):
     startupinfo)
 WindowsError: [Error 2] The system cannot find the file specified
 
+Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "F:\Python27\lib\threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "F:\Python27\lib\threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "F:\RaspberryPi\BedbotWorkspace\Bedbot\Modules\ScreenManager.py", line 41, in initializeScreenToggle
+    subprocess.call(shlex.split("sudo sh -c \"echo " + str(screenGPIO) + " > /sys/class/gpio/export\""))
+  File "F:\Python27\lib\subprocess.py", line 522, in call
+    return Popen(*popenargs, **kwargs).wait()
+  File "F:\Python27\lib\subprocess.py", line 710, in __init__
+    errread, errwrite)
+  File "F:\Python27\lib\subprocess.py", line 958, in _execute_child
+    startupinfo)
+WindowsError: [Error 2] The system cannot find the file specified
+

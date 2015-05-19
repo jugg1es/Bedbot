@@ -6,7 +6,7 @@ from PyQt4.QtCore import QObject
 
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
-from Modules.Widgets.RadioWidget import *
+from Modules.Widgets.AuxWidget import *
 
 class AuxInput(QObject):
     menuOrder = 3
@@ -32,7 +32,7 @@ class AuxInput(QObject):
         self.aux_widget.setVisible(False)
 
     def addMenuWidget(self, parent):
-        self.aux_widget = RadioWidget(parent)       
+        self.aux_widget = AuxWidget(parent)       
         self.aux_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.aux_widget.setVisible(False)
 
@@ -53,8 +53,8 @@ class AuxInput(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.onButton == pinNum and self.isVisible == True):
-            self.emit(QtCore.SIGNAL('audioStarted'), self)
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
+            self.emit(QtCore.SIGNAL('audioStarted'), self)
 
 
 

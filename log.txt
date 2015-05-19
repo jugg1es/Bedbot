@@ -95,3 +95,57 @@ WindowsError: [Error 2] The system cannot find the file specified
 
 hiding alarm
 hiding clock
+Alarm
+AudioPinSwitch
+Raspberry Pi GPIO library not found
+AuxInput
+Clock
+InternetRadio
+Objects
+Radio
+ScreenManager
+Raspberry Pi GPIO library not found
+pigpio library not found or pigpiod not running
+Widgets
+problem loading Widgets
+has IO libraries (screen manager): False
+Exception in thread Thread-1:
+Traceback (most recent call last):
+  File "F:\Python27\lib\threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "F:\Python27\lib\threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "F:\RaspberryPi\BedbotWorkspace\Bedbot\Modules\ScreenManager.py", line 41, in initializeScreenToggle
+    subprocess.call(shlex.split("sudo sh -c \"echo " + str(screenGPIO) + " > /sys/class/gpio/export\""))
+  File "F:\Python27\lib\subprocess.py", line 522, in call
+    return Popen(*popenargs, **kwargs).wait()
+  File "F:\Python27\lib\subprocess.py", line 710, in __init__
+    errread, errwrite)
+  File "F:\Python27\lib\subprocess.py", line 958, in _execute_child
+    startupinfo)
+WindowsError: [Error 2] The system cannot find the file specified
+
+12:00 AM
+12:00 AM
+12:00 AM
+hiding alarm
+hiding clock
+hiding alarm
+hiding clock
+problem cleaning up IO
+Disposing of Alarm
+Disposing of Radio
+Disposing of Internet Radio
+Disposing of Clock
+Disposing of Internet Radio
+Disposing of Radio
+disposing of motor manager
+Problem disposing of IO in screen manager
+Traceback (most recent call last):
+  File "F:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\Extensions\Microsoft\Python Tools for Visual Studio\2.1\visualstudio_py_util.py", line 106, in exec_file
+    exec_code(code, file, global_variables)
+  File "F:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\Extensions\Microsoft\Python Tools for Visual Studio\2.1\visualstudio_py_util.py", line 82, in exec_code
+    exec(code_obj, global_variables)
+  File "F:\RaspberryPi\BedbotWorkspace\Bedbot\mainBedbot.py", line 141, in <module>
+    sys.exit(app.exec_())
+SystemExit: 0
