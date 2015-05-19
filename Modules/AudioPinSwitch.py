@@ -4,7 +4,7 @@ from PyQt4.QtCore import QObject
 
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
-
+import time
 
 hasIOLibraries = False
 
