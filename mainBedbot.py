@@ -9,6 +9,7 @@ import pkgutil
 import importlib 
 import inspect
 import glob
+import sys
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -33,7 +34,9 @@ class MainWindow(QtGui.QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
         
-        
+        sys.stdout = Logger("log.txt")
+        sys.stderr = Logger("error.txt")
+
         screen_rect = app.desktop().screenGeometry()
         if(screen_rect.width() == 320):
             self.setCursor(QtGui.QCursor(QtCore.Qt.BlankCursor))
@@ -78,7 +81,15 @@ class MainWindow(QtGui.QMainWindow):
         self.primary_widget.contextButtonPressed()
 
 
-        
+class Logger(object):
+    def __init__(self, filename="logger.log"):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
 class MyApplication(QtGui.QApplication):    
     def __init__(self, args):
         super(MyApplication, self).__init__(args)
@@ -100,12 +111,14 @@ class MyApplication(QtGui.QApplication):
         return super(MyApplication, self).notify(receiver, event)
   
 if __name__ == '__main__':
-    import sys
-    
     #sets the current directory as the working directory
     launchDir = str(os.path.dirname(os.path.realpath(__file__)));
     os.chdir(launchDir)
     print("Setting working directory to:" + launchDir)
+
+    
+
+
     app = MyApplication(sys.argv)
     
     
