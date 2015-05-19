@@ -40,3 +40,23 @@ has IO libraries (screen manager): False
 12:00 AM
 hiding alarm
 hiding clock
+Alarm
+AudioPinSwitch
+Raspberry Pi GPIO library not found
+AuxInput
+Clock
+InternetRadio
+Objects
+Radio
+ScreenManager
+Raspberry Pi GPIO library not found
+pigpio library not found or pigpiod not running
+Widgets
+problem loading Widgets
+IO libraries initialized: False
+has IO libraries (screen manager): False
+12:00 AM
+12:00 AM
+12:00 AM
+hiding alarm
+hiding clock

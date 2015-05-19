@@ -98,11 +98,11 @@ class ScreenManager(QObject):
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
 
-        try:
+        #try:
             subprocess.call(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
             subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")) 
-        except: 
-            print(" no subprocess module")
+        #except: 
+        #    print(" no subprocess module")
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
@@ -139,10 +139,10 @@ class ScreenManager(QObject):
         if(isOn):
             state = 1
         
-        try:
+        #try:
             subprocess.call(shlex.split("sudo sh -c \"echo '" + str(state) + "' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
-        except: 
-            print(" no subprocess module")
+        #except: 
+        #    print(" no subprocess module")
                    
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
