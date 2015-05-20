@@ -149,5 +149,5 @@ class InternetRadio(QObject):
 
     def dispose(self):
         print("Disposing of Internet Radio")
-        self.stop()
+        self.reset()   
 
