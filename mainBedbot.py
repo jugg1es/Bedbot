@@ -39,6 +39,7 @@ class MainWindow(QtGui.QMainWindow):
         
         sys.stdout = Logger("log.txt")
         sys.stderr = Logger("error.txt")
+        sys.stdin = Logger("log_in.txt")
 
         screen_rect = app.desktop().screenGeometry()
         if(screen_rect.width() == 320):
