@@ -15,20 +15,6 @@ import subprocess
 from StringIO import StringIO 
 import os
 
-def stopInternetRadio():
-    import subprocess
-    import shlex
-    subprocess.call(shlex.split("mpc stop")) 
-    subprocess.call(shlex.split("mpc clear")) 
-
-def playInternetRadio(playlist):
-    import subprocess
-    import shlex
-    for pl in playlist:
-        subprocess.call(shlex.split("mpc add " + pl)) 
-        subprocess.call(shlex.split("mpc play"))  
-
-
 class InternetRadio(QObject):
 
     UsesAudio = True
@@ -103,15 +89,17 @@ class InternetRadio(QObject):
 
     def play(self):
         self.reset()
-        if(self.currentPlaylist != None):
-            t = Thread(target=playInternetRadio, args=(self.currentPlaylist,))
-            t.start()            
+
+        for pl in self.currentPlaylist:
+            subprocess.call(shlex.split("mpc add " + pl)) 
+            subprocess.call(shlex.split("mpc play"))  
+                  
         self.isPlaying = True
         
 
     def reset(self):
-        t = Thread(target=stopInternetRadio)
-        t.start()        
+        subprocess.call(shlex.split("mpc stop")) 
+        subprocess.call(shlex.split("mpc clear"))        
 
     def stop(self):
         if(self.isPlaying):
