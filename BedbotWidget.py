@@ -111,7 +111,8 @@ class BedbotWidget(QtGui.QWidget):
     def stopAllAudio(self, ignoredModule):
         for m in self.loadedModules:
             if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True and (ignoredModule == None or (ignoredModule != None and m != ignoredModule))):
-                m.stop()
+                if(self.moduleHasFunction(m, "stop")):
+                    m.stop()
 
 
     def logEvent(self, evtStr):
