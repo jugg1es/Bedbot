@@ -24,7 +24,7 @@ def stopInternetRadio():
 def playInternetRadio(playlist):
     import subprocess
     import shlex
-    for pl in currentPlaylist:
+    for pl in playlist:
         subprocess.call(shlex.split("mpc add " + pl)) 
         subprocess.call(shlex.split("mpc play"))  
 
