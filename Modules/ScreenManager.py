@@ -38,8 +38,7 @@ except ImportError:
 def initializeScreenToggle(screenGPIO):    
     import subprocess
     import shlex
-    subprocess.call(shlex.split("sudo sh -c \"echo " + str(screenGPIO) + " > /sys/class/gpio/export\"")) 
-    subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(screenGPIO) + "/direction\"")) 
+    
     
 def turnScreenOff(screenGPIO):
     import subprocess
@@ -65,7 +64,7 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = 508 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     currentAngle = None    
@@ -114,9 +113,16 @@ class ScreenManager(QObject):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
+        
+        try:
+            subprocess.call(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
+            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""))  
+        except:
+            print("error changing screen state")
+        
 
-        t = Thread(target=initializeScreenToggle, args=(self.screenGPIO,))
-        t.start()
+        #t = Thread(target=initializeScreenToggle, args=(self.screenGPIO,))
+        #t.start()
 
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
@@ -149,12 +155,16 @@ class ScreenManager(QObject):
             IO.output(self.buttonPowerPin, IO.LOW)
 
     def changeScreenState(self, isOn):
-        if(isOn):
-            t = Thread(target=turnScreenOn, args=(self.screenGPIO,))
-            t.start()
-        else:
-            t = Thread(target=turnScreenOff, args=(self.screenGPIO,))
-            t.start()
+        try:
+            if(isOn):
+                subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
+                #t.start()
+            else:
+                subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
+        except:
+            print("error changing screen state")
+        
+           
         
                    
     def getPulseWidth(self, angle):
@@ -189,6 +199,8 @@ class ScreenManager(QObject):
              angleTracker += angleDir
              self.setAngle(angleTracker)
              time.sleep(self.moveSpeed)
+         #self.pi.stop()
+         #self.pi = None
          #self.pi.set_servo_pulsewidth(self.servo, 0)
          return angleTracker
          

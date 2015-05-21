@@ -41,6 +41,31 @@
             "type": "AUDIO_TWO_SWITCH",
             "pin": 4,
             "listenForPress":  false
+        },
+        {
+            "type": "OLED_RST",
+            "pin": 21,
+            "listenForPress":  false
+        },
+        {
+            "type": "OLED_CS",
+            "pin": 20,
+            "listenForPress":  false
+        },
+        {
+            "type": "OLED_CLK",
+            "pin": 19,
+            "listenForPress":  false
+        },
+        {
+            "type": "OLED_DC",
+            "pin": 16,
+            "listenForPress":  false
+        },
+        {
+            "type": "OLED_DIN",
+            "pin": 13,
+            "listenForPress":  false
         }
 
     ]

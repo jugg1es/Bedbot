@@ -78,23 +78,24 @@ class InternetRadio(QObject):
     def stationSelectedCallback(self, stationID):
         if(stationID < len(self.stations)):
             station = self.stations[stationID]
-            self.currentPlaylist = self.retrievePlaylist(station.url)           
-            self.play()
-            self.audioStatusDisplay = station.name
-            self.emit(QtCore.SIGNAL('audioStarted'), self)
-            self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
+            self.currentPlaylist = self.retrievePlaylist(station.url)          
+            if(self.currentPlaylist != None): 
+                self.play()
+                self.audioStatusDisplay = station.name
+                self.emit(QtCore.SIGNAL('audioStarted'), self)
+                self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
 
     def getAudioStatusDisplay(self):
         return self.audioStatusDisplay
 
     def play(self):
         self.reset()
-
+        self.isPlaying = True
         for pl in self.currentPlaylist:
             subprocess.call(shlex.split("mpc add " + pl)) 
             subprocess.call(shlex.split("mpc play"))  
                   
-        self.isPlaying = True
+        
         
 
     def reset(self):
@@ -113,12 +114,16 @@ class InternetRadio(QObject):
         url = url.encode(encoding='UTF-8',errors='strict')
         print("retreiving playlist from: " + str(url))
         buffer = StringIO()
-        c = pycurl.Curl()
-        c.setopt(c.URL, url)
-        c.setopt(c.FOLLOWLOCATION, 1)
-        c.setopt(c.WRITEFUNCTION, buffer.write)
-        c.perform()
-        c.close()
+        try:
+            c = pycurl.Curl()
+            c.setopt(c.URL, url)
+            c.setopt(c.FOLLOWLOCATION, 1)
+            c.setopt(c.WRITEFUNCTION, buffer.write)
+            c.perform()
+            c.close()
+        except:
+            return None
+        
 
         playlist = []
         
