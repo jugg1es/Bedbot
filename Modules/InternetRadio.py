@@ -34,6 +34,7 @@ class InternetRadio(QObject):
 
     isPlaying = False
 
+    widgetVisible = False
 
     def __init__(self):
         super(InternetRadio, self).__init__()
@@ -48,9 +49,11 @@ class InternetRadio(QObject):
 
     def showWidget(self):
         self.inetradio_widget.setVisible(True)
+        self.widgetVisible =  True
 
     def hideWidget(self):
         self.inetradio_widget.setVisible(False)
+        self.widgetVisible =  False
 
     def addMenuWidget(self, parent):
         self.inetradio_widget = InternetRadioWidget(parent)       
@@ -95,9 +98,6 @@ class InternetRadio(QObject):
             subprocess.call(shlex.split("mpc add " + pl)) 
             subprocess.call(shlex.split("mpc play"))  
                   
-        
-        
-
     def reset(self):
         subprocess.call(shlex.split("mpc stop")) 
         subprocess.call(shlex.split("mpc clear"))        

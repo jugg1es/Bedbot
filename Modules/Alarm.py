@@ -22,11 +22,9 @@ class Alarm(QObject):
     
 
     def showWidget(self):
-        print("showing alarm")
         self.alarm_widget.setVisible(True)
 
     def hideWidget(self):
-        print("hiding alarm")
         self.alarm_widget.setVisible(False)
 
     def addMenuWidget(self, parent):
@@ -34,9 +32,8 @@ class Alarm(QObject):
         self.alarm_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.alarm_widget.setVisible(False)
         self.alarm_widget.initialize()
+
         
-
-
     def getMenuIcon(self):
         return "icons/bell.svg"
 

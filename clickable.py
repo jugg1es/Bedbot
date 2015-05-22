@@ -5,16 +5,18 @@ from PyQt4.QtGui import *
 import time
 
 
-def clickable(widget):
+
+
+def releaseable(widget):
 
     class Filter(QObject):
     
         clicked = pyqtSignal()
         
         def eventFilter(self, obj, event):
+        
             if obj == widget:
-                
-                if event.type() == QEvent.MouseButtonPress:
+                if event.type() == QEvent.MouseButtonRelease:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit()
                         return True
@@ -25,15 +27,15 @@ def clickable(widget):
     widget.installEventFilter(filter)
     return filter.clicked
 
-def clickableSender(widget):
+def releaseableSender(widget):
 
     class Filter(QObject):
     
-        clicked = pyqtSignal( QWidget)
+        clicked = pyqtSignal(QWidget)
         
         def eventFilter(self, obj, event):
+        
             if obj == widget:
-                
                 if event.type() == QEvent.MouseButtonRelease:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit(obj)
@@ -44,7 +46,6 @@ def clickableSender(widget):
     filter = Filter(widget)
     widget.installEventFilter(filter)
     return filter.clicked
-
 
 def pressable(widget):
 
@@ -58,7 +59,6 @@ def pressable(widget):
                 if event.type() == QEvent.MouseButtonPress:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit()
-                        # The developer can opt for .emit(obj) to get the object within the slot.
                         return True
             
             return False
@@ -79,7 +79,6 @@ def pressableSender(widget):
                 if event.type() == QEvent.MouseButtonPress:
                     if obj.rect().contains(event.pos()):
                         self.clicked.emit(obj)
-                        # The developer can opt for .emit(obj) to get the object within the slot.
                         return True
             
             return False

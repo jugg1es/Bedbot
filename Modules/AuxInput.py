@@ -28,7 +28,7 @@ class AuxInput(QObject):
         self.aux_widget.setVisible(True)
 
     def hideWidget(self):
-        isVisible = False
+        self.isVisible = False
         self.aux_widget.setVisible(False)
 
     def addMenuWidget(self, parent):
@@ -46,13 +46,15 @@ class AuxInput(QObject):
         return 65
     def getMenuIconWidth(self):
         return 65
-
+    def getAudioStatusDisplay(self):
+        return self.audioStatusDisplay
     def setPin(self, pinConfig):
         self.onButton = pinConfig["ON_BUTTON"]
         self.audioRelayPin = pinConfig["AUDIO_TWO_SWITCH"]
 
     def processPinEvent(self, pinNum):
         if(self.onButton == pinNum and self.isVisible == True):
+            print("requested aux pin")
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
             self.emit(QtCore.SIGNAL('audioStarted'), self)
 

@@ -238,12 +238,12 @@ class AlarmWidget(QtGui.QWidget):
         
         self.lblAM = QtGui.QLabel("AM", self.verticalLayoutWidget)             
         self.lblAM.name = TimeOfDay.AM        
-        clickableSender(self.lblAM).connect(self.setTimeOfDay)
+        pressableSender(self.lblAM).connect(self.setTimeOfDay)
         self.lblAM.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout.addWidget(self.lblAM)
         self.lblPM = QtGui.QLabel("PM", self.verticalLayoutWidget)
         self.lblPM.name = TimeOfDay.PM
-        clickableSender(self.lblPM).connect(self.setTimeOfDay)
+        pressableSender(self.lblPM).connect(self.setTimeOfDay)
         self.lblPM.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout.addWidget(self.lblPM)        
         
@@ -251,25 +251,25 @@ class AlarmWidget(QtGui.QWidget):
         self.btnHourUp = QSvgWidget("icons/triangle-up.svg", self)
         self.btnHourUp.name = Direction.UP        
         pressableSender(self.btnHourUp).connect(self.changeHour)
-        clickableSender(self.btnHourUp).connect(self.changeReleased) 
+        pressableSender(self.btnHourUp).connect(self.changeReleased) 
         self.btnHourUp.setGeometry(QtCore.QRect(20, 60, 61, 31))           
         
         self.btnHourDown = QSvgWidget("icons/triangle-down.svg", self)
         self.btnHourDown.name = Direction.DOWN
         pressableSender(self.btnHourDown).connect(self.changeHour)
-        clickableSender(self.btnHourDown).connect(self.changeReleased) 
+        pressableSender(self.btnHourDown).connect(self.changeReleased) 
         self.btnHourDown.setGeometry(QtCore.QRect(20, 155, 61, 31))
         
         self.btnMinuteUp = QSvgWidget("icons/triangle-up.svg", self)
         self.btnMinuteUp.name = Direction.UP
         pressableSender(self.btnMinuteUp).connect(self.changeMinute) 
-        clickableSender(self.btnMinuteUp).connect(self.changeReleased) 
+        pressableSender(self.btnMinuteUp).connect(self.changeReleased) 
         self.btnMinuteUp.setGeometry(QtCore.QRect(110, 60, 61, 31))
         
         self.btnMinuteDown = QSvgWidget("icons/triangle-down.svg", self)
         self.btnMinuteDown.name = Direction.DOWN
         pressableSender(self.btnMinuteDown).connect(self.changeMinute) 
-        clickableSender(self.btnMinuteDown).connect(self.changeReleased) 
+        pressableSender(self.btnMinuteDown).connect(self.changeReleased) 
         self.btnMinuteDown.setGeometry(QtCore.QRect(110, 155, 61, 31))
         
         self.verticalLayoutWidget_2 = QtGui.QWidget(self)
@@ -280,14 +280,14 @@ class AlarmWidget(QtGui.QWidget):
         
         self.lblOnRadio = QtGui.QLabel("RADIO", self.verticalLayoutWidget_2)  
         self.lblOnRadio.name = AlarmState.RADIO
-        clickableSender(self.lblOnRadio).connect(self.setAlarmState)
+        pressableSender(self.lblOnRadio).connect(self.setAlarmState)
         self.lblOnRadio.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout_2.addWidget(self.lblOnRadio)
         
         if(self.pandoraEnabled):
             self.lblOnPandora = QtGui.QLabel("PANDORA", self.verticalLayoutWidget_2)  
             self.lblOnPandora.name = AlarmState.PANDORA
-            clickableSender(self.lblOnPandora).connect(self.setAlarmState)
+            pressableSender(self.lblOnPandora).connect(self.setAlarmState)
             self.lblOnPandora.setAlignment(QtCore.Qt.AlignCenter)
             self.verticalLayout_2.addWidget(self.lblOnPandora)
         
@@ -296,13 +296,13 @@ class AlarmWidget(QtGui.QWidget):
         
         self.lblOnBuzzer = QtGui.QLabel("BUZZ", self.verticalLayoutWidget_2)  
         self.lblOnBuzzer.name = AlarmState.BUZZ
-        clickableSender(self.lblOnBuzzer).connect(self.setAlarmState)
+        pressableSender(self.lblOnBuzzer).connect(self.setAlarmState)
         self.lblOnBuzzer.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout_2.addWidget(self.lblOnBuzzer)
         
         self.lblOff = QtGui.QLabel("OFF", self.verticalLayoutWidget_2)        
         self.lblOff.name = AlarmState.OFF
-        clickableSender(self.lblOff).connect(self.setAlarmState)
+        pressableSender(self.lblOff).connect(self.setAlarmState)
         self.lblOff.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout_2.addWidget(self.lblOff)
         

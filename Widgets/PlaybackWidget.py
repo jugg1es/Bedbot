@@ -53,7 +53,7 @@ class PlaybackWidget(QtGui.QWidget):
         self.radioPlaybackButton = QSvgWidget("icons/radio-tower.svg", self.horizontalLayoutWidget)
         self.radioPlaybackButton.setGeometry(QtCore.QRect(0, 0, 40, 40))
         self.radioPlaybackButton.name = PlaybackType.RADIO
-        clickableSender(self.radioPlaybackButton).connect(self.setPlaybackType)
+        pressableSender(self.radioPlaybackButton).connect(self.setPlaybackType)
         self.horizontalLayout.addWidget(self.radioPlaybackButton)
         '''
         
@@ -61,7 +61,7 @@ class PlaybackWidget(QtGui.QWidget):
         self.radioPlaybackButton = QtGui.QPushButton(self.horizontalLayoutWidget)
         self.radioPlaybackButton.name = PlaybackType.RADIO
         self.radioPlaybackButton.setText("RADIO")
-        clickableSender(self.radioPlaybackButton).connect(self.setPlaybackType)
+        pressableSender(self.radioPlaybackButton).connect(self.setPlaybackType)
         self.horizontalLayout.addWidget(self.radioPlaybackButton)
         
         
@@ -70,7 +70,7 @@ class PlaybackWidget(QtGui.QWidget):
         self.pandoraPlaybackButton.name = PlaybackType.PANDORA        
         self.pandoraPlaybackButton.setText("PANDORA")
         
-        clickableSender(self.pandoraPlaybackButton).connect(self.setPlaybackType)
+        pressableSender(self.pandoraPlaybackButton).connect(self.setPlaybackType)
         self.horizontalLayout.addWidget(self.pandoraPlaybackButton)
         
         '''
@@ -79,7 +79,7 @@ class PlaybackWidget(QtGui.QWidget):
         self.internetRadioButton = QtGui.QPushButton(self.horizontalLayoutWidget)
         self.internetRadioButton.name = PlaybackType.WWWSTREAM
         self.internetRadioButton.setText("STREAM")
-        clickableSender(self.internetRadioButton).connect(self.setPlaybackType)
+        pressableSender(self.internetRadioButton).connect(self.setPlaybackType)
         self.horizontalLayout.addWidget(self.internetRadioButton)
        
         
@@ -87,7 +87,7 @@ class PlaybackWidget(QtGui.QWidget):
         self.auxPlaybackButton = QtGui.QPushButton(self.horizontalLayoutWidget)
         self.auxPlaybackButton.name = PlaybackType.AUX
         self.auxPlaybackButton.setText("AUX")
-        clickableSender(self.auxPlaybackButton).connect(self.setPlaybackType)
+        pressableSender(self.auxPlaybackButton).connect(self.setPlaybackType)
         self.horizontalLayout.addWidget(self.auxPlaybackButton)
         
         

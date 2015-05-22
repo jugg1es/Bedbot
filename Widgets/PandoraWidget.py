@@ -57,7 +57,7 @@ class PandoraWidget(QtGui.QWidget):
         
         
         self.btnStop = QSvgWidget("icons/stop.svg", self)
-        clickableSender(self.btnStop).connect(self.stopPressed) 
+        pressableSender(self.btnStop).connect(self.stopPressed) 
         self.btnStop.setGeometry(QtCore.QRect(20, 120, 35, 35))      
         
         
@@ -103,7 +103,7 @@ class PandoraWidget(QtGui.QWidget):
                 station.setStyleSheet(self.stationListingStyle)
                 station.name = i
                 self.verticalLayout.addWidget(station)
-                clickableSender(station).connect(self.setStation)
+                pressableSender(station).connect(self.setStation)
                 self.stations.append(station)
                 
         

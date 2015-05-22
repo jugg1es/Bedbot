@@ -19,7 +19,7 @@
         ,
         {
             "type": "CONTEXT_BUTTON",
-            "pin": 12,
+            "pin": 6,
             "listenForPress":  true
         },
         {
@@ -29,7 +29,7 @@
         },
         {
             "type": "OFF_BUTTON",
-            "pin": 6,
+            "pin": 12,
             "listenForPress":  true
         },
         {

@@ -57,23 +57,32 @@ class OLED(QObject):
 
     def initialize(self):        
         if(libarariesLoaded):
-            self.oledUpdateTimer = perpetualTimer(1, self.handle_function)
+            self.oledUpdateTimer = perpetualTimer(5, self.handle_function)
             self.oledUpdateTimer.start()
         else:
             print("Adafruit OLED libraries not found")
-        self.oledUpdateTimer = perpetualTimer(1, self.handle_function)
-        self.oledUpdateTimer.start()
+        
 
 
     def handle_function(self):
-        print(self.previousTime)
+        #print(self.previousTime)
+        t = Thread(target=self._doUpdateTime, args=(self,))        
+        t.start()
+        '''
+        if(self.previousTime == "0"):
+            self.previousTime = self.updateTime(self.previousTime, self.pinRST, self.pinCS, self.pinCLK, self.pinDC, self.pinDIN)
+            time.sleep(0.1)
         self.previousTime = self.updateTime(self.previousTime, self.pinRST, self.pinCS, self.pinCLK, self.pinDC, self.pinDIN)
+        '''
 
 
     def dispose(self):
         if(self.oledUpdateTimer != None):
             self.oledUpdateTimer.cancel()
 
+    def _doUpdateTime(self, parent):
+        print("doupdatetime")
+        parent.previousTime = self.updateTime(parent.previousTime, parent.pinRST, parent.pinCS, parent.pinCLK, parent.pinDC, parent.pinDIN)
 
     def updateTime(self, previousTime, RST, CS, CLK, DC, DIN):
         

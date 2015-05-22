@@ -32,13 +32,42 @@ pressing the right arrow key will scan through menu options
 
 
 '''
+
+class Logger(object):
+    def __init__(self, filename="logger.log"):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+class ErrorLogger(object):
+    def __init__(self, filename="logger.log"):
+        self.terminal = sys.stderr
+        self.log = open(filename, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+class InLogger(object):
+    def __init__(self, filename="logger.log"):
+        self.terminal = sys.stdin
+        self.log = open(filename, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
         
         sys.stdout = Logger("log.txt")
-        sys.stderr = Logger("error.txt")
+        sys.stderr = ErrorLogger("error.txt")
+        sys.stdin = InLogger("in.txt")
 
         screen_rect = app.desktop().screenGeometry()
         if(screen_rect.width() == 320):
@@ -84,14 +113,7 @@ class MainWindow(QtGui.QMainWindow):
         self.primary_widget.contextButtonPressed()
 
 
-class Logger(object):
-    def __init__(self, filename="logger.log"):
-        self.terminal = sys.stdout
-        self.log = open(filename, "a")
 
-    def write(self, message):
-        self.terminal.write(message)
-        self.log.write(message)
 
 class MyApplication(QtGui.QApplication):    
     def __init__(self, args):
@@ -101,8 +123,6 @@ class MyApplication(QtGui.QApplication):
     def setMainWindow(self, win):
         self.w = win
 
-    def doClose(self):
-        self.w.closeEvent()
         
     def notify(self, receiver, event):
         if(event.type() == QtCore.QEvent.KeyPress):
@@ -120,7 +140,9 @@ if __name__ == '__main__':
     print("Setting working directory to:" + launchDir)
 
     
-
+    sys.stdout = Logger("log.txt")
+    sys.stderr = ErrorLogger("error.txt")
+    sys.stdin = InLogger("in.txt")
 
     app = MyApplication(sys.argv)
     

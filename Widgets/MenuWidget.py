@@ -28,17 +28,17 @@ class MenuWidget(QtGui.QWidget):
         self.setAutoFillBackground(True)
         self.alarmButton = QSvgWidget("icons/bell.svg", self)
         self.alarmButton.setGeometry(QtCore.QRect(10, 0, 70, 65))
-        clickable(self.alarmButton).connect(self.alarmButtonClicked)
+        pressable(self.alarmButton).connect(self.alarmButtonClicked)
         
         
         self.playbackButton = QSvgWidget("icons/connection.svg", self)
         self.playbackButton.setGeometry(QtCore.QRect(125, 0, 70, 65))
-        clickable(self.playbackButton).connect(self.playbackButtonClicked)
+        pressable(self.playbackButton).connect(self.playbackButtonClicked)
         
         
         self.clockButton = QSvgWidget("icons/clockSelected.svg", self)
         self.clockButton.setGeometry(QtCore.QRect(240, 0, 65, 65))
-        clickable(self.clockButton).connect(self.clockButtonClicked)
+        pressable(self.clockButton).connect(self.clockButtonClicked)
         
         
         

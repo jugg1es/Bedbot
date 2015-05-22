@@ -128,7 +128,8 @@ class BedbotWidget(QtGui.QWidget):
 
         self.menuButton = QSvgWidget("icons/three-bars.svg", self)
         self.menuButton.setGeometry(QtCore.QRect(10,200,30,35))
-        clickableSender(self.menuButton).connect(self.menuButtonPressed)
+        pressableSender(self.menuButton).connect(self.menuButtonPressed)
+        releaseableSender(self.menuButton).connect(self.menuButtonReleased)
         self.menuButton.setVisible(False)
 
 
@@ -139,7 +140,7 @@ class BedbotWidget(QtGui.QWidget):
         self.statusDisplay.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.statusDisplay.setStyleSheet('color: #eaf736')
         self.statusDisplay.setFont(font)
-        clickableSender(self.statusDisplay).connect(self.audioStatusPressed)
+        pressableSender(self.statusDisplay).connect(self.audioStatusPressed)
 
     def audioStatusPressed(self, obj):
         if(self.currentAudioModule != None):
@@ -160,8 +161,12 @@ class BedbotWidget(QtGui.QWidget):
             self.showWidgetCallback(self.currentWidget)
         
 
-    def menuButtonPressed(self, obj):
+    def menuButtonReleased(self, obj):
+        self.menuButton.load("icons/three-bars.svg")
         self.toggleMainMenu(True)
+
+    def menuButtonPressed(self, obj):
+        self.menuButton.load("icons/three-barsSelected.svg")
 
 
     def contextButtonPressed(self):
@@ -235,6 +240,9 @@ class BedbotWidget(QtGui.QWidget):
                 m.dispose()
             except BaseException:
                 print("problem disposing")
+                print(m)
+
+        print("finished closing widgets")
 
 
       

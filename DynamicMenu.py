@@ -53,7 +53,8 @@ class DynamicMenu(QtGui.QWidget):
     def configureMenuItem(self, w, iconWidth, xTracker,yTracker):
         iconPosition = xTracker + ((iconWidth / 2 ) - (w.tag.getMenuIconWidth() /2))
         w.setGeometry(QtCore.QRect(iconPosition, yTracker, w.tag.getMenuIconWidth(), w.tag.getMenuIconHeight()))
-        clickableSender(w).connect(self.menuButtonClicked)
+        pressableSender(w).connect(self.menuButtonClicked)
+        pressableSender(w).connect(self.menuButtonClicked)
         
     def setMenuItemSelected(self, m):
         for w in self.menuItems:

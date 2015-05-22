@@ -41,6 +41,8 @@ class AudioPinSwitch(QObject):
             IO.setmode(IO.BCM)
             IO.setup(self.audioPin1, IO.OUT)
             IO.setup(self.audioPin2, IO.OUT)
+            IO.output(self.audioPin1, IO.LOW)
+            IO.output(self.audioPin2, IO.LOW)
             self.audioPinsInitialized = True
 
 
@@ -51,10 +53,17 @@ class AudioPinSwitch(QObject):
 
     def flipRelay(self, pin):
         IO.output(pin, IO.HIGH)    
-        time.sleep(0.2)
+        time.sleep(0.5)
         IO.output(pin, IO.LOW)    
 
 
     def dispose(self):
-        print("Disposing of Radio")
+        print("Disposing of Audio Relay switch")
+        try: 
+            IO.cleanup() 
+        except Exception:
+            print("Problem disposing of IO in audio relay switch")
+
+        print("disposed of audio relay switch")
+
 

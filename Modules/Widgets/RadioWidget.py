@@ -48,7 +48,7 @@ class RadioWidget(QtGui.QWidget):
         
         self.slideUpButton = QSvgWidget("icons/forward3.svg", self.slideUpFrame)
         self.slideUpButton.setGeometry(QtCore.QRect(5, 5, 40, 40))  
-        clickable(self.slideUpButton).connect(self.doFreqUpReleased)
+        releaseable(self.slideUpButton).connect(self.doFreqUpReleased)
         pressable(self.slideUpButton).connect(self.doFreqUpPressed)        
         
         self.slideDownFrame = QFrame(self)        
@@ -59,7 +59,7 @@ class RadioWidget(QtGui.QWidget):
         
         self.slideDownButton = QSvgWidget("icons/backward2.svg", self.slideDownFrame)
         self.slideDownButton.setGeometry(QtCore.QRect(0, 5, 40, 40))    
-        clickable(self.slideDownButton).connect(self.doFreqDownReleased) 
+        releaseable(self.slideDownButton).connect(self.doFreqDownReleased) 
         pressable(self.slideDownButton).connect(self.doFreqDownPressed)
                
        
@@ -70,25 +70,9 @@ class RadioWidget(QtGui.QWidget):
     def updateRadioFrequency(self):
         self.frequencyDisplay.display("{0:.1f}".format(self.currentFrequency))
         newFreq = str(self.frequencyDisplay.value())
-        self.emit(QtCore.SIGNAL('changeFrequency'), newFreq)
+        #self.emit(QtCore.SIGNAL('changeFrequency'), newFreq)
         #self.radioManager.setFrequency(newFreq)
     
-    
-    def togglePlayState(self):        
-        if(self.playing == False):
-            self.powerButton.load("icons/stop.svg")
-            print("radio on")
-            self.playing = True
-            self.emit(QtCore.SIGNAL('startRadio'))  
-        else:
-            self.powerButton.load("icons/play2.svg")
-            print("radio off")
-            self.playing = False
-            self.emit(QtCore.SIGNAL('stopRadio'))  
-            
-            
-    
-            
     def isFreqValid(self, freq):
         if(freq >= 88.1 and freq <= 108.1):
             return True

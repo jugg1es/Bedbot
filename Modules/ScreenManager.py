@@ -34,23 +34,6 @@ try:
 except ImportError:
     print('pigpio library not found or pigpiod not running')
 
-
-def initializeScreenToggle(screenGPIO):    
-    import subprocess
-    import shlex
-    
-    
-def turnScreenOff(screenGPIO):
-    import subprocess
-    import shlex
-    subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(screenGPIO) + "/value\"")) 
-
-def turnScreenOn(screenGPIO):
-    import subprocess
-    import shlex
-    subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(screenGPIO) + "/value\"")) 
-
-
 class ScreenManager(QObject):
 
     Enabled = True
@@ -76,10 +59,7 @@ class ScreenManager(QObject):
     angleTestMode = False
 
     #ranges from 500-2500 but those may not be safe for the servo
-    #bottomRange = 600
-    #topRange = 2400
-
-    bottomRange = 700  
+    bottomRange = 600  
     topRange = 2400
 
     #middle is always safe at 1500
@@ -113,16 +93,13 @@ class ScreenManager(QObject):
             IO.setmode(IO.BCM)
             IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
+            self.toggleButtonPower(False)
         
-        try:
-            subprocess.call(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
-            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""))  
-        except:
-            print("error changing screen state")
+        
         
 
-        #t = Thread(target=initializeScreenToggle, args=(self.screenGPIO,))
-        #t.start()
+        t = Thread(target=self._initializeScreenToggle, args=(self,))
+        t.start()
 
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
@@ -137,7 +114,24 @@ class ScreenManager(QObject):
         
         
         
-    
+    def _initializeScreenToggle(self, parent):
+        try:
+            subprocess.call(shlex.split("sudo sh -c \"echo " + str(parent.screenGPIO) + " > /sys/class/gpio/export\"")) 
+            subprocess.call(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/direction\""))  
+        except:
+            print("error changing screen state")
+
+    def _turnScreenOn(self, parent):
+        try:
+            subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))   
+        except:
+            print("error changing screen state")
+
+    def _turnScreenOff(self, parent):
+        try:
+            subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))   
+        except:
+            print("error changing screen state")
 
     def setCurrentLidState(self, state):
         self.currentState = state
@@ -149,24 +143,21 @@ class ScreenManager(QObject):
             self.changeScreenState(False)
 
     def toggleButtonPower(self, isOn):
-        if(isOn):
+        if(isOn):            
             IO.output(self.buttonPowerPin, IO.HIGH)
         else:
             IO.output(self.buttonPowerPin, IO.LOW)
 
     def changeScreenState(self, isOn):
-        try:
-            if(isOn):
-                subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
-                #t.start()
-            else:
-                subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
-        except:
-            print("error changing screen state")
-        
-           
-        
-                   
+        if(isOn):
+            t = Thread(target=self._turnScreenOn, args=(self,))
+            t.start()
+            #subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))
+        else:
+            t = Thread(target=self._turnScreenOff, args=(self,))
+            t.start()
+            #subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")) 
+       
     def getPulseWidth(self, angle):
          above90Range = self.topRange - self.middle
          below90Range = self.middle - self.bottomRange
@@ -178,16 +169,18 @@ class ScreenManager(QObject):
              percent = float(angle) / 90
              mod = math.trunc(self.bottomRange + (float(percent) * below90Range))
          return mod
-     
-    def setAngle(self, angle):
-         if(self.pi == None):
-             self.initPigpio()
+
+    def initPigpio(self):
+        if(self.pi == None):
+            self.pi = pigpio.pi()       
+
+    def setAngle(self, angle):         
+         self.initPigpio()
          mod = self.getPulseWidth(angle)
          self.pi.set_servo_pulsewidth(self.servo, mod)
          
     def move(self, angle):
-         if(self.pi == None):
-            self.initPigpio()
+         self.initPigpio()
          angleDiff = self.currentAngle - angle
          angleTracker = self.currentAngle
          angleDir = 0
@@ -199,9 +192,8 @@ class ScreenManager(QObject):
              angleTracker += angleDir
              self.setAngle(angleTracker)
              time.sleep(self.moveSpeed)
-         #self.pi.stop()
-         #self.pi = None
-         #self.pi.set_servo_pulsewidth(self.servo, 0)
+
+        
          return angleTracker
          
      
@@ -222,11 +214,14 @@ class ScreenManager(QObject):
                  self.setAngle(self.openAngle)
              elif(self.currentState != ScreenState.MOVING):             
                  self.setCurrentLidState(ScreenState.MOVING)
+
                  self.currentAngle = self.move(self.openAngle)
+                 #self.stopPigpio()
+             
              self.setCurrentLidState(ScreenState.OPEN)
              
          
-         
+      
     def closeLid(self):
         if(pigpioLibraryFound):
              if(self.angleTestMode):
@@ -234,20 +229,32 @@ class ScreenManager(QObject):
              elif(self.currentState != ScreenState.MOVING):    
                  self.setCurrentLidState(ScreenState.MOVING)          
                  self.currentAngle = self.move(self.closeAngle)   
+                 #self.stopPigpio()
              self.setCurrentLidState(ScreenState.CLOSED)     
-                         
-  
+
+    def stopPigpio(self):
+        t = Thread(target=self._disposePigpio, args=(self,))        
+        t.start()
+
+    def _disposePigpio(self, parent):
+        parent.pi.stop()
+        parent.pi = None
+
     def dispose(self):
          
-         self.emit(QtCore.SIGNAL('logEvent'),"disposing of motor manager")
-       
-         if(pigpioLibraryFound):
-             self.pi.stop()
+        print("disposing of pigpio")
+        if(self.pi != None):
+            try: 
+                if(pigpioLibraryFound):
+                    self.pi.stop()
+            except Exception:
+                print("Problem disposing of PiGPIO in screen manager")
+        
+        print("disposing of screen manager pins")
+        try: 
+            IO.cleanup() 
+        except Exception:
+            print("Problem disposing of IO in screen manager")
 
-         
-
-         try: 
-             IO.cleanup()
-         except Exception:
-             self.emit(QtCore.SIGNAL('logEvent'),"Problem disposing of IO in screen manager")
+        print("disposed screen manager")
 

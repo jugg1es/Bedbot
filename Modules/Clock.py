@@ -15,11 +15,9 @@ class Clock(QObject):
 
     
     def showWidget(self):
-        print("showing clock")
         self.time_widget.setVisible(True)
 
     def hideWidget(self):
-        print("hiding clock")
         self.time_widget.setVisible(False)
 
     def addMenuWidget(self, parent):

@@ -51,7 +51,7 @@ class InternetRadioWidget(QtGui.QWidget):
             station.setStyleSheet(self.stationListingStyle)
             station.tag = i
             self.verticalLayout.addWidget(station)
-            clickableSender(station).connect(self.setStation)
+            pressableSender(station).connect(self.setStation)
             self.stationObjects.append(station)
     
     def setStation(self, obj):
