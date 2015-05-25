@@ -68,7 +68,7 @@ def move(angle):
 def disposePigpio():
     print("stopping")
     #pi.set_servo_pulsewidth(servo, 0)
-    #pi.stop()
+    pi.stop()
 
 print("command: " + sys.argv[1])
 if(len(sys.argv) >= 2):
