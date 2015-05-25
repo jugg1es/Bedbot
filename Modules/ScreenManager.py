@@ -111,7 +111,7 @@ class ScreenManager(QObject):
             self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
             self.servoInitialized = True
             
-            subprocess.Popen(shlex.split(self.servoScriptFile + " init"))
+            subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " init"))
             time.sleep(0.5)
             self.currentAngle = 90
             self.openLid()
@@ -181,7 +181,7 @@ class ScreenManager(QObject):
              if(self.angleTestMode):
                  self.setAngle(self.openAngle)
              else:
-                 subprocess.Popen(shlex.split(self.servoScriptFile + " open " + str(self.currentAngle)))
+                 subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open " + str(self.currentAngle)))
                  self.currentAngle = self.openAngle
              time.sleep(0.5)
              self.setCurrentLidState(ScreenState.OPEN)
@@ -193,7 +193,7 @@ class ScreenManager(QObject):
              if(self.angleTestMode):
                  self.setAngle(self.closeAngle)
              else:
-                 subprocess.Popen(shlex.split(self.servoScriptFile + " close " + str(self.currentAngle)))
+                 subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close " + str(self.currentAngle)))
                  self.currentAngle = self.closeAngle
              time.sleep(0.5)
              self.setCurrentLidState(ScreenState.CLOSED)     
