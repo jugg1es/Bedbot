@@ -3,6 +3,7 @@
 import time
 import pigpio
 import math
+from threading import Timer,Thread,Event
 import sys
 
 servo = 18
@@ -111,7 +112,8 @@ def cbf(gpio, level, tick):
    print("toggling")
    currentAngle = getAngleFromPulseWidth()
    if(currentAngle == openAngle or currentAngle == closeAngle or currentAngle == 90):
-        togglePosition()
+       t = Thread(target=togglePosition)
+       t.start()
    
 
 
