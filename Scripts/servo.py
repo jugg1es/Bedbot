@@ -109,8 +109,11 @@ def togglePosition():
 def cbf(gpio, level, tick):
    #print(gpio, level, tick)
    print("toggling")
-   togglePosition()
+   currentAngle = getAngleFromPulseWidth()
+   if(currentAngle == openAngle or currentAngle == closeAngle or currentAngle == 90):
+        togglePosition()
    
+
 
 
 cb1 = pi.callback(22, pigpio.RISING_EDGE, cbf)
