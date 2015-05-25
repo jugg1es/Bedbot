@@ -25,9 +25,12 @@ def getAngleFromPulseWidth():
     if(pw == middle):
         return 90
     elif(pw >= bottomRange and pw < middle):		
-        percent = float((angle - 90)) / 90
-        mod = math.trunc(middle + (float(percent) * above90Range))
+        adj = float((pw - float(bottomRange))) / below90Range
+        adj = adj * 90
+        adj = int(round(adj,-1))
+        return adj
     elif(pw > middle and pw <= topRange):
+        
         percent = float(angle) / 90
         mod = math.trunc(bottomRange + (float(percent) * below90Range))
     return mod
