@@ -12,7 +12,7 @@ bottomRange = 700
 topRange = 2500
 middle = 1500
 currentAngle = -1
-moveSpeed = 0.02
+moveSpeed = 0.1
 
 
 def getAngleFromPulseWidth():
@@ -65,13 +65,13 @@ if(len(sys.argv) >= 2):
         setAngle(90)
         getAngleFromPulseWidth()
     elif(sys.argv[1] == "open"):
-        #move(60)
-        setAngle(60)
+        move(60)
+        #setAngle(60)
         getAngleFromPulseWidth()
     elif(sys.argv[1] == "close"):
-        setAngle(175)
+        #setAngle(175)        
+        move(175)
         getAngleFromPulseWidth()
-        #move(175)
 
 
 
