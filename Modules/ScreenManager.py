@@ -26,19 +26,10 @@ except ImportError:
     print('Raspberry Pi GPIO library not found')
 
 
-pigpioLibraryFound = False
-
-try:
-    import pigpio
-    pigpioLibraryFound = True
-except ImportError:
-    print('pigpio library not found or pigpiod not running')
-
 class ScreenManager(QObject):
 
     Enabled = True
     ListenForPinEvent = True
-    servoInitialized = False
 
     togglePin = None
     toggleInitialized = False
@@ -102,14 +93,13 @@ class ScreenManager(QObject):
 
         time.sleep(0.5)
 
-        
-        if(pigpioLibraryFound and self.servoInitialized == False):           
-            self.emit(QtCore.SIGNAL('logEvent'),"servo initialized") 
-            self.servoInitialized = True
-            
+        try:
             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " init"))
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
+        except: 
+            print("problem using subprocess")
+        
 
 
     def setCurrentLidState(self, state):
