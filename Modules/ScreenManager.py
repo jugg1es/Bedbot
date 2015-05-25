@@ -31,6 +31,8 @@ class ScreenManager(QObject):
     Enabled = True
     ListenForPinEvent = True
 
+    servo = None
+
     togglePin = None
     toggleInitialized = False
 
@@ -67,6 +69,7 @@ class ScreenManager(QObject):
         super(ScreenManager, self).__init__()
 
     def setPin(self, pinConfig):
+        self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
         self.initialize()

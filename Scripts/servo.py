@@ -70,8 +70,8 @@ def move(angle):
             angleTracker += angleDir		
             setAngle(angleTracker)	
             time.sleep(moveSpeed)
-        #pi.set_servo_pulsewidth(servo,0)
-        #return angleTracker
+        
+        pi.set_servo_pulsewidth(servo,0)
         return currentAngle
     return None
 
