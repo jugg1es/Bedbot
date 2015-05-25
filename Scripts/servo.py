@@ -11,9 +11,13 @@ pi = pigpio.pi()
 bottomRange = 700
 topRange = 2500
 middle = 1500
-currentMod = -1
 currentAngle = -1
 moveSpeed = 0.02
+
+
+def getAngleFromPulseWidth():
+    print(pi.get_servo_pulsewidth(servo))
+
 
 def getPulseWidth(angle):
 	above90Range = topRange - middle
@@ -35,6 +39,7 @@ def setAngle(angle):
 	
 def move(angle):
 	#print("currentAngle: " + str(currentAngle))
+
 	angleDiff = currentAngle - angle
 	#print("diff: " + str(angleDiff))
 	angleTracker = currentAngle
@@ -54,18 +59,18 @@ def move(angle):
 #currentAngle = 90
 
 print("command: " + sys.argv[1])
-if(len(sys.argv) == 3):
-	print("angle: " + str(sys.argv[2]))
 
 if(len(sys.argv) >= 2):
-	if(sys.argv[1] == "init"):
-		setAngle(90)
-	elif(sys.argv[1] == "open"):
-		currentAngle = int(sys.argv[2])
-		move(60)
-	elif(sys.argv[1] == "close"):
-		currentAngle = int(sys.argv[2])
-		move(175)
+    if(sys.argv[1] == "init"):
+        setAngle(90)
+    elif(sys.argv[1] == "open"):
+        #move(60)
+        getAngleFromPulseWidth()
+        setAngle(60)
+    elif(sys.argv[1] == "close"):
+        getAngleFromPulseWidth()
+        setAngle(175)
+        #move(175)
 
 
 
