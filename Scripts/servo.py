@@ -8,8 +8,6 @@ import sys
 
 servo = 18
 
-openAngle = 60
-closeAngle = 177
 
 pi = pigpio.pi()
 bottomRange = 700
@@ -18,6 +16,8 @@ middle = 1500
 currentAngle = -1
 moveSpeed = 0.02
 
+openAngle = 60
+closeAngle = 177
 
 above90Range = topRange - middle
 below90Range = middle - bottomRange

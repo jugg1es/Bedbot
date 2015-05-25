@@ -18,7 +18,6 @@ hasIOLibraries = False
 
 
 try:
-    import RPi.GPIO as IO
     import pigpio
     hasIOLibraries = True
 except ImportError:
@@ -234,34 +233,26 @@ class BedbotWidget(QtGui.QWidget):
 
 
     def loadPinConfig(self):      
-        
-        
         with open("pinConfig.json") as data_file:    
             data = json.load(data_file)    
         self.pinConfig = {}
         
         if(hasIOLibraries):
-            pi = pigpio.pi()
-            #IO.setmode(IO.BCM)
+            self.pi = pigpio.pi()
 
         for x in range(0, len(data["pins"])):
             p = data["pins"][x]
             self.pinConfig[p["type"]] = p["pin"]
             if(hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
                 self.logEvent("adding event to pin: " + str(p["pin"]))
-                pi.set_pull_up_down(p["pin"], pigpio.PUD_DOWN)
-                cb1 = pi.callback(p["pin"], pigpio.RISING_EDGE, self.pigpioCallback)
-                self.pinCallbacks.append(cb1)
-                #IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN)
-                #IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback, bouncetime=3000)
+                self.pi.set_pull_up_down(p["pin"], pigpio.PUD_DOWN)
+                cb1 = self.pi.callback(p["pin"], pigpio.RISING_EDGE, self.pigpioCallback)
+                
 
 
 
     def doClose(self):        
-        try:
-            IO.cleanup()
-        except BaseException:
-            print("problem cleaning up IO")
+        
 
         for m in self.loadedModules:
             try:
@@ -269,8 +260,11 @@ class BedbotWidget(QtGui.QWidget):
             except BaseException:
                 print("problem disposing")
                 print(m)
+        try:
+            self.pi.stop()
+        except BaseException:
+            print("problem cleaning up IO")
 
-        print("finished closing widgets")
 
 
       
