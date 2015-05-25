@@ -95,14 +95,14 @@ class ScreenManager(QObject):
         subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""))
 
         time.sleep(0.5)
-
+        '''
         try:
             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile))
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
         except: 
             print("problem using subprocess")
-        
+        '''
 
 
     def setCurrentLidState(self, state):
