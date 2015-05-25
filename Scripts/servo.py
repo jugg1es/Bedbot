@@ -102,7 +102,7 @@ def cbf(gpio, level, tick):
        t.start()
    
 
-
+pi.set_pull_up_down(22, pigpio.PUD_DOWN)
 
 cb1 = pi.callback(22, pigpio.RISING_EDGE, cbf)
 
