@@ -56,7 +56,7 @@ def setAngle(angle):
 	
 def move(angle):
     currentAngle = getAngleFromPulseWidth()
-    if(currentAngle == openAngle or currentAngle == closeAngle):
+    if(currentAngle == openAngle or currentAngle == closeAngle or currentAngle == 90):
         #print("current angle: " + str(currentAngle))
         angleDiff = currentAngle - angle
         angleTracker = currentAngle
@@ -95,7 +95,7 @@ if(len(sys.argv) >= 2):
     
 '''
 setAngle(90)
-time.sleep(0.2)
+
 move(openAngle)
 
 def togglePosition():
@@ -108,6 +108,7 @@ def togglePosition():
 
 def cbf(gpio, level, tick):
    #print(gpio, level, tick)
+   print("toggling")
    togglePosition()
    
 
