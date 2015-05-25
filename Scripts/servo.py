@@ -59,7 +59,7 @@ def move(angle):
 #currentAngle = 90
 
 print("command: " + sys.argv[1])
-
+print(sys.argv)
 if(len(sys.argv) >= 2):
     if(sys.argv[1] == "init"):
         setAngle(90)
