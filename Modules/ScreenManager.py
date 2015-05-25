@@ -38,7 +38,6 @@ class ScreenManager(QObject):
 
     Enabled = True
     ListenForPinEvent = True
-    servo = None
     servoInitialized = False
 
     togglePin = None
@@ -81,7 +80,6 @@ class ScreenManager(QObject):
         super(ScreenManager, self).__init__()
 
     def setPin(self, pinConfig):
-        self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
         self.initialize()
@@ -114,9 +112,7 @@ class ScreenManager(QObject):
             self.servoInitialized = True
             
             subprocess.Popen(shlex.split(self.servoScriptFile + " init"))
-            #self.setAngle(90)
-
-
+            time.sleep(0.5)
             self.currentAngle = 90
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
@@ -187,6 +183,7 @@ class ScreenManager(QObject):
              else:
                  subprocess.Popen(shlex.split(self.servoScriptFile + " open " + str(self.currentAngle)))
                  self.currentAngle = self.openAngle
+             time.sleep(0.5)
              self.setCurrentLidState(ScreenState.OPEN)
              
          
@@ -198,6 +195,7 @@ class ScreenManager(QObject):
              else:
                  subprocess.Popen(shlex.split(self.servoScriptFile + " close " + str(self.currentAngle)))
                  self.currentAngle = self.closeAngle
+             time.sleep(0.5)
              self.setCurrentLidState(ScreenState.CLOSED)     
 
     def dispose(self):
