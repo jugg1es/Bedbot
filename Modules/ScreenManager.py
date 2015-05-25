@@ -101,8 +101,8 @@ class ScreenManager(QObject):
         
         
 
-        subprocess.Popen(shlex.split("sudo sh -c \"echo " + str(parent.screenGPIO) + " > /sys/class/gpio/export\"")) 
-        subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/direction\""))
+        subprocess.Popen(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
+        subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""))
 
         time.sleep(0.5)
 
@@ -117,27 +117,6 @@ class ScreenManager(QObject):
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
 
-        
-        
-        
-    def _initializeScreenToggle(self, parent):
-        try:
-            subprocess.Popen(shlex.split("sudo sh -c \"echo " + str(parent.screenGPIO) + " > /sys/class/gpio/export\"")) 
-            subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/direction\""))  
-        except:
-            print("error changing screen state")
-
-    def _turnScreenOn(self, parent):
-        try:
-            subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))   
-        except:
-            print("error changing screen state")
-
-    def _turnScreenOff(self, parent):
-        try:
-            subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))   
-        except:
-            print("error changing screen state")
 
     def setCurrentLidState(self, state):
         self.currentState = state
@@ -156,12 +135,12 @@ class ScreenManager(QObject):
 
     def changeScreenState(self, isOn):
         if(isOn):
-            subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))
+            subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))
             #t = Thread(target=self._turnScreenOn, args=(self,))
             #t.start()
             #subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))
         else:
-            subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))  
+            subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))  
             #t = Thread(target=self._turnScreenOff, args=(self,))
             #t.start()
             #subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))       
