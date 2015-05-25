@@ -81,7 +81,7 @@ class OLED(QObject):
             self.oledUpdateTimer.cancel()
 
     def _doUpdateTime(self, parent):
-        print("doupdatetime")
+        #print("doupdatetime")
         parent.previousTime = self.updateTime(parent.previousTime, parent.pinRST, parent.pinCS, parent.pinCLK, parent.pinDC, parent.pinDIN)
 
     def updateTime(self, previousTime, RST, CS, CLK, DC, DIN):
