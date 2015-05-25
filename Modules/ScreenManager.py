@@ -21,6 +21,7 @@ hasIOLibraries_screen = False
 
 try:
     import RPi.GPIO as IO
+    import pigpio
     hasIOLibraries_screen = True
 except ImportError:
     print('Raspberry Pi GPIO library not found')
@@ -82,9 +83,13 @@ class ScreenManager(QObject):
 
     def initialize(self):
         print("has IO libraries (screen manager): " + str(hasIOLibraries_screen))
+
+        self.pi = pigpio.pi()
         if(hasIOLibraries_screen and self.btnPowerInitialized == False):
-            IO.setmode(IO.BCM)
-            IO.setup(self.buttonPowerPin, IO.OUT)
+            self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
+
+            #IO.setmode(IO.BCM)
+            #IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
             self.toggleButtonPower(False)
         
@@ -116,9 +121,11 @@ class ScreenManager(QObject):
 
     def toggleButtonPower(self, isOn):
         if(isOn):            
-            IO.output(self.buttonPowerPin, IO.HIGH)
+            self.pi.write(self.buttonPowerPin,1)
+            #IO.output(self.buttonPowerPin, IO.HIGH)
         else:
-            IO.output(self.buttonPowerPin, IO.LOW)
+            self.pi.write(self.buttonPowerPin,0)
+            #IO.output(self.buttonPowerPin, IO.LOW)
 
     def changeScreenState(self, isOn):
         if(isOn):
