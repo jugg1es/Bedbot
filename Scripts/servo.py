@@ -7,21 +7,33 @@ import sys
 
 servo = 18
 
-pi = pigpio.pi()
+pi = pigpio.pi("servo")
 bottomRange = 700
 topRange = 2500
 middle = 1500
 currentAngle = -1
-moveSpeed = 0.1
+moveSpeed = 0.02
+
+
+above90Range = topRange - middle
+below90Range = middle - bottomRange
 
 
 def getAngleFromPulseWidth():
-    print(pi.get_servo_pulsewidth(servo))
+    pw = pi.get_servo_pulsewidth(servo)
+    print(pw)
+    if(pw == middle):
+        return 90
+    elif(pw >= bottomRange and pw < middle):		
+        percent = float((angle - 90)) / 90
+        mod = math.trunc(middle + (float(percent) * above90Range))
+    elif(pw > middle and pw <= topRange):
+        percent = float(angle) / 90
+        mod = math.trunc(bottomRange + (float(percent) * below90Range))
+    return mod
 
 
-def getPulseWidth(angle):
-	above90Range = topRange - middle
-	below90Range = middle - bottomRange
+def getPulseWidth(angle):	
 	mod = middle
 	if(angle > 90 and angle <= 180):		
 		percent = float((angle - 90)) / 90
@@ -52,11 +64,16 @@ def move(angle):
 		angleTracker += angleDir		
 		setAngle(angleTracker)	
 		time.sleep(moveSpeed)
-	pi.set_servo_pulsewidth(servo,0)
+	#pi.set_servo_pulsewidth(servo,0)
 	return angleTracker
 
 #setAngle(90)
 #currentAngle = 90
+
+def disposePigpio():
+    print("stopping")
+    #pi.set_servo_pulsewidth(servo, 0)
+    #pi.stop()
 
 print("command: " + sys.argv[1])
 print(sys.argv)
@@ -65,13 +82,15 @@ if(len(sys.argv) >= 2):
         setAngle(90)
         getAngleFromPulseWidth()
     elif(sys.argv[1] == "open"):
-        move(60)
-        #setAngle(60)
+        #move(60)
+        setAngle(60)
         getAngleFromPulseWidth()
     elif(sys.argv[1] == "close"):
-        #setAngle(175)        
-        move(175)
+        setAngle(175)        
+        #move(175)
         getAngleFromPulseWidth()
+    disposePigpio()
+
 
 
 
@@ -89,6 +108,4 @@ raw_input("Enter to end")
 '''
 
 
-pi.set_servo_pulsewidth(servo, 0)
 
-pi.stop()
