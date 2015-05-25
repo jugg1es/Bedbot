@@ -224,9 +224,11 @@ class BedbotWidget(QtGui.QWidget):
            for m in self.loadedModules:
                 if(self.moduleHasFunction(m, "processPinEvent")):
                     m.processPinEvent(gpio)
-           QtCore.QTimer.singleShot(1, lambda : self.reenablePin(gpio))
+           t = Thread(target=self.reenablePin, args=(gpio,))        
+           t.start()
 
     def reenablePin(self, pin):
+        time.sleep(1)
         print("reenable pin: " + str(pin))
 
 
