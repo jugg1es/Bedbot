@@ -132,7 +132,7 @@ class ScreenManager(QObject):
      
     def positionToggled(self):     
          print("position toggled   state: " + str(self.currentState))   
-         if(pigpioLibraryFound and self.currentState != None):
+         if(self.currentState != None):
              if(self.currentState == ScreenState.CLOSED):
                  self.openLid()
              elif(self.currentState == ScreenState.OPEN):
@@ -142,18 +142,16 @@ class ScreenManager(QObject):
          return self.currentState
   
     def openLid(self):
-         if(pigpioLibraryFound):
-             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open" ))
-             #time.sleep(0.5)
-             self.setCurrentLidState(ScreenState.OPEN)
+        subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open" ))
+        #time.sleep(0.5)
+        self.setCurrentLidState(ScreenState.OPEN)
              
          
       
     def closeLid(self):
-        if(pigpioLibraryFound):
-             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close"))
-             #time.sleep(0.5)
-             self.setCurrentLidState(ScreenState.CLOSED)     
+        subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close"))
+        #time.sleep(0.5)
+        self.setCurrentLidState(ScreenState.CLOSED)     
 
     def dispose(self):
         
