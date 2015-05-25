@@ -23,7 +23,7 @@ try:
     import pigpio
     hasIOLibraries = True
 except ImportError:
-    print('Raspberry Pi GPIO library not found')
+    print('PIGPIO library not found')
 
 
 class ScreenManager(QObject):
@@ -42,22 +42,6 @@ class ScreenManager(QObject):
     screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
-
-    '''
-    moveSpeed = 0.02
-
-    #Setting angleTestMode to True will skip the slow movement and just set the
-    #angles quickly
-    angleTestMode = False
-
-    #ranges from 500-2500 but those may not be safe for the servo
-    bottomRange = 600  
-    topRange = 2400
-
-    #middle is always safe at 1500
-    middle = 1500
-    pi = None
-    '''
     bottomRange = 700
     topRange = 2500
     middle = 1500
@@ -112,17 +96,6 @@ class ScreenManager(QObject):
             self.setCurrentLidState(ScreenState.OPEN)
         
         
-              
-        
-        '''
-        try:
-            subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile))
-            self.openLid()
-            self.setCurrentLidState(ScreenState.OPEN)
-        except: 
-            print("problem using subprocess")
-        '''
-
 
     def setCurrentLidState(self, state):
         self.currentState = state

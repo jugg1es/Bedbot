@@ -21,7 +21,7 @@ try:
     import pigpio
     hasIOLibraries = True
 except ImportError:
-    print('Raspberry Pi GPIO library not found')
+    print('PIGPIO library not found')
 
 
 #Required pins

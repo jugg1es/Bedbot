@@ -9,10 +9,10 @@ import time
 hasIOLibraries = False
 
 try:
-    import RPi.GPIO as IO
+    import pigpio
     hasIOLibraries = True
 except ImportError:
-    print('Raspberry Pi GPIO library not found')
+    print('PIGPIO library not found')
 
 
 
@@ -38,32 +38,24 @@ class AudioPinSwitch(QObject):
 
     def initialize(self):
         if(hasIOLibraries):
-            IO.setmode(IO.BCM)
-            IO.setup(self.audioPin1, IO.OUT)
-            IO.setup(self.audioPin2, IO.OUT)
-            IO.output(self.audioPin1, IO.LOW)
-            IO.output(self.audioPin2, IO.LOW)
+            self.pi = pigpio.pi()
+            self.pi.set_mode(self.audioPin1, pigpio.OUTPUT)
+            self.pi.set_mode(self.audioPin2, pigpio.OUTPUT)
+            self.pi.write(self.audioPin1,0)
+            self.pi.write(self.audioPin2,0)
             self.audioPinsInitialized = True
 
 
     def processPinEvent(self, pinNum):
         if(self.audioPinsInitialized):
-            if(self.audioPin1 == pinNum or self.audioPin2 == pinNum):
-                self.flipRelay(pinNum)
-
-    def flipRelay(self, pin):
-        IO.output(pin, IO.HIGH)    
-        time.sleep(0.5)
-        IO.output(pin, IO.LOW)    
-
+            if(self.audioPin1 == pinNum):
+                self.pi.write(self.audioPin2,0)
+                self.pi.write(self.audioPin1,1)
+            elif(self.audioPin2 == pinNum):
+                self.pi.write(self.audioPin1,0)
+                self.pi.write(self.audioPin2,1)
 
     def dispose(self):
-        print("Disposing of Audio Relay switch")
-        try: 
-            IO.cleanup() 
-        except Exception:
-            print("Problem disposing of IO in audio relay switch")
-
         print("disposed of audio relay switch")
 
 
