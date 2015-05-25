@@ -14,17 +14,6 @@ import inspect
 import glob
 import sys
 
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
-    
-    
-
-
 '''
 Pressing the escape key will properly dispose and exit
 
@@ -65,9 +54,9 @@ class MainWindow(QtGui.QMainWindow):
         super(MainWindow, self).__init__(parent)
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
         
-        sys.stdout = Logger("log.txt")
-        sys.stderr = ErrorLogger("error.txt")
-        sys.stdin = InLogger("in.txt")
+        #sys.stdout = Logger("log.txt")
+        #sys.stderr = ErrorLogger("error.txt")
+        #sys.stdin = InLogger("in.txt")
 
         screen_rect = app.desktop().screenGeometry()
         if(screen_rect.width() == 320):
@@ -149,7 +138,7 @@ if __name__ == '__main__':
     
     win = MainWindow()
     
-    logging.basicConfig(filename='bedbot.log', level=logging.INFO)
+    #logging.basicConfig(filename='bedbot.log', level=logging.INFO)
     
     
    
