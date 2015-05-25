@@ -46,10 +46,9 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 508 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
-    currentAngle = None    
     currentState = None
 
 
@@ -69,9 +68,6 @@ class ScreenManager(QObject):
     pi = None
     '''
     
-
-    openAngle = 60
-    closeAngle = 175
 
 
     servoScriptFile = "Scripts/servo.py"
@@ -112,8 +108,6 @@ class ScreenManager(QObject):
             self.servoInitialized = True
             
             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " init"))
-            time.sleep(0.5)
-            self.currentAngle = 90
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
 
@@ -159,20 +153,16 @@ class ScreenManager(QObject):
   
     def openLid(self):
          if(pigpioLibraryFound):
-             print("opening from angle: " + str(self.currentAngle))
-             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open " + str(self.currentAngle)))
-             self.currentAngle = self.openAngle
-             time.sleep(0.5)
+             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open" ))
+             #time.sleep(0.5)
              self.setCurrentLidState(ScreenState.OPEN)
              
          
       
     def closeLid(self):
         if(pigpioLibraryFound):
-             print("opening from angle: " + str(self.currentAngle))
-             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close " + str(self.currentAngle)))
-             self.currentAngle = self.closeAngle
-             time.sleep(0.5)
+             subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close"))
+             #time.sleep(0.5)
              self.setCurrentLidState(ScreenState.CLOSED)     
 
     def dispose(self):

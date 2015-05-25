@@ -27,16 +27,11 @@ def getAngleFromPulseWidth():
     elif(pw >= bottomRange and pw < middle):		
         adj = float((pw - float(bottomRange))) / below90Range
         adj = adj * 90
-        adj = int(round(adj))
-        return adj
+        return int(round(adj))
     elif(pw > middle and pw <= topRange):
         adj = float((pw - float(middle))) / above90Range
-        print(adj)
         adj = (adj * 90) + 90
-        print(adj)
-        adj = int(round(adj))
-        print(adj)
-        return adj
+        return int(round(adj))
 
 
 def getPulseWidth(angle):	
@@ -51,12 +46,9 @@ def getPulseWidth(angle):
 
 def setAngle(angle):
 	mod = getPulseWidth(angle)
-	
-	#print("setting to: " + str(mod))
 	pi.set_servo_pulsewidth(servo, mod)
 	
 def move(angle):
-    #print("currentAngle: " + str(currentAngle))
     currentAngle = getAngleFromPulseWidth()
     print("current angle: " + str(currentAngle))
     angleDiff = currentAngle - angle
@@ -72,9 +64,6 @@ def move(angle):
         time.sleep(moveSpeed)
     #pi.set_servo_pulsewidth(servo,0)
     #return angleTracker
-
-#setAngle(90)
-#currentAngle = 90
 
 def disposePigpio():
     print("stopping")
