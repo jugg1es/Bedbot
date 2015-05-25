@@ -150,7 +150,7 @@ class ScreenManager(QObject):
     def positionToggled(self):     
         print("checking if toggling possible")
         currentAngle = self.getAngleFromPulseWidth()
-        if(currentAngle == openAngle or currentAngle == closeAngle or currentAngle == 90):
+        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
             print("now toggling ")
             t = Thread(target=self.togglePosition, args=(self,))
             t.start()
