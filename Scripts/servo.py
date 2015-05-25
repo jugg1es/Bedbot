@@ -53,22 +53,22 @@ def setAngle(angle):
 	pi.set_servo_pulsewidth(servo, mod)
 	
 def move(angle):
-	#print("currentAngle: " + str(currentAngle))
-
-	angleDiff = currentAngle - angle
-	#print("diff: " + str(angleDiff))
-	angleTracker = currentAngle
-	angleDir = 0
-	if(angleDiff < 0):
-		angleDir = 1
-	elif(angleDiff > 0):
-		angleDir = -1
-	for angle in range(abs(angleDiff)):		
-		angleTracker += angleDir		
-		setAngle(angleTracker)	
-		time.sleep(moveSpeed)
-	#pi.set_servo_pulsewidth(servo,0)
-	return angleTracker
+    #print("currentAngle: " + str(currentAngle))
+    currentAngle = getAngleFromPulseWidth()
+    print("current angle: " + str(currentAngle))
+    angleDiff = currentAngle - angle
+    angleTracker = currentAngle
+    angleDir = 0
+    if(angleDiff < 0):
+        angleDir = 1
+    elif(angleDiff > 0):
+        angleDir = -1
+    for angle in range(abs(angleDiff)):		
+        angleTracker += angleDir		
+        setAngle(angleTracker)	
+        time.sleep(moveSpeed)
+    #pi.set_servo_pulsewidth(servo,0)
+    #return angleTracker
 
 #setAngle(90)
 #currentAngle = 90
@@ -83,20 +83,18 @@ print(sys.argv)
 if(len(sys.argv) >= 2):
     if(sys.argv[1] == "init"):
         setAngle(90)
-        
     elif(sys.argv[1] == "open"):
-        #move(60)
-        setAngle(60)
+        move(60)
+        #setAngle(60)
     elif(sys.argv[1] == "close"):
-        setAngle(175)        
-        #move(175)
+        #setAngle(175)        
+        move(175)
     newAngle = getAngleFromPulseWidth()
     print("new angle: " + str(newAngle))
     disposePigpio()
 
 
 
-raw_input("Enter to end")
 
 '''
 raw_input("Enter to move")
