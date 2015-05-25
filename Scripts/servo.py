@@ -97,21 +97,19 @@ if(len(sys.argv) >= 2):
 setAngle(90)
 time.sleep(0.2)
 move(openAngle)
-currentState = 1
-time.sleep(0.2)
+
+def togglePosition():
+    ang = getAngleFromPulseWidth()
+    if(ang == openAngle):
+        move(closeAngle)
+    elif(ang == closeAngle):
+        move(openAngle)
 
 
 def cbf(gpio, level, tick):
    #print(gpio, level, tick)
-   status = None
-   if(currentState == 1):
-       status = move(closeAngle)
-       if(status != None):
-           currentState = 0
-   elif(currentState == 0):
-       status = move(openAngle)
-       if(status != None):
-           currentState = 1
+   togglePosition()
+   
 
 
 cb1 = pi.callback(22, pigpio.RISING_EDGE, cbf)
