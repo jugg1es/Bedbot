@@ -55,6 +55,9 @@ class BedbotWidget(QtGui.QWidget):
     pinConfig = {}
 
     pinCallbacks = []
+    disabledPins = []
+
+    pinStatusTimer = None
 
     def __init__(self, parent,modules):
         super(BedbotWidget, self).__init__(parent)
@@ -216,12 +219,17 @@ class BedbotWidget(QtGui.QWidget):
     def pigpioCallback(self, gpio, level, tick):
        #print(gpio, level, tick)
        self.logEvent("pin callback for channel: " + str(gpio))
-       for m in self.loadedModules:
-            if(self.moduleHasFunction(m, "processPinEvent")):
-                m.processPinEvent(gpio)
+       if(self.disabledPins.index(gpio) == -1):
+           for m in self.loadedModules:
+                if(self.moduleHasFunction(m, "processPinEvent")):
+                    m.processPinEvent(gpio)
+           self.disabledPins.append(gpio)
+
+
 
 
     def loadPinConfig(self):      
+        
         
         with open("pinConfig.json") as data_file:    
             data = json.load(data_file)    
