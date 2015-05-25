@@ -22,6 +22,9 @@ above90Range = topRange - middle
 below90Range = middle - bottomRange
 
 
+
+
+
 def getAngleFromPulseWidth():
     pw = pi.get_servo_pulsewidth(servo)
     print(pw)
@@ -68,12 +71,15 @@ def move(angle):
             time.sleep(moveSpeed)
         #pi.set_servo_pulsewidth(servo,0)
         #return angleTracker
+        return currentAngle
+    return None
 
 def disposePigpio():
     print("stopping")
-    #pi.set_servo_pulsewidth(servo, 0)
-    #pi.stop()
+    pi.set_servo_pulsewidth(servo, 0)
+    pi.stop()
 
+'''
 print("command: " + sys.argv[1])
 if(len(sys.argv) >= 2):
     if(sys.argv[1] == "init"):
@@ -86,14 +92,29 @@ if(len(sys.argv) >= 2):
         move(closeAngle)
     newAngle = getAngleFromPulseWidth()
     #print("new angle: " + str(newAngle))
-    disposePigpio()
-
+    
+'''
+setAngle(90)
+time.sleep(0.2)
+move(openAngle)
+currentState = 1
+time.sleep(0.2)
 
 
 def cbf(gpio, level, tick):
-   print(gpio, level, tick)
+   #print(gpio, level, tick)
+   status = None
+   if(currentState == 1):
+       status = move(closeAngle)
+       if(status != None):
+           currentState = 0
+   elif(currentState == 0):
+       status = move(openAngle)
+       if(status != None):
+           currentState = 1
 
 
 cb1 = pi.callback(22, pigpio.RISING_EDGE, cbf)
 
 raw_input("Press enter to end")
+disposePigpio()
