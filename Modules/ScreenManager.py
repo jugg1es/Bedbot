@@ -94,7 +94,7 @@ class ScreenManager(QObject):
         time.sleep(0.5)
 
         try:
-            subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " init"))
+            subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile))
             self.openLid()
             self.setCurrentLidState(ScreenState.OPEN)
         except: 

@@ -80,21 +80,6 @@ def disposePigpio():
     pi.set_servo_pulsewidth(servo, 0)
     pi.stop()
 
-'''
-print("command: " + sys.argv[1])
-if(len(sys.argv) >= 2):
-    if(sys.argv[1] == "init"):
-        setAngle(90)
-    elif(sys.argv[1] == "open"):
-        move(openAngle)
-        #setAngle(60)
-    elif(sys.argv[1] == "close"):
-        #setAngle(175)        
-        move(closeAngle)
-    newAngle = getAngleFromPulseWidth()
-    #print("new angle: " + str(newAngle))
-    
-'''
 setAngle(90)
 
 move(openAngle)
