@@ -87,15 +87,11 @@ class ScreenManager(QObject):
         self.pi = pigpio.pi()
         if(hasIOLibraries_screen and self.btnPowerInitialized == False):
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
-
             #IO.setmode(IO.BCM)
             #IO.setup(self.buttonPowerPin, IO.OUT)
             self.btnPowerInitialized = True
             self.toggleButtonPower(False)
         
-        
-        
-
         subprocess.Popen(shlex.split("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")) 
         subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""))
 
@@ -152,14 +148,14 @@ class ScreenManager(QObject):
          return self.currentState
   
     def openLid(self):
-        subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open" ))
+        #subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open" ))
         #time.sleep(0.5)
         self.setCurrentLidState(ScreenState.OPEN)
              
          
       
     def closeLid(self):
-        subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close"))
+        #subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close"))
         #time.sleep(0.5)
         self.setCurrentLidState(ScreenState.CLOSED)     
 
