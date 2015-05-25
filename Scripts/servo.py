@@ -7,6 +7,9 @@ import sys
 
 servo = 18
 
+openAngle = 60
+closeAngle = 175
+
 pi = pigpio.pi()
 bottomRange = 700
 topRange = 2500
@@ -50,54 +53,47 @@ def setAngle(angle):
 	
 def move(angle):
     currentAngle = getAngleFromPulseWidth()
-    #print("current angle: " + str(currentAngle))
-    angleDiff = currentAngle - angle
-    angleTracker = currentAngle
-    angleDir = 0
-    if(angleDiff < 0):
-        angleDir = 1
-    elif(angleDiff > 0):
-        angleDir = -1
-    for angle in range(abs(angleDiff)):		
-        angleTracker += angleDir		
-        setAngle(angleTracker)	
-        time.sleep(moveSpeed)
-    #pi.set_servo_pulsewidth(servo,0)
-    #return angleTracker
+    if(currentAngle == openAngle or currentAngle == closeAngle):
+        #print("current angle: " + str(currentAngle))
+        angleDiff = currentAngle - angle
+        angleTracker = currentAngle
+        angleDir = 0
+        if(angleDiff < 0):
+            angleDir = 1
+        elif(angleDiff > 0):
+            angleDir = -1
+        for angle in range(abs(angleDiff)):		
+            angleTracker += angleDir		
+            setAngle(angleTracker)	
+            time.sleep(moveSpeed)
+        #pi.set_servo_pulsewidth(servo,0)
+        #return angleTracker
 
 def disposePigpio():
     print("stopping")
     #pi.set_servo_pulsewidth(servo, 0)
-    pi.stop()
+    #pi.stop()
 
 print("command: " + sys.argv[1])
 if(len(sys.argv) >= 2):
     if(sys.argv[1] == "init"):
         setAngle(90)
     elif(sys.argv[1] == "open"):
-        move(60)
+        move(openAngle)
         #setAngle(60)
     elif(sys.argv[1] == "close"):
         #setAngle(175)        
-        move(175)
+        move(closeAngle)
     newAngle = getAngleFromPulseWidth()
     #print("new angle: " + str(newAngle))
     disposePigpio()
 
 
 
-
-'''
-raw_input("Enter to move")
-print("currentAngle: " + str(currentAngle))
-currentAngle = move(175)
-
-raw_input("Enter to move")
-print("currentAngle: " + str(currentAngle))
-currentAngle = move(60)
-
-raw_input("Enter to end")
-'''
+def cbf(gpio, level, tick):
+   print(gpio, level, tick)
 
 
+cb1 = pi.callback(22, pigpio.RISING_EDGE, cbf)
 
+raw_input("Press enter to end")
