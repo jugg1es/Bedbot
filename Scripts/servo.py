@@ -63,13 +63,14 @@ print(sys.argv)
 if(len(sys.argv) >= 2):
     if(sys.argv[1] == "init"):
         setAngle(90)
+        getAngleFromPulseWidth()
     elif(sys.argv[1] == "open"):
         #move(60)
-        getAngleFromPulseWidth()
         setAngle(60)
-    elif(sys.argv[1] == "close"):
         getAngleFromPulseWidth()
+    elif(sys.argv[1] == "close"):
         setAngle(175)
+        getAngleFromPulseWidth()
         #move(175)
 
 
