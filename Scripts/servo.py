@@ -7,7 +7,7 @@ import sys
 
 servo = 18
 
-pi = pigpio.pi("servo")
+pi = pigpio.pi()
 bottomRange = 700
 topRange = 2500
 middle = 1500
@@ -93,7 +93,7 @@ if(len(sys.argv) >= 2):
 
 
 
-
+raw_input("Enter to end")
 
 '''
 raw_input("Enter to move")
