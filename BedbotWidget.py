@@ -220,11 +220,14 @@ class BedbotWidget(QtGui.QWidget):
        #print(gpio, level, tick)
        self.logEvent("pin callback for channel: " + str(gpio))
        currentlyDisabled = gpio in self.disabledPins
+       print(gpio in self.disabledPins)
        if(currentlyDisabled == False):
+           self.disabledPins.append(gpio)
+           print(gpio in self.disabledPins)
            for m in self.loadedModules:
                 if(self.moduleHasFunction(m, "processPinEvent")):
                     m.processPinEvent(gpio)
-           self.disabledPins.append(gpio)
+           
 
 
 
