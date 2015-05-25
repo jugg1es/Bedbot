@@ -50,7 +50,7 @@ def setAngle(angle):
 	
 def move(angle):
     currentAngle = getAngleFromPulseWidth()
-    print("current angle: " + str(currentAngle))
+    #print("current angle: " + str(currentAngle))
     angleDiff = currentAngle - angle
     angleTracker = currentAngle
     angleDir = 0
@@ -71,7 +71,6 @@ def disposePigpio():
     #pi.stop()
 
 print("command: " + sys.argv[1])
-print(sys.argv)
 if(len(sys.argv) >= 2):
     if(sys.argv[1] == "init"):
         setAngle(90)
@@ -82,7 +81,7 @@ if(len(sys.argv) >= 2):
         #setAngle(175)        
         move(175)
     newAngle = getAngleFromPulseWidth()
-    print("new angle: " + str(newAngle))
+    #print("new angle: " + str(newAngle))
     disposePigpio()
 
 
