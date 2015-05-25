@@ -159,6 +159,7 @@ class ScreenManager(QObject):
   
     def openLid(self):
          if(pigpioLibraryFound):
+             print("opening from angle: " + str(self.currentAngle))
              subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " open " + str(self.currentAngle)))
              self.currentAngle = self.openAngle
              time.sleep(0.5)
@@ -168,6 +169,7 @@ class ScreenManager(QObject):
       
     def closeLid(self):
         if(pigpioLibraryFound):
+             print("opening from angle: " + str(self.currentAngle))
              subprocess.Popen(shlex.split("sudo python " + self.servoScriptFile + " close " + str(self.currentAngle)))
              self.currentAngle = self.closeAngle
              time.sleep(0.5)
