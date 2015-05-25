@@ -9,7 +9,7 @@ import sys
 servo = 18
 
 openAngle = 60
-closeAngle = 175
+closeAngle = 177
 
 pi = pigpio.pi()
 bottomRange = 700
@@ -23,7 +23,7 @@ above90Range = topRange - middle
 below90Range = middle - bottomRange
 
 
-
+currentPulse = 0
 
 
 def getAngleFromPulseWidth():
@@ -71,7 +71,7 @@ def move(angle):
             setAngle(angleTracker)	
             time.sleep(moveSpeed)
         
-        pi.set_servo_pulsewidth(servo,0)
+        #pi.set_servo_pulsewidth(servo,0)
         return currentAngle
     return None
 
@@ -83,6 +83,7 @@ def disposePigpio():
 setAngle(90)
 
 move(openAngle)
+
 
 def togglePosition():
     ang = getAngleFromPulseWidth()
