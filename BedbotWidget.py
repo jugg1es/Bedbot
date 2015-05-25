@@ -19,6 +19,7 @@ hasIOLibraries = False
 
 try:
     import RPi.GPIO as IO
+    import pigpio
     hasIOLibraries = True
 except ImportError:
     print('Raspberry Pi GPIO library not found')
@@ -52,6 +53,8 @@ class BedbotWidget(QtGui.QWidget):
 
     currentAudioModule = None
     pinConfig = {}
+
+    pinCallbacks = []
 
     def __init__(self, parent,modules):
         super(BedbotWidget, self).__init__(parent)
@@ -210,6 +213,13 @@ class BedbotWidget(QtGui.QWidget):
             if(self.moduleHasFunction(m, "processPinEvent")):
                 m.processPinEvent(channel)
 
+    def pigpioCallback(self, gpio, level, tick):
+       #print(gpio, level, tick)
+       for m in self.loadedModules:
+            if(self.moduleHasFunction(m, "processPinEvent")):
+                m.processPinEvent(gpio)
+
+
     def loadPinConfig(self):      
         
         with open("pinConfig.json") as data_file:    
@@ -217,15 +227,19 @@ class BedbotWidget(QtGui.QWidget):
         self.pinConfig = {}
         
         if(hasIOLibraries):
-            IO.setmode(IO.BCM)
+            pi = pigpio.pi()
+            #IO.setmode(IO.BCM)
 
         for x in range(0, len(data["pins"])):
             p = data["pins"][x]
             self.pinConfig[p["type"]] = p["pin"]
             if(hasIOLibraries and self.listenToButtons == True and p["listenForPress"] == True):
                 self.logEvent("adding event to pin: " + str(p["pin"]))
-                IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN)
-                IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback, bouncetime=3000)
+                pi.set_pull_up_down(p["pin"], pigpio.PUD_DOWN)
+                cb1 = pi.callback(p["pin"], pigpio.RISING_EDGE, self.pigpioCallback)
+                self.pinCallbacks.append(cb1)
+                #IO.setup(p["pin"], IO.IN, pull_up_down = IO.PUD_DOWN)
+                #IO.add_event_detect(p["pin"], IO.RISING, callback=self.pinEventCallback, bouncetime=3000)
 
 
 
