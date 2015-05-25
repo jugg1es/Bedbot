@@ -101,10 +101,10 @@ class ScreenManager(QObject):
         
         
 
-        t = Thread(target=self._initializeScreenToggle, args=(self,))
-        t.start()
+        subprocess.Popen(shlex.split("sudo sh -c \"echo " + str(parent.screenGPIO) + " > /sys/class/gpio/export\"")) 
+        subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/direction\""))
 
-        
+        time.sleep(0.5)
 
         
         if(pigpioLibraryFound and self.servoInitialized == False):           
@@ -156,12 +156,14 @@ class ScreenManager(QObject):
 
     def changeScreenState(self, isOn):
         if(isOn):
-            t = Thread(target=self._turnScreenOn, args=(self,))
-            t.start()
+            subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))
+            #t = Thread(target=self._turnScreenOn, args=(self,))
+            #t.start()
             #subprocess.call(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))
         else:
-            t = Thread(target=self._turnScreenOff, args=(self,))
-            t.start()
+            subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(parent.screenGPIO) + "/value\""))  
+            #t = Thread(target=self._turnScreenOff, args=(self,))
+            #t.start()
             #subprocess.call(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\""))       
     
      
