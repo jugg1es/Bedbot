@@ -27,14 +27,14 @@ def getAngleFromPulseWidth():
     elif(pw >= bottomRange and pw < middle):		
         adj = float((pw - float(bottomRange))) / below90Range
         adj = adj * 90
-        adj = int(round(adj,-1))
+        adj = int(round(adj))
         return adj
     elif(pw > middle and pw <= topRange):
         adj = float((pw - float(middle))) / above90Range
         print(adj)
         adj = (adj * 90) + 90
         print(adj)
-        adj = int(round(adj,-1))
+        adj = int(round(adj))
         print(adj)
         return adj
 
