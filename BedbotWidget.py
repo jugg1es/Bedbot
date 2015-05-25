@@ -219,8 +219,8 @@ class BedbotWidget(QtGui.QWidget):
     def pigpioCallback(self, gpio, level, tick):
        #print(gpio, level, tick)
        self.logEvent("pin callback for channel: " + str(gpio))
-       print(str(self.disabledPins.index(gpio)))
-       if(self.disabledPins.index(gpio) == -1):
+       currentlyDisabled = gpio in self.disabledPins
+       if(currentlyDisabled == False):
            for m in self.loadedModules:
                 if(self.moduleHasFunction(m, "processPinEvent")):
                     m.processPinEvent(gpio)
