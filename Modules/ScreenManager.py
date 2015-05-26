@@ -48,7 +48,7 @@ class ScreenManager(QObject):
     above90Range = topRange - middle
     below90Range = middle - bottomRange
 
-    servoInitPulse = (topRange - bottomRange) + bottomRange
+    servoInitPulse = (topRange - bottomRange) 
 
     subprocessAvailable = True
 
@@ -120,8 +120,9 @@ class ScreenManager(QObject):
     
      
     def positionToggled(self):     
-        print("checking if toggling possible")
+        
         currentAngle = self.getAngleFromPulseWidth()
+        print("checking if toggling possible  current angle: " + str(currentAngle))
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
             print("now toggling ")
             self.savedPreviousPulseWidth = None
