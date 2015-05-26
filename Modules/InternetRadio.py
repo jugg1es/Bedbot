@@ -99,6 +99,7 @@ class InternetRadio(QObject):
             subprocess.call(shlex.split("mpc play"))  
                   
     def reset(self):
+        print("resetting mpc")
         subprocess.call(shlex.split("mpc stop")) 
         subprocess.call(shlex.split("mpc clear"))        
 
@@ -106,8 +107,9 @@ class InternetRadio(QObject):
         if(self.isPlaying):
             self.reset()   
             self.inetradio_widget.deselectAllStations()
+            self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
-        self.isPlaying = False
+        
 
     def retrievePlaylist(self, url):       
         url = url.strip() 
