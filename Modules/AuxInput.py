@@ -8,6 +8,7 @@ from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.AuxWidget import *
 
+
 class AuxInput(QObject):
     menuOrder = 3
     Enabled = True    

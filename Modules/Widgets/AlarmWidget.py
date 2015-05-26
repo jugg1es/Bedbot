@@ -260,33 +260,43 @@ class AlarmWidget(QtGui.QWidget):
         
         self.btnHourUp = QSvgWidget("icons/triangle-up.svg", self)
         self.btnHourUp.name = Direction.UP        
+        releaseableSender(self.btnHourUp).connect(self.changeReleased) 
         pressableSender(self.btnHourUp).connect(self.changeHour)
-        pressableSender(self.btnHourUp).connect(self.changeReleased) 
         self.btnHourUp.setGeometry(QtCore.QRect(20, 60, 61, 31))           
         
         self.btnHourDown = QSvgWidget("icons/triangle-down.svg", self)
         self.btnHourDown.name = Direction.DOWN
+        releaseableSender(self.btnHourDown).connect(self.changeReleased) 
         pressableSender(self.btnHourDown).connect(self.changeHour)
-        pressableSender(self.btnHourDown).connect(self.changeReleased) 
         self.btnHourDown.setGeometry(QtCore.QRect(20, 155, 61, 31))
         
         self.btnMinuteUp = QSvgWidget("icons/triangle-up.svg", self)
         self.btnMinuteUp.name = Direction.UP
-        pressableSender(self.btnMinuteUp).connect(self.changeMinute) 
-        pressableSender(self.btnMinuteUp).connect(self.changeReleased) 
+        releaseableSender(self.btnMinuteUp).connect(self.changeReleased) 
+        pressableSender(self.btnMinuteUp).connect(self.changeMinute)
         self.btnMinuteUp.setGeometry(QtCore.QRect(110, 60, 61, 31))
         
         self.btnMinuteDown = QSvgWidget("icons/triangle-down.svg", self)
         self.btnMinuteDown.name = Direction.DOWN
-        pressableSender(self.btnMinuteDown).connect(self.changeMinute) 
-        pressableSender(self.btnMinuteDown).connect(self.changeReleased) 
+        releaseableSender(self.btnMinuteDown).connect(self.changeReleased) 
+        pressableSender(self.btnMinuteDown).connect(self.changeMinute)
         self.btnMinuteDown.setGeometry(QtCore.QRect(110, 155, 61, 31))
         
+
+
         self.verticalLayoutWidget_2 = QtGui.QWidget(self)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(235, 50, 80, 151))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.verticalLayoutWidget_2)
         self.verticalLayout_2.setMargin(0)
+
+        self.lblAlarmStatus =  QtGui.QLabel("RADIO", self.verticalLayoutWidget_2)  
+        self.lblAlarmStatus.name = AlarmState.RADIO
+        pressableSender(self.lblAlarmStatus).connect(self.setAlarmState)
+        self.lblAlarmStatus.setAlignment(QtCore.Qt.AlignCenter)
+        self.verticalLayout_2.addWidget(self.lblAlarmStatus)
         
+
+
         
         self.lblOnRadio = QtGui.QLabel("RADIO", self.verticalLayoutWidget_2)  
         self.lblOnRadio.name = AlarmState.RADIO
