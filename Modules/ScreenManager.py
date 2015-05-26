@@ -39,7 +39,7 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     bottomRange = 700
@@ -69,6 +69,7 @@ class ScreenManager(QObject):
         self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
+        self.screenGPIO = pinConfig["SCREEN_POWER"]
         self.initialize()
 
     def processPinEvent(self, pinNum):
@@ -132,10 +133,10 @@ class ScreenManager(QObject):
         ang = self.getAngleFromPulseWidth()
         if(ang == self.openAngle):
             self.move(self.closeAngle)
-            parent.setCurrentLidState(ScreenState.CLOSED)
+            self.setCurrentLidState(ScreenState.CLOSED)
         elif(ang == self.closeAngle):
             self.move(self.openAngle)
-            parent.setCurrentLidState(ScreenState.OPEN)
+            self.setCurrentLidState(ScreenState.OPEN)
 
     def getAngleFromPulseWidth(self):
         pw = self.pi.get_servo_pulsewidth(self.servo)

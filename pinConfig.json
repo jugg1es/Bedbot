@@ -1,71 +1,75 @@
 {
     "pins": [
         {
+            "type": "SCREEN_POWER",
+            //"pin": 508,  //new pitft kernel
+            "pin": 252,   // old pitft kernel 
+            "listenForPress":  false
+        },
+        {
             "type": "SERVO",
             "pin": 18,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "SCREEN_TOGGLE",
             "pin": 22,
             "listenForPress": true
-        }
-        ,
+        },
         {
             "type": "BUTTON_LED_POWER",
             "pin": 27,
             "listenForPress": false
-        }
-        ,
+        },
         {
             "type": "CONTEXT_BUTTON",
             "pin": 6,
-            "listenForPress":  true
+            "listenForPress": true
         },
         {
             "type": "ON_BUTTON",
             "pin": 5,
-            "listenForPress":  true
+            "listenForPress": true
         },
         {
             "type": "OFF_BUTTON",
             "pin": 12,
-            "listenForPress":  true
+            "listenForPress": true
         },
         {
             "type": "AUDIO_ONE_SWITCH",
             "pin": 17,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "AUDIO_TWO_SWITCH",
             "pin": 4,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "OLED_RST",
             "pin": 21,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "OLED_CS",
             "pin": 20,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "OLED_CLK",
             "pin": 19,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "OLED_DC",
             "pin": 16,
-            "listenForPress":  false
+            "listenForPress": false
         },
         {
             "type": "OLED_DIN",
             "pin": 13,
-            "listenForPress":  false
+            "listenForPress": false
         }
 
     ]
