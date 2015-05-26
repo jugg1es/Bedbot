@@ -2,9 +2,8 @@
     "pins": [
         {
             "type": "SCREEN_POWER",
-            //"pin": 508,  //new pitft kernel
-            "pin": 252,   // old pitft kernel 
-            "listenForPress":  false
+            "pin": 252,
+            "listenForPress": false
         },
         {
             "type": "SERVO",
