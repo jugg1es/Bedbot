@@ -33,11 +33,17 @@ class InternetRadio(QObject):
     currentPlaylist = []
 
     isPlaying = False
-
+    
+    subprocessAvailable = True
     widgetVisible = False
 
     def __init__(self):
         super(InternetRadio, self).__init__()
+        try:
+            subprocess.Popen(shlex.split("echo Checking if subprocess module is available")) 
+        except:
+            print("** subprocess module unavailable **")
+            self.subprocessAvailable = False
 
     def setPin(self, pinConfig):
         self.offButton = pinConfig["OFF_BUTTON"]
@@ -92,16 +98,18 @@ class InternetRadio(QObject):
         return self.audioStatusDisplay
 
     def play(self):
-        self.reset()
-        self.isPlaying = True
-        for pl in self.currentPlaylist:
-            subprocess.call(shlex.split("mpc add " + pl)) 
-            subprocess.call(shlex.split("mpc play"))  
+        if(self.subprocessAvailable):
+            self.reset()
+            self.isPlaying = True
+            for pl in self.currentPlaylist:
+                subprocess.Popen(shlex.split("mpc add " + pl)) 
+                subprocess.Popen(shlex.split("mpc play"))  
                   
     def reset(self):
         print("resetting mpc")
-        subprocess.call(shlex.split("mpc stop")) 
-        subprocess.call(shlex.split("mpc clear"))        
+        if(self.subprocessAvailable):
+            subprocess.Popen(shlex.split("mpc stop")) 
+            subprocess.Popen(shlex.split("mpc clear"))        
 
     def stop(self):
         if(self.isPlaying):
