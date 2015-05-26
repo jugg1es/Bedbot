@@ -31,13 +31,10 @@ class ScreenManager(QObject):
     ListenForPinEvent = True
 
     servo = None
-
     togglePin = None
-    toggleInitialized = False
-
     buttonPowerPin = None
 
-    screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = None #this is dependent on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     bottomRange = 700
@@ -54,6 +51,8 @@ class ScreenManager(QObject):
     servoInitPulse = (topRange - bottomRange) + bottomRange
 
     subprocessAvailable = True
+
+    savedPreviousPulseWidth = None
 
 
 
@@ -125,6 +124,7 @@ class ScreenManager(QObject):
         currentAngle = self.getAngleFromPulseWidth()
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
             print("now toggling ")
+            self.savedPreviousPulseWidth = None
             t = Thread(target=self.togglePosition, args=(self,))
             t.start()
      
@@ -136,9 +136,15 @@ class ScreenManager(QObject):
         elif(ang == self.closeAngle):
             self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
+        parent.savedPreviousPulseWidth = self.pi.get_servo_pulsewidth(self.servo)
+        self.pi.set_servo_pulsewidth(self.servo,0)
 
     def getAngleFromPulseWidth(self):
-        pw = self.pi.get_servo_pulsewidth(self.servo)
+        pw = None
+        if(self.savedPreviousPulseWidth != None):
+            pw = self.savedPreviousPulseWidth
+        else:
+            pw = self.pi.get_servo_pulsewidth(self.servo)
         print(pw)
         if(pw == self.middle):
             return 90
@@ -182,8 +188,6 @@ class ScreenManager(QObject):
                 angleTracker += angleDir		
                 self.setAngle(angleTracker)	
                 time.sleep(self.moveSpeed)
-        
-            #pi.set_servo_pulsewidth(servo,0)
             return currentAngle
         return None
 
