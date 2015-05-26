@@ -90,8 +90,7 @@ class ScreenManager(QObject):
             print("setting to initial angle: " + str(self.initAngle))
             self.setAngle(self.initAngle)
             time.sleep(0.5)
-            
-            self.move(self.openAngle, self.initAngle)
+            self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
         
         
@@ -132,14 +131,11 @@ class ScreenManager(QObject):
     def togglePosition(self, parent):
         ang = parent.getAngleFromPulseWidth()
         if(ang == self.openAngle):
-            self.move(self.closeAngle, ang)
+            self.move(self.closeAngle)
             self.setCurrentLidState(ScreenState.CLOSED)
         elif(ang == self.closeAngle):
-            self.move(self.openAngle, ang)
+            self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
-        parent.savedPreviousPulseWidth = self.pi.get_servo_pulsewidth(self.servo)
-        print("saved pulse width at: " + str(parent.savedPreviousPulseWidth))
-        self.pi.set_servo_pulsewidth(self.servo,0)
 
     def getAngleFromPulseWidth(self):
         pw = None
@@ -175,8 +171,8 @@ class ScreenManager(QObject):
         self.pi.set_servo_pulsewidth(self.servo, mod)
 
 
-    def move(self, angle, currentAngle):
-        
+    def move(self, angle):
+        currentAngle = self.getAngleFromPulseWidth()
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle ==  self.initAngle):
             #print("current angle: " + str(currentAngle))
             angleDiff = currentAngle - angle
