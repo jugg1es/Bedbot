@@ -137,6 +137,7 @@ class ScreenManager(QObject):
             self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
         parent.savedPreviousPulseWidth = self.pi.get_servo_pulsewidth(self.servo)
+        print("saved pulse width at: " + str(parent.savedPreviousPulseWidth))
         self.pi.set_servo_pulsewidth(self.servo,0)
 
     def getAngleFromPulseWidth(self):
