@@ -47,9 +47,7 @@ class ScreenManager(QObject):
 
     above90Range = topRange - middle
     below90Range = middle - bottomRange
-
-    servoInitPulse = (topRange - bottomRange) 
-
+    
     subprocessAvailable = True
 
     savedPreviousPulseWidth = None
@@ -88,9 +86,9 @@ class ScreenManager(QObject):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
             self.toggleButtonPower(False)
-            print("setting to initial pulse width: " + str(self.servoInitPulse))
-            self.pi.set_servo_pulsewidth(self.servo, self.servoInitPulse)
-
+            initAngle = self.closeAngle - self.openAngle
+            print("setting to initial angle: " + str(initAngle))
+            self.setAngle(initAngle)
             self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
         
@@ -138,7 +136,7 @@ class ScreenManager(QObject):
             self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
         parent.savedPreviousPulseWidth = self.pi.get_servo_pulsewidth(self.servo)
-        self.pi.set_servo_pulsewidth(self.servo,0)
+        #self.pi.set_servo_pulsewidth(self.servo,0)
 
     def getAngleFromPulseWidth(self):
         pw = None
