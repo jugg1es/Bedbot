@@ -52,7 +52,7 @@ class ScreenManager(QObject):
 
     savedPreviousPulseWidth = None
 
-
+    initAngle = closeAngle - openAngle
 
     def __init__(self):
         super(ScreenManager, self).__init__()
@@ -86,9 +86,10 @@ class ScreenManager(QObject):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
             self.toggleButtonPower(False)
-            initAngle = self.closeAngle - self.openAngle
-            print("setting to initial angle: " + str(initAngle))
-            self.setAngle(initAngle)
+            
+            print("setting to initial angle: " + str(self.initAngle))
+            self.setAngle(self.initAngle)
+            time.sleep(0.5)
             self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
         
@@ -121,7 +122,7 @@ class ScreenManager(QObject):
         
         currentAngle = self.getAngleFromPulseWidth()
         print("checking if toggling possible  current angle: " + str(currentAngle))
-        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
+        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == self.initAngle):
             print("now toggling ")
             self.savedPreviousPulseWidth = None
             t = Thread(target=self.togglePosition, args=(self,))
@@ -174,7 +175,7 @@ class ScreenManager(QObject):
 
     def move(self, angle):
         currentAngle = self.getAngleFromPulseWidth()
-        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
+        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle ==  self.initAngle):
             #print("current angle: " + str(currentAngle))
             angleDiff = currentAngle - angle
             angleTracker = currentAngle
