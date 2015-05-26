@@ -39,7 +39,7 @@ class ScreenManager(QObject):
     buttonPowerPin = None
     btnPowerInitialized = False
 
-    screenGPIO = 252 #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
 
     bottomRange = 700
@@ -66,6 +66,7 @@ class ScreenManager(QObject):
             self.subprocessAvailable = False
 
     def setPin(self, pinConfig):
+        self.screenGPIO = pinConfig["SCREEN_POWER"]
         self.servo = pinConfig["SERVO"]
         self.togglePin = pinConfig["SCREEN_TOGGLE"]
         self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
