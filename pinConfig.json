@@ -2,7 +2,7 @@
     "pins": [
         {
             "type": "SCREEN_POWER",
-            "pin": 252,
+            "pin": 508,
             "listenForPress": false
         },
         {
