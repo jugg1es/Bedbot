@@ -14,8 +14,7 @@ import shlex
 
 class ScreenState(Enum):
     CLOSED = 0
-    MOVING = 1
-    OPEN = 2
+    OPEN = 1
 
 hasIOLibraries = False
 
@@ -37,7 +36,6 @@ class ScreenManager(QObject):
     toggleInitialized = False
 
     buttonPowerPin = None
-    btnPowerInitialized = False
 
     screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
@@ -52,6 +50,8 @@ class ScreenManager(QObject):
 
     above90Range = topRange - middle
     below90Range = middle - bottomRange
+
+    servoInitPulse = (topRange - bottomRange) + bottomRange
 
     subprocessAvailable = True
 
@@ -74,8 +74,7 @@ class ScreenManager(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.togglePin == pinNum):
-            if(self.currentState != ScreenState.MOVING):
-                self.positionToggled()
+            self.positionToggled()
 
 
     def initialize(self):
@@ -86,12 +85,12 @@ class ScreenManager(QObject):
             subprocess.Popen(shlex.split("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\""))      
 
 
-        if(hasIOLibraries and self.btnPowerInitialized == False):
+        if(hasIOLibraries):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
-            self.btnPowerInitialized = True
             self.toggleButtonPower(False)
-            self.setAngle(90)
+            print("setting to initial pulse width: " + str(self.servoInitPulse))
+            self.pi.set_servo_pulsewidth(self.servo, self.servoInitPulse)
 
             self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
