@@ -67,6 +67,7 @@ class BedbotWidget(QtGui.QWidget):
 
         self.loadedModules = modules
 
+        self.connect(self, QtCore.SIGNAL('processPigpioEvent'), self.pinEventCallback)
         self.initializeMenu()
 
         menuWidgets = []
@@ -218,11 +219,8 @@ class BedbotWidget(QtGui.QWidget):
     def pigpioCallback(self, gpio, level, tick):
        currentlyDisabled = gpio in self.disabledPins
        if(currentlyDisabled == False):
-           self.logEvent("pin callback for channel: " + str(gpio))
            self.disabledPins.append(gpio)
-           for m in self.loadedModules:
-                if(self.moduleHasFunction(m, "processPinEvent")):
-                    m.processPinEvent(gpio)
+           self.emit(QtCore.SIGNAL('processPigpioEvent'), gpio)
            t = Thread(target=self.reenablePin, args=(self, gpio,))        
            t.start()
 
