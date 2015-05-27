@@ -9,6 +9,8 @@ from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
+from Modules.Widgets.Popup import *
+import json
 
     
 class RadioWidget(QtGui.QWidget):
@@ -62,39 +64,54 @@ class RadioWidget(QtGui.QWidget):
         releaseable(self.slideDownButton).connect(self.doFreqDownReleased) 
         pressable(self.slideDownButton).connect(self.doFreqDownPressed)
 
+        self.horizontalLayoutWidget = QtGui.QWidget(self)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 100, 300, 80))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setAlignment(self.horizontalLayoutWidget, QtCore.Qt.AlignCenter)
+        self.horizontalLayout.setMargin(0)
 
-
-        self.scrollarea = QtGui.QScrollArea(self)
-        self.scrollarea.setGeometry(QtCore.QRect(10, 100, 300, 80))
-        self.scrollarea.setWidgetResizable(True)
-        layout = QtGui.QHBoxLayout(self.scrollarea)
-        self.scrollarea.setWidget(layout.widget())
-        testLabel = QtGui.QLabel("Test")
-        testLabel.setStyleSheet('color: #fff')
-        layout.addWidget(testLabel)
-
-        '''
-        self.horizLayoutWidget = QtGui.QWidget(self)
-        self.horizLayoutWidget.setGeometry(QtCore.QRect(0, 100, 320, 80))
-        self.horizLayoutWidget.setAutoFillBackground(True)
-        p = self.horizLayoutWidget.palette()
-        p.setColor(self.horizLayoutWidget.backgroundRole(), Qt.blue)
-        self.horizLayoutWidget.setPalette(p)
-        self.horizLayout = QtGui.QHBoxLayout(self.horizLayoutWidget)
-        self.horizLayout.setMargin(0)
-
-        self.scroll = QtGui.QScrollArea()
-        self.scroll.setWidget(self.horizLayoutWidget)
-        self.scroll.setWidgetResizable(True)
-        self.scroll.setFixedHeight(80)
-        layout = QtGui.QHBoxLayout(self)
-        layout.addWidget(self.scroll)
-               
-        '''
-       
-        
         QtCore.QMetaObject.connectSlotsByName(self)       
         
+    def fillPresets(self, presets):
+        print("filling presets")
+        self.clearPresets()
+        font = QtGui.QFont()
+        font.setPointSize(20)
+        for x in range(0, len(presets)):
+            pre = presets[x]
+            print("preset " + str(pre.id) + " freq: " + str(pre.frequency))
+            testLabel = QtGui.QLabel(str(pre.frequency))
+            testLabel.setStyleSheet('color: #fff')
+            testLabel.setAlignment(QtCore.Qt.AlignCenter)
+            testLabel.setFont(font)
+            testLabel.freq = pre.frequency;
+            testLabel.preID = pre.id
+            holdable(testLabel).connect(self.presetChangePressed)
+            clickable(testLabel).connect(self.presetSelected)
+            self.horizontalLayout.addWidget(testLabel)
+
+    def presetSelected(self, obj):
+        print("preset selected: " + str(obj.freq))
+        self.currentFrequency = float(obj.freq)
+        self.updateRadioFrequency()
+
+
+    def presetChangePressed(self, obj):
+        print("preset change pressed: " + str(obj.freq))
+        confirm = Popup(self)
+        self.connect(confirm, QtCore.SIGNAL('popupResult'), self.confirmResultCallback)
+        confirm.doConfirm("Change Preset?", obj.preID)
+
+    def confirmResultCallback(self, obj):
+        args = obj;
+        if(args[0] == "OK"):
+            self.emit(QtCore.SIGNAL('presetChanged'), [args[1], self.currentFrequency])
+
+
+    def clearPresets(self):
+        for i in reversed(range(self.horizontalLayout.count())): 
+            self.horizontalLayout.itemAt(i).widget().setParent(None)
+
         
     def updateRadioFrequency(self):
         self.frequencyDisplay.display("{0:.1f}".format(self.currentFrequency))

@@ -5,6 +5,10 @@ from PyQt4.QtCore import QObject
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.RadioWidget import *
+from Modules.Objects.radioPreset import *
+import json
+import os.path
+
 
 class Radio(QObject):
 
@@ -23,6 +27,10 @@ class Radio(QObject):
     
     widgetVisible = False
 
+    radioPresetFile = "radioPresets.json"
+
+    radioPresets = []
+
     def __init__(self):
         super(Radio, self).__init__()
 
@@ -38,6 +46,10 @@ class Radio(QObject):
         self.radio_widget = RadioWidget(parent)       
         self.radio_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.radio_widget.setVisible(False)
+        self.connect(self.radio_widget, QtCore.SIGNAL('presetChanged'), self.presetChangedCallback)        
+        self.loadRadioPresets()
+        self.radio_widget.fillPresets(self.radioPresets)
+
 
     def getMenuIcon(self):
         return "icons/radio-tower.svg"
@@ -49,6 +61,64 @@ class Radio(QObject):
         return 65
     def getMenuIconWidth(self):
         return 65
+
+    def presetChangedCallback(self, d):
+        print(d)        
+        for x in range(0, len(self.radioPresets)):
+            pre = self.radioPresets[x]
+            print(int(pre.id));
+            print(int(d[0]));
+            if(int(pre.id) == int(d[0])):
+                pre.frequency = str(d[1])
+        self.saveRadioPresets()
+        self.radio_widget.fillPresets(self.radioPresets)
+
+    def loadRadioPresets(self):
+        presetData = None
+        buildDefaultData = False
+
+        if(os.path.isfile(self.radioPresetFile) == False):
+            buildDefaultData = True
+        try:
+            with open(self.radioPresetFile) as data_file:    
+                presetData = json.load(data_file)
+        except:
+            buildDefaultData = True
+
+        if(buildDefaultData == True or presetData == None):
+            presetData = []
+            for x in range(0,3):
+                d = {}
+                d["frequency"] = "88.1"
+                d["id"] = str(x)
+                presetData.append(d)
+
+            with open(self.radioPresetFile, 'w') as outfile:
+                json.dump(presetData, outfile)
+
+        self.radioPresets = []
+
+        with open(self.radioPresetFile) as data_file:    
+            data = json.load(data_file)     
+
+        for x in range(0, len(data)):
+            pre = radioPreset(data[x])
+            self.radioPresets.append(pre)
+
+    def saveRadioPresets(self):
+        data = []
+        for x in range(0, len(self.radioPresets)):
+            pre = self.radioPresets[x]
+            d = {}
+            d["frequency"] = str(pre.frequency)
+            d["id"] = str(pre.id)
+            data.append(d)
+
+        with open(self.radioPresetFile, 'w') as outfile:
+             json.dump(data, outfile)
+
+
+
 
     def setPin(self, pinConfig):
         self.offButton = pinConfig["OFF_BUTTON"]
