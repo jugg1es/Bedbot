@@ -179,7 +179,7 @@ class Radio(QObject):
 
     def generateCommand(self, freq):
         cmd = self.rtlfmCommand.replace("@FREQ", str(freq) + "M")
-        cmd = cmd.replace("@DEVICE", this.audioDeviceIdentifier)
+        cmd = cmd.replace("@DEVICE", self.audioDeviceIdentifier)
         return cmd
 
 
