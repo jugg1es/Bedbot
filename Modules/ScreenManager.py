@@ -143,7 +143,6 @@ class ScreenManager(QObject):
 
     def getAngleFromPulseWidth(self):
         pw = self.pi.get_servo_pulsewidth(self.servo)
-        print(pw)
         if(pw == 0):
             return None
         elif(pw == self.middle):
@@ -163,6 +162,7 @@ class ScreenManager(QObject):
         pwa = self.getAngleFromPulseWidth()
         if(pwa == None):
             pwa = self.currentAngleTracker
+        print("returning: " + str(pwa))
         return pwa
 
     def getPulseWidth(self, angle):	
