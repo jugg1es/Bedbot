@@ -191,7 +191,7 @@ class ScreenManager(QObject):
                 angleTracker += angleDir		
                 self.setAngle(angleTracker)	
                 time.sleep(self.moveSpeed)
-            pi.set_servo_pulsewidth(servo,0)
+            self.pi.set_servo_pulsewidth(servo,0)
             return currentAngle
         return None
 
