@@ -55,7 +55,7 @@ class RadioWidget(QtGui.QWidget):
         self.slideUpButton = QSvgWidget("icons/forward3.svg", self.slideUpFrame)
         self.slideUpButton.setGeometry(QtCore.QRect(5, 5, 40, 40))  
 
-        releaseable(self.slideUpButton).connect(self.doFreqUpReleased)
+        #releaseable(self.slideUpButton).connect(self.doFreqUpReleased)
         pressable(self.slideUpButton).connect(self.doFreqUpPressed)        
         
         self.slideDownFrame = QFrame(self)        
@@ -66,7 +66,7 @@ class RadioWidget(QtGui.QWidget):
         
         self.slideDownButton = QSvgWidget("icons/backward2.svg", self.slideDownFrame)
         self.slideDownButton.setGeometry(QtCore.QRect(0, 5, 40, 40))    
-        releaseable(self.slideDownButton).connect(self.doFreqDownReleased) 
+        #releaseable(self.slideDownButton).connect(self.doFreqDownReleased) 
         pressable(self.slideDownButton).connect(self.doFreqDownPressed)
 
         self.horizontalLayoutWidget = QtGui.QWidget(self)
@@ -91,8 +91,9 @@ class RadioWidget(QtGui.QWidget):
             presetButton.setStyleSheet(self.popupButtonStyle)
             presetButton.freq = pre.frequency;
             presetButton.preID = pre.id
-            holdable(presetButton).connect(self.presetChangePressed)
-            clickable(presetButton).connect(self.presetSelected)
+            #holdable(presetButton).connect(self.presetChangePressed)
+            #clickable(presetButton).connect(self.presetSelected)
+            releaseableSender(presetButton).connect(self.presetSelected)
 
             presetDisplay = QtGui.QLabel(presetButton)
             presetDisplay.setGeometry(QtCore.QRect(5,5,60,60))
@@ -144,9 +145,10 @@ class RadioWidget(QtGui.QWidget):
         self.stopTimer()
         
     def doFreqDownPressed(self):
-        self.slideDownFrame.setStyleSheet(self.buttonPressedStyle)
+        #self.slideDownFrame.setStyleSheet(self.buttonPressedStyle)
         self.scanDirection = "down"
-        self.startTimer()        
+        self.doChangeFrequency()
+        #self.startTimer()        
         
         
     def doFreqUpReleased(self):
@@ -154,9 +156,14 @@ class RadioWidget(QtGui.QWidget):
         self.stopTimer()
         
     def doFreqUpPressed(self):
-        self.slideUpFrame.setStyleSheet(self.buttonPressedStyle)
+        #self.slideUpFrame.setStyleSheet(self.buttonPressedStyle)
         self.scanDirection = "up"
-        self.startTimer()     
+        self.doChangeFrequency()
+        #self.startTimer()     
+
+    def doChangeFrequency(self):
+        t = Thread(target=self.changeFrequency, args=(self,))        
+        t.start()
         
     def startTimer(self):
         self.scanInterval = 0.5
@@ -181,16 +188,16 @@ class RadioWidget(QtGui.QWidget):
         
         
     
-    def changeFrequency(self):
+    def changeFrequency(self, parent):
         
-        freq = self.currentFrequency
+        freq = parent.currentFrequency
         if(self.scanDirection == "down"):
             freq = freq - 0.2;
         elif (self.scanDirection =="up"):
             freq = freq + 0.2;
         if(self.isFreqValid(freq)):
-            self.currentFrequency = freq
-            self.updateRadioFrequency()
+            parent.currentFrequency = freq
+            parent.updateRadioFrequency()
         
     
     
