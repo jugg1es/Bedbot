@@ -165,8 +165,9 @@ class Radio(QObject):
             self.emit(QtCore.SIGNAL('audioStarted'), self)
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
             if(self.subprocessAvailable):
-                killrtlfm = subprocess.Popen(shlex.split("sudo killall rtl_fm"), stdout=subprocess.PIPE)
-                killrtlfm.wait()
+                subprocess.Popen(shlex.split("sudo killall rtl_fm"))
+                subprocess.Popen(shlex.split("sudo killall aplay"))
+                time.sleep(1)
                 rtlfmStr = self.rtlfmCommand.replace("@FREQ", str(self.radio_widget.currentFrequency) + "M")
                 aplayStr =  self.aplayCommand.replace("@DEVICE", str(self.audioDeviceIdentifier))
                 rtlfm = subprocess.Popen(shlex.split(rtlfmStr), stdout=subprocess.PIPE)
