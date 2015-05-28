@@ -166,7 +166,8 @@ class Radio(QObject):
             self.emit(QtCore.SIGNAL('audioStarted'), self)
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
             if(self.subprocessAvailable):
-                subprocess.Popen(shlex.split(cmd)) 
+                subprocess.Popen( cmd, stdin=subprocess.PIPE)
+                #subprocess.Popen(shlex.split(cmd)) 
                 
     def stop(self):
         if(self.isPlaying == True):
