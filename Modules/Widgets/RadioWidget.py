@@ -24,7 +24,11 @@ class RadioWidget(QtGui.QWidget):
     
     buttonDefaultStyle = "border: 2px solid #000;"
     buttonPressedStyle = "border: 2px solid #fff;"
-    
+
+    presetFrameStyle = "border: 2px solid #fff; border-radius: 10px; margin:10px; "
+    popupButtonStyle = "QPushButton { font-size:20px;background-color:#000; border: 2px solid #000; border-radius: 10px; color:#fff; padding: 5px; } QPushButton:pressed { background-color:#fff; color: #000;  }"
+
+
     
     def __init__(self, parent):
         super(RadioWidget, self).__init__(parent)
@@ -73,31 +77,31 @@ class RadioWidget(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(self)       
         
     def fillPresets(self, presets):
-        print("filling presets")
+        print("Filling Radio presets")
         self.clearPresets()
         font = QtGui.QFont()
         font.setPointSize(20)
+        self.changingPreset = None
         for x in range(0, len(presets)):
             pre = presets[x]
-            print("preset " + str(pre.id) + " freq: " + str(pre.frequency))
-            testLabel = QtGui.QLabel(str(pre.frequency))
-            testLabel.setStyleSheet('color: #fff')
-            testLabel.setAlignment(QtCore.Qt.AlignCenter)
-            testLabel.setFont(font)
-            testLabel.freq = pre.frequency;
-            testLabel.preID = pre.id
-            holdable(testLabel).connect(self.presetChangePressed)
-            clickable(testLabel).connect(self.presetSelected)
-            self.horizontalLayout.addWidget(testLabel)
+            presetButton = QtGui.QPushButton(str(pre.frequency))
+            presetButton.freq = pre.frequency;
+            presetButton.preID = pre.id
+            presetButton.setStyleSheet(self.popupButtonStyle)
+            presetButton.clicked.connect(self.presetSelected)
+            holdable(presetButton, 2).connect(self.presetChangePressed)
+            self.horizontalLayout.addWidget(presetButton)
+    
+    def presetSelected(self):       
+        obj = self.sender()
+        if(self.changingPreset == None or self.changingPreset == False):
+            print("preset selected: " + str(obj.freq))
+            self.currentFrequency = float(obj.freq)
+            self.updateRadioFrequency()
 
-    def presetSelected(self, obj):
-        print("preset selected: " + str(obj.freq))
-        self.currentFrequency = float(obj.freq)
-        self.updateRadioFrequency()
 
-
-    def presetChangePressed(self, obj):
-        print("preset change pressed: " + str(obj.freq))
+    def presetChangePressed(self, obj):       
+        self.changingPreset = True 
         confirm = Popup(self)
         self.connect(confirm, QtCore.SIGNAL('popupResult'), self.confirmResultCallback)
         confirm.doConfirm("Change Preset?", obj.preID)
@@ -106,6 +110,7 @@ class RadioWidget(QtGui.QWidget):
         args = obj;
         if(args[0] == "OK"):
             self.emit(QtCore.SIGNAL('presetChanged'), [args[1], self.currentFrequency])
+        self.changingPreset = False
 
 
     def clearPresets(self):
@@ -146,8 +151,6 @@ class RadioWidget(QtGui.QWidget):
     def startTimer(self):
         self.scanInterval = 0.5
         self.processTimer()
-        
-        # perpetualTimer(self.scanInterval, self.processTimer)
     
     def processTimer(self):        
         if(self.scanDirection != "none"):            

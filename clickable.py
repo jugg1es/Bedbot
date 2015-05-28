@@ -4,6 +4,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import time
 import datetime
+from threading import Timer,Thread,Event
 
 def clickable(widget):
     class Filter(QObject):    
@@ -27,23 +28,28 @@ def clickable(widget):
     widget.installEventFilter(filter)
     return filter.clicked
 
-def holdable(widget):
+def holdable(widget, holdTime=1):
     class Filter(QObject):    
-        clicked = pyqtSignal(QWidget)        
+        clicked = pyqtSignal(QWidget)      
+        timer = None
+        sender = None
+        def holdTimerCallback(self):
+            print("callback")
+            self.timer.cancel()
+            self.clicked.emit(self.sender)
+
         def eventFilter(self, obj, event):        
             if obj == widget:
                 if event.type() == QEvent.MouseButtonPress:
                     if obj.rect().contains(event.pos()):
-                        obj.heldDown = datetime.datetime.now()
-                        #return True     
+                        self.sender = obj
+                        self.timer = Timer(holdTime,self.holdTimerCallback)
+                        self.timer.start()                        
+
                 elif event.type() == QEvent.MouseButtonRelease:
                     if obj.rect().contains(event.pos()):
-                        if(obj.heldDown):
-                            diff = datetime.datetime.now() - obj.heldDown
-                            obj.heldDown = None
-                            if(diff.total_seconds() >= 1):                                
-                                self.clicked.emit(obj)
-                                return True           
+                        self.timer.cancel()
+
             return False    
     filter = Filter(widget)
     widget.installEventFilter(filter)
