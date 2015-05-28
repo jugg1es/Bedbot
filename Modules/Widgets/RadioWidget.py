@@ -98,6 +98,7 @@ class RadioWidget(QtGui.QWidget):
             print("preset selected: " + str(obj.freq))
             self.currentFrequency = float(obj.freq)
             self.updateRadioFrequency()
+            self.emit(QtCore.SIGNAL('frequencyChanged'),self.currentFrequency)
 
 
     def presetChangePressed(self, obj):       
