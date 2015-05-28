@@ -26,9 +26,9 @@ class RadioWidget(QtGui.QWidget):
     buttonPressedStyle = "border: 2px solid #fff;"
 
     presetFrameStyle = "border: 2px solid #fff; border-radius: 10px; margin:10px; "
-    popupButtonStyle = "QPushButton { font-size:20px;background-color:#000; border: 2px solid #000; border-radius: 10px; color:#fff; padding: 5px; } QPushButton:pressed { background-color:#fff; color: #000;  }"
+    popupButtonStyle = "font-size:20px;background-color:#000; border: 2px solid #fff; border-radius: 10px; color:#fff; padding: 5px;"
 
-
+    popupContentsStyle = "border: none; color:#fff"
     
     def __init__(self, parent):
         super(RadioWidget, self).__init__(parent)
@@ -54,6 +54,7 @@ class RadioWidget(QtGui.QWidget):
         
         self.slideUpButton = QSvgWidget("icons/forward3.svg", self.slideUpFrame)
         self.slideUpButton.setGeometry(QtCore.QRect(5, 5, 40, 40))  
+
         releaseable(self.slideUpButton).connect(self.doFreqUpReleased)
         pressable(self.slideUpButton).connect(self.doFreqUpPressed)        
         
@@ -84,25 +85,33 @@ class RadioWidget(QtGui.QWidget):
         self.changingPreset = None
         for x in range(0, len(presets)):
             pre = presets[x]
-            presetButton = QtGui.QPushButton(str(pre.frequency))
+            presetButton = QFrame()       
+            presetButton.setFrameShape(QtGui.QFrame.Box)
+            presetButton.setFrameShadow(QtGui.QFrame.Plain)
+            presetButton.setStyleSheet(self.popupButtonStyle)
             presetButton.freq = pre.frequency;
             presetButton.preID = pre.id
-            presetButton.setStyleSheet(self.popupButtonStyle)
-            presetButton.clicked.connect(self.presetSelected)
-            #holdable(presetButton, 2).connect(self.presetChangePressed)
+            holdable(presetButton).connect(self.presetChangePressed)
+            clickable(presetButton).connect(self.presetSelected)
+
+            presetDisplay = QtGui.QLabel(presetButton)
+            presetDisplay.setGeometry(QtCore.QRect(5,5,60,60))
+            presetDisplay.setAlignment(QtCore.Qt.AlignCenter)
+            presetDisplay.setStyleSheet(self.popupContentsStyle)
+            presetDisplay.setFont(font)
+            presetDisplay.setText(str(pre.frequency))
+
+
             self.horizontalLayout.addWidget(presetButton)
     
-    def presetSelected(self):       
-        obj = self.sender()
-        if(self.changingPreset == None or self.changingPreset == False):
-            print("preset selected: " + str(obj.freq))
-            self.currentFrequency = float(obj.freq)
-            self.updateRadioFrequency()
-            self.emit(QtCore.SIGNAL('frequencyChanged'),self.currentFrequency)
+    def presetSelected(self, obj):     
+        print("preset selected: " + str(obj.freq))
+        self.currentFrequency = float(obj.freq)
+        self.updateRadioFrequency()
+        self.emit(QtCore.SIGNAL('frequencyChanged'),self.currentFrequency)
 
 
-    def presetChangePressed(self, obj):       
-        self.changingPreset = True 
+    def presetChangePressed(self, obj):   
         confirm = Popup(self)
         self.connect(confirm, QtCore.SIGNAL('popupResult'), self.confirmResultCallback)
         confirm.doConfirm("Change Preset?", obj.preID)
@@ -176,9 +185,9 @@ class RadioWidget(QtGui.QWidget):
         
         freq = self.currentFrequency
         if(self.scanDirection == "down"):
-            freq = freq - 0.1;
+            freq = freq - 0.2;
         elif (self.scanDirection =="up"):
-            freq = freq + 0.1;
+            freq = freq + 0.2;
         if(self.isFreqValid(freq)):
             self.currentFrequency = freq
             self.updateRadioFrequency()

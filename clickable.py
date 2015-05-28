@@ -6,27 +6,39 @@ import time
 import datetime
 from threading import Timer,Thread,Event
 
-def clickable(widget):
+def clickable(widget, holdTime=1):
     class Filter(QObject):    
-        clicked = pyqtSignal(QWidget)        
+        clicked = pyqtSignal(QWidget)      
+        timer = None
+        sender = None
+        timeoutReached = False
+
+        def holdTimerCallback(self):
+            print("callback")
+            self.timer.cancel()
+            self.timeoutReached = True
+
         def eventFilter(self, obj, event):        
             if obj == widget:
                 if event.type() == QEvent.MouseButtonPress:
                     if obj.rect().contains(event.pos()):
-                        obj.clickedTime = datetime.datetime.now()
-                        #return True     
+                        self.sender = obj
+                        self.timer = Timer(holdTime,self.holdTimerCallback)
+                        self.timer.start()                        
+
                 elif event.type() == QEvent.MouseButtonRelease:
-                    if obj.rect().contains(event.pos()):
-                        if(obj.clickedTime):
-                            diff = datetime.datetime.now() - obj.clickedTime
-                            obj.clickedTime = None
-                            if(diff.total_seconds() < 1):                                
-                                self.clicked.emit(obj)
-                                return True           
+                    if obj.rect().contains(event.pos()):                        
+                        if(self.timeoutReached == False):
+                            self.timer.cancel()
+                            self.clicked.emit(self.sender)
+
             return False    
     filter = Filter(widget)
     widget.installEventFilter(filter)
     return filter.clicked
+
+
+
 
 def holdable(widget, holdTime=1):
     class Filter(QObject):    
