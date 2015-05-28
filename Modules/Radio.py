@@ -20,6 +20,7 @@ class Radio(QObject):
     offButton = None
     onButton = None
     audioRelayPin = None
+    contextPin = None
 
     audioStatusDisplay =""
     Enabled = True    
@@ -81,6 +82,7 @@ class Radio(QObject):
         self.offButton = pinConfig["OFF_BUTTON"]
         self.onButton = pinConfig["ON_BUTTON"]
         self.audioRelayPin = pinConfig["AUDIO_ONE_SWITCH"]
+        self.contextPin = pinConfig["CONTEXT_BUTTON"]
         
 
     def processPinEvent(self, pinNum):
@@ -88,6 +90,8 @@ class Radio(QObject):
             self.stop()
         elif(self.onButton == pinNum):
             self.play()
+        elif(self.contextPin == pinNum):
+            self.preparePresetChange()
 
     def initialize(self):
         self.loadRadioPresets()
@@ -103,6 +107,9 @@ class Radio(QObject):
         if(self.isPlaying):
             self.play()
 
+    def preparePresetChange(self):
+        print("prepare preset change")
+        self.radio_widget.doPresetChangeSelect()
 
     def presetChangedCallback(self, d):
         print(d)        
