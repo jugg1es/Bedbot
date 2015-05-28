@@ -94,7 +94,7 @@ class ScreenManager(QObject):
             self.toggleButtonPower(False)
             self.setAngle(90)
 
-            self.move(self.openAngle)
+            self.currentAngleTracker = self.move(self.openAngle)
             self.setCurrentLidState(ScreenState.OPEN)
         
         
@@ -156,6 +156,8 @@ class ScreenManager(QObject):
             return int(round(adj))
 
     def getCurrentAngle(self):
+
+        print("getting current angle")
         pwa = self.getAngleFromPulseWidth()
         if(pwa == None):
             pwa = self.currentAngleTracker
