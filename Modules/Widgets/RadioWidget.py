@@ -25,11 +25,15 @@ class RadioWidget(QtGui.QWidget):
     buttonDefaultStyle = "border: 2px solid #000;"
     buttonPressedStyle = "border: 2px solid #fff;"
 
-    presetFrameStyle = "border: 2px solid #000; border-radius: 10px; margin:10px; "
-    presetFrameSelectedStyle = "border: 2px solid #fff; border-radius: 10px; margin:10px; "
+    presetFrameStyle = "border: 2px solid #7f7f7f; border-radius: 10px; margin:10px; "
+    presetFrameSelectedStyle = "border: none; background-color: #fff200; border-radius: 10px; margin:10px; "
 
 
-    popupContentsStyle = "border: none; color:#fff"
+    presetContentsStyle = "border: none; color:#fff"
+    presetContentsSelectedStyle = "border: none; color:#000"
+
+
+    settingPreset = False
     
     def __init__(self, parent):
         super(RadioWidget, self).__init__(parent)
@@ -78,7 +82,8 @@ class RadioWidget(QtGui.QWidget):
 
         QtCore.QMetaObject.connectSlotsByName(self)       
         
-    def fillPresets(self, presets):
+    def fillPresets(self, presets, selected=False):
+        self.settingPreset = selected
         print("Filling Radio presets")
         self.clearPresets()
         font = QtGui.QFont()
@@ -89,7 +94,10 @@ class RadioWidget(QtGui.QWidget):
             presetButton = QFrame()       
             presetButton.setFrameShape(QtGui.QFrame.Box)
             presetButton.setFrameShadow(QtGui.QFrame.Plain)
-            presetButton.setStyleSheet(self.presetFrameStyle)
+            if(selected == True):
+                presetButton.setStyleSheet(self.presetFrameSelectedStyle)
+            else:
+                presetButton.setStyleSheet(self.presetFrameStyle)
             presetButton.freq = pre.frequency;
             presetButton.preID = pre.id
             releaseableSender(presetButton).connect(self.presetSelected)
@@ -97,7 +105,10 @@ class RadioWidget(QtGui.QWidget):
             presetDisplay = QtGui.QLabel(presetButton)
             presetDisplay.setGeometry(QtCore.QRect(5,0,90,80))
             presetDisplay.setAlignment(QtCore.Qt.AlignCenter)
-            presetDisplay.setStyleSheet(self.popupContentsStyle)
+            if(selected == True):
+                presetDisplay.setStyleSheet(self.presetContentsSelectedStyle)
+            else:
+                presetDisplay.setStyleSheet(self.presetContentsStyle)
             presetDisplay.setFont(font)
             presetDisplay.setText(str(pre.frequency))
 
@@ -105,13 +116,14 @@ class RadioWidget(QtGui.QWidget):
             self.horizontalLayout.addWidget(presetButton)
     
     def presetSelected(self, obj):     
-        print("preset selected: " + str(obj.freq))
-        self.currentFrequency = float(obj.freq)
-        self.updateRadioFrequency()
-        self.emit(QtCore.SIGNAL('frequencyChanged'),self.currentFrequency)
-
-    def doPresetChangeSelect(self):
-        print("preset chnagE")
+        if(self.settingPreset):
+            self.presetChangePressed(obj)
+        else:
+            print("preset selected: " + str(obj.freq))
+            self.currentFrequency = float(obj.freq)
+            self.updateRadioFrequency()
+            self.emit(QtCore.SIGNAL('frequencyChanged'),self.currentFrequency)
+             
 
     def presetChangePressed(self, obj):   
         confirm = Popup(self)

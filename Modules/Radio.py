@@ -109,7 +109,7 @@ class Radio(QObject):
 
     def preparePresetChange(self):
         print("prepare preset change")
-        self.radio_widget.doPresetChangeSelect()
+        self.radio_widget.fillPresets(self.radioPresets, True)
 
     def presetChangedCallback(self, d):
         print(d)        
