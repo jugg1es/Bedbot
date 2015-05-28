@@ -183,6 +183,7 @@ class Radio(QObject):
 
                 
     def stop(self):
+        self.radio_widget.fillPresets(self.radioPresets)
         if(self.isPlaying == True):
             print("stopping radio")
             self.audioStatusDisplay = ""
