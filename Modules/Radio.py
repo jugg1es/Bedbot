@@ -37,7 +37,8 @@ class Radio(QObject):
 
     audioDeviceIdentifier = "plughw:0,0"
 
-    rtlfmCommand = "rtl_fm -M wbfm -f @FREQ | aplay -D @DEVICE -r 32000 -f S16_LE -t raw -c 1"
+    rtlfmCommand = "rtl_fm -M wbfm -f @FREQ"
+    aplayCommand ="aplay -D @DEVICE -r 32000 -f S16_LE -t raw -c 1"
 
 
     def __init__(self):
@@ -159,15 +160,18 @@ class Radio(QObject):
              json.dump(data, outfile)
 
     def play(self):
-        if(self.widgetVisible == True and self.radio_widget.currentFrequency):
-            cmd = self.generateCommand(self.radio_widget.currentFrequency)
-            print("**CALLING** " + cmd)            
+        if(self.widgetVisible == True and self.radio_widget.currentFrequency):         
             self.isPlaying = True
             self.emit(QtCore.SIGNAL('audioStarted'), self)
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
             if(self.subprocessAvailable):
-                subprocess.Popen( cmd, stdin=subprocess.PIPE)
-                #subprocess.Popen(shlex.split(cmd)) 
+                rtlfmStr = self.rtlfmCommand.replace("@FREQ", str(self.radio_widget.currentFrequency) + "M")
+                aplayStr =  self.aplayCommand.replace("@DEVICE", str(self.audioDeviceIdentifier))
+                rtlfm = subprocess.Popen(shlex.split(rtlfmStr), stdout=subprocess.PIPE)
+                subprocess.Popen(shlex.split(aplayStr), stdin=rtlfm.stdout, stdout=subprocess.PIPE)
+                
+
+
                 
     def stop(self):
         if(self.isPlaying == True):
@@ -178,13 +182,7 @@ class Radio(QObject):
             if(self.subprocessAvailable):
                 subprocess.Popen(shlex.split("sudo killall rtl_fm")) 
 
-    def generateCommand(self, freq):
-        cmd = self.rtlfmCommand.replace("@FREQ", str(freq) + "M")
-        cmd = cmd.replace("@DEVICE", self.audioDeviceIdentifier)
-        return cmd
 
-
-    
     def dispose(self):
         print("Disposing of Radio")
         try:
