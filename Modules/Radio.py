@@ -35,7 +35,7 @@ class Radio(QObject):
 
     subprocessAvailable = True
 
-    audioDeviceIdentifier = "plughw:0,0"
+    audioDeviceIdentifier = "plughw:1,0"
 
     rtlfmCommand = "rtl_fm -M wbfm -f @FREQ"
     aplayCommand ="aplay -D @DEVICE -r 32000 -f S16_LE -t raw -c 1"
