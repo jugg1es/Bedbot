@@ -55,6 +55,7 @@ class ScreenManager(QObject):
 
     subprocessAvailable = True
 
+    currentAngleTracker = None
 
 
     def __init__(self):
@@ -123,25 +124,27 @@ class ScreenManager(QObject):
      
     def positionToggled(self):     
         print("checking if toggling possible")
-        currentAngle = self.getAngleFromPulseWidth()
+        currentAngle = self.getCurrentAngle()
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
             print("now toggling ")
             t = Thread(target=self.togglePosition, args=(self,))
             t.start()
      
     def togglePosition(self, parent):
-        ang = self.getAngleFromPulseWidth()
+        ang = self.getCurrentAngle()
         if(ang == self.openAngle):
-            self.move(self.closeAngle)
+            parent.currentAngleTracker = self.move(self.closeAngle)
             parent.setCurrentLidState(ScreenState.CLOSED)
         elif(ang == self.closeAngle):
-            self.move(self.openAngle)
+            parent.currentAngleTracker = self.move(self.openAngle)
             parent.setCurrentLidState(ScreenState.OPEN)
 
     def getAngleFromPulseWidth(self):
         pw = self.pi.get_servo_pulsewidth(self.servo)
         print(pw)
-        if(pw == self.middle):
+        if(pw == 0):
+            return None
+        elif(pw == self.middle):
             return 90
         elif(pw >= self.bottomRange and pw < self.middle):		
             adj = float((pw - float(self.bottomRange))) / self.below90Range
@@ -152,6 +155,11 @@ class ScreenManager(QObject):
             adj = (adj * 90) + 90
             return int(round(adj))
 
+    def getCurrentAngle(self):
+        pwa = self.getAngleFromPulseWidth()
+        if(pwa == None):
+            pwa = self.currentAngleTracker
+        return pwa
 
     def getPulseWidth(self, angle):	
         mod = self.middle
@@ -169,7 +177,7 @@ class ScreenManager(QObject):
 
 
     def move(self, angle):
-        currentAngle = self.getAngleFromPulseWidth()
+        currentAngle = self.getCurrentAngle()
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
             #print("current angle: " + str(currentAngle))
             angleDiff = currentAngle - angle
@@ -183,8 +191,7 @@ class ScreenManager(QObject):
                 angleTracker += angleDir		
                 self.setAngle(angleTracker)	
                 time.sleep(self.moveSpeed)
-        
-            #pi.set_servo_pulsewidth(servo,0)
+            pi.set_servo_pulsewidth(servo,0)
             return currentAngle
         return None
 
