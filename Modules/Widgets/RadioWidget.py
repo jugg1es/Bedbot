@@ -89,7 +89,7 @@ class RadioWidget(QtGui.QWidget):
             presetButton.preID = pre.id
             presetButton.setStyleSheet(self.popupButtonStyle)
             presetButton.clicked.connect(self.presetSelected)
-            holdable(presetButton, 2).connect(self.presetChangePressed)
+            #holdable(presetButton, 2).connect(self.presetChangePressed)
             self.horizontalLayout.addWidget(presetButton)
     
     def presetSelected(self):       
