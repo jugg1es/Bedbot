@@ -83,11 +83,10 @@ class ScreenManager(QObject):
         print("has IO libraries (screen manager): " + str(hasIOLibraries))
 
         if(self.subprocessAvailable):
-            subprocess.Popen(shlex.split("sudo chmod a+x Scripts/screenPowerControl.sh"))
+            #subprocess.Popen(shlex.split("sudo chmod a+x Scripts/screenPowerControl.sh"))
             screeninit = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh init"))
             screeninit.wait()
             screenon = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))
-            screenon.wait()
 
 
 
@@ -108,10 +107,14 @@ class ScreenManager(QObject):
         self.currentState = state
         if(self.currentState == ScreenState.OPEN):
             #self.toggleButtonPower(True)
-            self.changeScreenState(True)
+            t = Thread(target=self.changeScreenState, args=(self,True,))
+            t.start()
+            #self.changeScreenState(True)
         elif(self.currentState == ScreenState.CLOSED):
+            t = Thread(target=self.changeScreenState, args=(self,False,))
+            t.start()
             #self.toggleButtonPower(False)
-            self.changeScreenState(False)
+            #self.changeScreenState(False)
 
     def toggleButtonPower(self, isOn):
         if(isOn):            
@@ -119,14 +122,12 @@ class ScreenManager(QObject):
         else:
             self.pi.write(self.buttonPowerPin,0)
 
-    def changeScreenState(self, isOn):
-        if(self.subprocessAvailable):
+    def changeScreenState(self, parent, isOn):
+        if(parent.subprocessAvailable):
             if(isOn):                
-                oncmd = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))               
-                oncmd.wait()
+                subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))         
             else:
-                offcmd = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh off")) 
-                offcmd.wait()     
+                subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh off")) 
     
      
     def positionToggled(self):     
