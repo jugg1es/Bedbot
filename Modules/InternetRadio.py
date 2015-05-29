@@ -21,6 +21,7 @@ class InternetRadio(QObject):
     ListenForPinEvent = True
     offButton = None
     audioRelayPin = None
+    onButton = None
 
 
     Enabled = True    
@@ -47,9 +48,14 @@ class InternetRadio(QObject):
 
     def setPin(self, pinConfig):
         self.offButton = pinConfig["OFF_BUTTON"]
+        self.onButton = pinConfig["ON_BUTTON"]
         self.audioRelayPin = pinConfig["AUDIO_ONE_SWITCH"]
 
     def processPinEvent(self, pinNum):
+        if(self.onButton == pinNum):
+            s = self.inetradio_widget.getCurrentStation()
+            if(s != None):
+                self.stationSelectedCallback(s)
         if(self.offButton == pinNum and self.isPlaying == True):
             self.stop()
 
