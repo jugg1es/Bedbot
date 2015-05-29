@@ -37,7 +37,6 @@ class ScreenManager(QObject):
     toggleInitialized = False
 
     buttonPowerPin = None
-    btnPowerInitialized = False
 
     screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
     screenGPIOInitialized = False
@@ -81,19 +80,10 @@ class ScreenManager(QObject):
 
     def initialize(self):
         print("has IO libraries (screen manager): " + str(hasIOLibraries))
-
-        if(self.subprocessAvailable):
-            #subprocess.Popen(shlex.split("sudo chmod a+x Scripts/screenPowerControl.sh"))
-            screeninit = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh init"))
-            screeninit.wait()
-            screenon = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))
-
-
-
-        if(hasIOLibraries and self.btnPowerInitialized == False):
+        
+        if(hasIOLibraries):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
-            self.btnPowerInitialized = True
             #self.toggleButtonPower(False)
             self.setAngle(90)
             self.setCurrentLidState(ScreenState.OPEN)
@@ -125,9 +115,9 @@ class ScreenManager(QObject):
     def changeScreenState(self, parent, isOn):
         if(parent.subprocessAvailable):
             if(isOn):                
-                subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))         
+                subprocess.Popen(shlex.split("sudo bash Scripts/screenPowerControl.sh on"))         
             else:
-                subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh off")) 
+                subprocess.Popen(shlex.split("sudo bash Scripts/screenPowerControl.sh off")) 
     
      
     def positionToggled(self):     
