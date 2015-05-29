@@ -84,7 +84,8 @@ class ScreenManager(QObject):
 
         if(self.subprocessAvailable):
             subprocess.Popen(shlex.split("sudo chmod a+x Scripts/screenPowerControl.sh"))
-            subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh init"))
+            screeninit = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh init"))
+            screeninit.wait()
             subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))
 
 
