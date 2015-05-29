@@ -115,9 +115,9 @@ class ScreenManager(QObject):
     def changeScreenState(self, parent, isOn):
         if(parent.subprocessAvailable):
             if(isOn):                
-                subprocess.Popen(shlex.split("sudo bash Scripts/screenPowerControl.sh on"))         
+                subprocess.Popen(shlex.split("sudo Scripts/turnScreenOn.sh"))         
             else:
-                subprocess.Popen(shlex.split("sudo bash Scripts/screenPowerControl.sh off")) 
+                subprocess.Popen(shlex.split("sudo Scripts/turnScreenOff.sh")) 
     
      
     def positionToggled(self):     
