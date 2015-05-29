@@ -95,7 +95,7 @@ class ScreenManager(QObject):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
             self.btnPowerInitialized = True
-            self.toggleButtonPower(False)
+            #self.toggleButtonPower(False)
             self.setAngle(90)
             self.setCurrentLidState(ScreenState.OPEN)
             self.currentAngleTracker = self.move(self.openAngle)
