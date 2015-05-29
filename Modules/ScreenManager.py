@@ -83,6 +83,7 @@ class ScreenManager(QObject):
         print("has IO libraries (screen manager): " + str(hasIOLibraries))
 
         if(self.subprocessAvailable):
+            subprocess.Popen(shlex.split("sudo chmod a+x Scripts/screenPowerControl.sh"))
             subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh init"))
             subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))
 
