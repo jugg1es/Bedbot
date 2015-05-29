@@ -86,7 +86,9 @@ class ScreenManager(QObject):
             subprocess.Popen(shlex.split("sudo chmod a+x Scripts/screenPowerControl.sh"))
             screeninit = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh init"))
             screeninit.wait()
-            subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))
+            screenon = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))
+            screenon.wait()
+
 
 
         if(hasIOLibraries and self.btnPowerInitialized == False):
@@ -95,9 +97,10 @@ class ScreenManager(QObject):
             self.btnPowerInitialized = True
             self.toggleButtonPower(False)
             self.setAngle(90)
+            self.setCurrentLidState(ScreenState.OPEN)
             self.currentAngleTracker = self.move(self.openAngle)
             print("** OPENED **")
-            self.setCurrentLidState(ScreenState.OPEN)
+            
         
         
 
@@ -119,9 +122,11 @@ class ScreenManager(QObject):
     def changeScreenState(self, isOn):
         if(self.subprocessAvailable):
             if(isOn):                
-                subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))               
+                oncmd = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh on"))               
+                oncmd.wait()
             else:
-                subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh off"))      
+                offcmd = subprocess.Popen(shlex.split("sudo Scripts/screenPowerControl.sh off")) 
+                offcmd.wait()     
     
      
     def positionToggled(self):     
