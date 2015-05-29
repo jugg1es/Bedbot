@@ -83,8 +83,8 @@ class ScreenManager(QObject):
         print("has IO libraries (screen manager): " + str(hasIOLibraries))
 
         if(self.subprocessAvailable):
-            subprocess.call("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")
-            subprocess.call("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")      
+            subprocess.Popen("sudo sh -c \"echo " + str(self.screenGPIO) + " > /sys/class/gpio/export\"")
+            subprocess.Popen("sudo sh -c \"echo 'out' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/direction\"")      
 
 
         if(hasIOLibraries and self.btnPowerInitialized == False):
@@ -117,9 +117,9 @@ class ScreenManager(QObject):
     def changeScreenState(self, isOn):
         if(self.subprocessAvailable):
             if(isOn):
-                subprocess.call("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")
+                subprocess.Popen("sudo sh -c \"echo '1' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")
             else:
-                subprocess.call("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")      
+                subprocess.Popen("sudo sh -c \"echo '0' > /sys/class/gpio/gpio" + str(self.screenGPIO) + "/value\"")      
     
      
     def positionToggled(self):     
