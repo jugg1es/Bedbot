@@ -98,8 +98,14 @@ class MainWindow(QtGui.QMainWindow):
         self.primary_widget.doClose()
         
         
-    def gotoNextMenuItem(self):
-        self.primary_widget.contextButtonPressed()
+    def simulateRedButton(self):
+        self.primary_widget.simulateButton("OFF_BUTTON")
+
+    def simulateBlueButton(self):
+        self.primary_widget.simulateButton("CONTEXT_BUTTON")
+
+    def simulateGreenButton(self):
+        self.primary_widget.simulateButton("ON_BUTTON")
 
 
 
@@ -118,7 +124,11 @@ class MyApplication(QtGui.QApplication):
             if (event.key() == QtCore.Qt.Key_Escape):
                 self.w.close()
             elif(event.key() == QtCore.Qt.Key_Right):
-                self.w.gotoNextMenuItem()
+                self.w.simulateRedButton()
+            elif(event.key() == QtCore.Qt.Key_Down):
+                self.w.simulateBlueButton()
+            elif(event.key() == QtCore.Qt.Key_Left):
+                self.w.simulateGreenButton()
                 
         return super(MyApplication, self).notify(receiver, event)
   

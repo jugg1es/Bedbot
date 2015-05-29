@@ -135,7 +135,6 @@ class BedbotWidget(QtGui.QWidget):
         self.menuButton = QSvgWidget("icons/three-bars.svg", self)
         self.menuButton.setGeometry(QtCore.QRect(10,200,30,35))
         pressableSender(self.menuButton).connect(self.menuButtonPressed)
-        releaseableSender(self.menuButton).connect(self.menuButtonReleased)
         self.menuButton.setVisible(False)
 
 
@@ -163,21 +162,22 @@ class BedbotWidget(QtGui.QWidget):
         self.menu_widget.setVisible(showMenu)
 
     def autoCloseMainMenu(self):
+        self.autoCloseTimer.stop()
+        self.autoCloseTimer = None
         if(self.currentWidget != None):
             self.showWidgetCallback(self.currentWidget)
         
 
-    def menuButtonReleased(self, obj):
+    def triggerMenuButton(self):
+        self.menuButtonTimer.stop()
         self.menuButton.load("icons/three-bars.svg")
         self.toggleMainMenu(True)
 
     def menuButtonPressed(self, obj):
         self.menuButton.load("icons/three-barsSelected.svg")
-
-
-    def contextButtonPressed(self):
-        print("context button pressed")
-
+        self.menuButtonTimer = QTimer()
+        self.menuButtonTimer.timeout.connect(self.triggerMenuButton)
+        self.menuButtonTimer.start(500)
     
     def showWidgetCallback(self, w):
         if(self.autoCloseTimer != None):
@@ -209,6 +209,9 @@ class BedbotWidget(QtGui.QWidget):
         w.setPin(self.pinConfig)
         if(hasattr(w, "ListenForPinEvent") == True and w.ListenForPinEvent == True):
             self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
+
+    def simulateButton(self, buttonDesc):
+        self.pinEventCallback(self.pinConfig[buttonDesc])        
 
     def pinEventCallback(self, channel):
         self.logEvent("pin callback for channel: " + str(channel))

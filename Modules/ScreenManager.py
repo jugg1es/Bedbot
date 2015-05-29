@@ -131,12 +131,12 @@ class ScreenManager(QObject):
     def togglePosition(self, parent):
         ang = self.getCurrentAngle()
         if(ang == self.openAngle):
-            parent.currentAngleTracker = self.move(self.closeAngle)
             parent.setCurrentLidState(ScreenState.CLOSED)
+            parent.currentAngleTracker = self.move(self.closeAngle)            
             print("** CLOSED **")
         elif(ang == self.closeAngle):
-            parent.currentAngleTracker = self.move(self.openAngle)
             parent.setCurrentLidState(ScreenState.OPEN)
+            parent.currentAngleTracker = self.move(self.openAngle)            
             print("** OPENED **")
 
     def getAngleFromPulseWidth(self):

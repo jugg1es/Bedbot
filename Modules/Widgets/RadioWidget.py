@@ -10,6 +10,7 @@ from PyQt4.QtSvg import QSvgWidget
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.Popup import *
+from Modules.Widgets.ButtonIndicator import *
 import json
 
     
@@ -74,6 +75,7 @@ class RadioWidget(QtGui.QWidget):
         #releaseable(self.slideDownButton).connect(self.doFreqDownReleased) 
         pressable(self.slideDownButton).connect(self.doFreqDownPressed)
 
+
         self.horizontalLayoutWidget = QtGui.QWidget(self)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 100, 300, 80))
         self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
@@ -93,7 +95,7 @@ class RadioWidget(QtGui.QWidget):
             pre = presets[x]
             presetButton = QFrame()       
             presetButton.setFrameShape(QtGui.QFrame.Box)
-            presetButton.setFrameShadow(QtGui.QFrame.Plain)
+            
             if(selected == True):
                 presetButton.setStyleSheet(self.presetFrameSelectedStyle)
             else:
@@ -117,7 +119,7 @@ class RadioWidget(QtGui.QWidget):
     
     def presetSelected(self, obj):     
         if(self.settingPreset):
-            self.presetChangePressed(obj)
+            self.emit(QtCore.SIGNAL('presetChanged'), [obj.preID, self.currentFrequency])
         else:
             print("preset selected: " + str(obj.freq))
             self.currentFrequency = float(obj.freq)
@@ -156,13 +158,11 @@ class RadioWidget(QtGui.QWidget):
     def doFreqDownPressed(self):
         self.scanDirection = "down"
         self.doChangeFrequency()
-        self.scanDirection = "none"
         
         
     def doFreqUpPressed(self):
         self.scanDirection = "up"
         self.doChangeFrequency()
-        self.scanDirection = "none"
 
     def doChangeFrequency(self):
         t = Thread(target=self.changeFrequency, args=(self,))        

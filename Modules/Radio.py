@@ -86,12 +86,15 @@ class Radio(QObject):
         
 
     def processPinEvent(self, pinNum):
-        if(self.offButton == pinNum and self.isPlaying == True):
-            self.stop()
-        elif(self.onButton == pinNum):
-            self.play()
-        elif(self.contextPin == pinNum):
-            self.preparePresetChange()
+        if(self.radio_widget.settingPreset == True):
+                self.radio_widget.fillPresets(self.radioPresets)
+        else:
+            if(self.offButton == pinNum):
+                self.stop()
+            elif(self.onButton == pinNum):
+                self.play()
+            elif(self.contextPin == pinNum):
+                self.preparePresetChange()
 
     def initialize(self):
         self.loadRadioPresets()
@@ -101,6 +104,11 @@ class Radio(QObject):
     def getAudioStatusDisplay(self):
         self.audioStatusDisplay = str(self.radio_widget.currentFrequency)
         return self.audioStatusDisplay
+
+    def getPossibleButtons(self):        
+        self.indicator = ButtonIndicator(self)
+        self.indicator.setGeometry(QtCore.QRect(0, 0, 30, 30)) 
+
 
     def frequencyChangedCallback(self, freq):
         self.audioStatusDisplay = str(freq)
@@ -112,7 +120,6 @@ class Radio(QObject):
         self.radio_widget.fillPresets(self.radioPresets, True)
 
     def presetChangedCallback(self, d):
-        print(d)        
         for x in range(0, len(self.radioPresets)):
             pre = self.radioPresets[x]
             print(int(pre.id));
