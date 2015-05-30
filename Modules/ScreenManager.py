@@ -7,6 +7,7 @@ import math
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 from threading import Timer,Thread,Event
+from Modules.Widgets.Popup import *
 import os
 import sys
 import subprocess
@@ -56,6 +57,7 @@ class ScreenManager(QObject):
 
     currentAngleTracker = None
 
+    screenPowerPopup = None
 
     def __init__(self):
         super(ScreenManager, self).__init__()
@@ -113,12 +115,23 @@ class ScreenManager(QObject):
             self.pi.write(self.buttonPowerPin,0)
 
     def changeScreenState(self, parent, isOn):
+        parent.screenPowerPopup = Popup(self)
+        parent.connect(parent.screenPowerPopup, QtCore.SIGNAL('popupResult'), parent.screenPowerOffCancelled)
+
+
         if(parent.subprocessAvailable):
-            if(isOn):                
+            if(isOn):         
                 subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
             else:
-                subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
+                parent.screenPowerPopup.doWait("Turning Screen Off")
+                offproc = subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
+                offproc.communicate()
+                
+        parent.screenPowerPopup.close()
     
+    def screenPowerOffCancelled(self, result):
+        t = Thread(target=self.changeScreenState, args=(self,True,))
+        t.start()
      
     def positionToggled(self):     
         currentAngle = self.getCurrentAngle()

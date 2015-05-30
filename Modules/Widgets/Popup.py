@@ -31,6 +31,36 @@ class Popup(QtGui.QWidget):
 
         QtCore.QMetaObject.connectSlotsByName(self)  
 
+    def doWait(self, msg):
+        font = QtGui.QFont()
+        font.setPointSize(20)
+
+        self.prompt = QtGui.QLabel(self.popupFrame)
+        self.prompt.setGeometry(QtCore.QRect(10,10,300,80))
+        self.prompt.setAlignment(QtCore.Qt.AlignCenter)
+        self.prompt.setStyleSheet(self.popupContentsStyle)
+        self.prompt.setFont(font)
+        self.prompt.setText(msg)
+
+        self.horizontalLayoutWidget = QtGui.QWidget(self)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 100, 300, 80))
+        self.horizontalLayout = QtGui.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setAlignment(self.horizontalLayoutWidget, QtCore.Qt.AlignCenter)
+        #self.horizontalLayout.setMargin(20)
+
+
+        self.btnCancel = QtGui.QPushButton("CANCEL", self.horizontalLayoutWidget)
+        self.btnCancel.name = "CANCEL"
+        self.btnCancel.tag = tag
+        self.btnCancel.setStyleSheet(self.popupButtonStyle)
+        self.btnCancel.clicked.connect(self.buttonCallback)
+        self.horizontalLayout.addWidget(self.btnCancel)
+
+
+        self.show()
+
+
+
     def doConfirm(self, promptText, tag):
 
         font = QtGui.QFont()
