@@ -51,7 +51,7 @@ class Popup(QtGui.QWidget):
 
         self.btnCancel = QtGui.QPushButton("CANCEL", self.horizontalLayoutWidget)
         self.btnCancel.name = "CANCEL"
-        self.btnCancel.tag = tag
+        self.btnCancel.tag = "CANCEL"
         self.btnCancel.setStyleSheet(self.popupButtonStyle)
         self.btnCancel.clicked.connect(self.buttonCallback)
         self.horizontalLayout.addWidget(self.btnCancel)
