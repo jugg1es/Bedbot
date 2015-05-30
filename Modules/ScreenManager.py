@@ -123,7 +123,8 @@ class ScreenManager(QObject):
                 parent.emit(QtCore.SIGNAL('showPopup'),[self, "Turning Screen Off"])
                 offproc = subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
                 offproc.communicate()
-                self.screenPowerPopup.close()
+                if(self.screenPowerPopup != None):
+                    self.screenPowerPopup.close()
             
 
     def setCurrentPopup(self, popup):
