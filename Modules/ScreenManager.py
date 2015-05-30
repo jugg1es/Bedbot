@@ -115,19 +115,16 @@ class ScreenManager(QObject):
             self.pi.write(self.buttonPowerPin,0)
 
     def changeScreenState(self, parent, isOn):
-        parent.screenPowerPopup = Popup()
-        parent.connect(parent.screenPowerPopup, QtCore.SIGNAL('popupResult'), parent.screenPowerOffCancelled)
-
-
+        
         if(parent.subprocessAvailable):
             if(isOn):         
                 subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
             else:
-                parent.screenPowerPopup.doWait("Turning Screen Off")
+                parent.emit(QtCore.SIGNAL('showPopup'), "Turning Screen Off")
+                #parent.screenPowerPopup.doWait("Turning Screen Off")
                 offproc = subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
                 offproc.communicate()
                 
-        parent.screenPowerPopup.close()
     
     def screenPowerOffCancelled(self, result):
         t = Thread(target=self.changeScreenState, args=(self,True,))

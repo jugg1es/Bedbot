@@ -13,6 +13,7 @@ from enum import Enum
 import json
 import shlex 
 import subprocess
+from Modules.Widgets.Popup import *
 
 hasIOLibraries = False
 
@@ -83,6 +84,7 @@ class BedbotWidget(QtGui.QWidget):
                 if(self.moduleHasFunction(m, "setPin")):
                     self.addPinBasedObject(m)
 
+                self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
@@ -97,6 +99,10 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)   
 
+    def showPopupCallback(self, msg):
+        self.screenPowerPopup = Popup(self)
+        #self.connect(self.screenPowerPopup, QtCore.SIGNAL('popupResult'), parent.screenPowerOffCancelled)
+        self.screenPowerPopup.doWait(msg)
 
     def pinRequestedCallback(self, pin):
         self.pinEventCallback(pin)
