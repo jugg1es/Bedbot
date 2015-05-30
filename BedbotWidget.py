@@ -100,15 +100,19 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)   
 
-    def showPopupCallback(self, msg):
-        self.customPopup = Popup(self)
-        self.connect(self.customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
-        self.screenPowerPopup.doWait(msg)
+    def showPopupCallback(self, caller, msg):
+        customPopup = Popup(self)
+        self.connect(customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
+        customPopup.doWait(msg)
+        for m in self.loadedModules:
+            if(self.moduleHasFunction(m, "setCurrentPopup")):
+                m.setCurrentPopup(customPopup)
 
     def popupCallback(self, name, tag):
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "popupResult")):
                 m.popupResult(name, tag)
+
 
     def pinRequestedCallback(self, pin):
         self.pinEventCallback(pin)
