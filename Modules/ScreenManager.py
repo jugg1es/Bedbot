@@ -115,7 +115,7 @@ class ScreenManager(QObject):
             self.pi.write(self.buttonPowerPin,0)
 
     def changeScreenState(self, parent, isOn):
-        parent.screenPowerPopup = Popup(parent)
+        parent.screenPowerPopup = Popup()
         parent.connect(parent.screenPowerPopup, QtCore.SIGNAL('popupResult'), parent.screenPowerOffCancelled)
 
 
