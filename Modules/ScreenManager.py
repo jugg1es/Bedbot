@@ -84,7 +84,7 @@ class ScreenManager(QObject):
         if(hasIOLibraries):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
-            #self.toggleButtonPower(False)
+            self.toggleButtonPower(False)
             self.setAngle(90)
             self.setCurrentLidState(ScreenState.OPEN)
             self.currentAngleTracker = self.move(self.openAngle)
@@ -97,7 +97,7 @@ class ScreenManager(QObject):
         self.currentState = state
         
         if(self.currentState == ScreenState.OPEN):
-            #self.toggleButtonPower(True)
+            self.toggleButtonPower(True)
             t = Thread(target=self.changeScreenState, args=(self,True,))
             t.start()
             self.changeScreenState(True)
