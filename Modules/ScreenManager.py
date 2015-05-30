@@ -95,6 +95,7 @@ class ScreenManager(QObject):
 
     def setCurrentLidState(self, state):
         self.currentState = state
+        '''
         if(self.currentState == ScreenState.OPEN):
             #self.toggleButtonPower(True)
             #t = Thread(target=self.changeScreenState, args=(self,True,))
@@ -105,6 +106,7 @@ class ScreenManager(QObject):
             #t.start()
             #self.toggleButtonPower(False)
             #self.changeScreenState(False)
+        '''
 
     def toggleButtonPower(self, isOn):
         if(isOn):            
