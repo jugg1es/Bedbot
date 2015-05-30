@@ -95,18 +95,17 @@ class ScreenManager(QObject):
 
     def setCurrentLidState(self, state):
         self.currentState = state
-        '''
+        
         if(self.currentState == ScreenState.OPEN):
             #self.toggleButtonPower(True)
-            #t = Thread(target=self.changeScreenState, args=(self,True,))
-            #t.start()
-            #self.changeScreenState(True)
-        elif(self.currentState == ScreenState.CLOSED):
-            #t = Thread(target=self.changeScreenState, args=(self,False,))
-            #t.start()
-            #self.toggleButtonPower(False)
-            #self.changeScreenState(False)
-        '''
+            t = Thread(target=self.changeScreenState, args=(self,True,))
+            t.start()
+            self.changeScreenState(True)
+        elif(self.currentState == ScreenState.CLOSED):            
+            self.toggleButtonPower(False)
+            t = Thread(target=self.changeScreenState, args=(self,False,))
+            t.start()
+        
 
     def toggleButtonPower(self, isOn):
         if(isOn):            
@@ -117,9 +116,9 @@ class ScreenManager(QObject):
     def changeScreenState(self, parent, isOn):
         if(parent.subprocessAvailable):
             if(isOn):                
-                subprocess.Popen(shlex.split("sudo /home/pi/Bedbot/Scripts/turnScreenOn.sh"))         
+                subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
             else:
-                subprocess.Popen(shlex.split("sudo /home/pi/Bedbot/Scripts/turnScreenOff.sh")) 
+                subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
     
      
     def positionToggled(self):     
