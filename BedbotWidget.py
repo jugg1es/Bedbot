@@ -85,6 +85,7 @@ class BedbotWidget(QtGui.QWidget):
                     self.addPinBasedObject(m)
 
                 self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
+
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
@@ -100,9 +101,14 @@ class BedbotWidget(QtGui.QWidget):
         QtCore.QMetaObject.connectSlotsByName(self)   
 
     def showPopupCallback(self, msg):
-        self.screenPowerPopup = Popup(self)
-        #self.connect(self.screenPowerPopup, QtCore.SIGNAL('popupResult'), parent.screenPowerOffCancelled)
+        self.customPopup = Popup(self)
+        self.connect(self.customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
         self.screenPowerPopup.doWait(msg)
+
+    def popupCallback(self, name, tag):
+        for m in self.loadedModules:
+            if(self.moduleHasFunction(m, "popupResult")):
+                m.popupResult(name, tag)
 
     def pinRequestedCallback(self, pin):
         self.pinEventCallback(pin)
