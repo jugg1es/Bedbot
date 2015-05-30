@@ -100,7 +100,6 @@ class ScreenManager(QObject):
             self.toggleButtonPower(True)
             t = Thread(target=self.changeScreenState, args=(self,True,))
             t.start()
-            self.changeScreenState(True)
         elif(self.currentState == ScreenState.CLOSED):            
             self.toggleButtonPower(False)
             t = Thread(target=self.changeScreenState, args=(self,False,))
