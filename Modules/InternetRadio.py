@@ -53,9 +53,10 @@ class InternetRadio(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.onButton == pinNum):
-            s = self.inetradio_widget.getCurrentStation()
-            if(s != None):
-                self.stationSelectedCallback(s)
+            if(self.widgetVisible == True):
+                s = self.inetradio_widget.getCurrentStation()
+                if(s != None):
+                    self.stationSelectedCallback(s)
         if(self.offButton == pinNum and self.isPlaying == True):
             self.stop()
 

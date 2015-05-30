@@ -97,12 +97,12 @@ class ScreenManager(QObject):
         self.currentState = state
         if(self.currentState == ScreenState.OPEN):
             #self.toggleButtonPower(True)
-            t = Thread(target=self.changeScreenState, args=(self,True,))
-            t.start()
+            #t = Thread(target=self.changeScreenState, args=(self,True,))
+            #t.start()
             #self.changeScreenState(True)
         elif(self.currentState == ScreenState.CLOSED):
-            t = Thread(target=self.changeScreenState, args=(self,False,))
-            t.start()
+            #t = Thread(target=self.changeScreenState, args=(self,False,))
+            #t.start()
             #self.toggleButtonPower(False)
             #self.changeScreenState(False)
 
@@ -115,9 +115,9 @@ class ScreenManager(QObject):
     def changeScreenState(self, parent, isOn):
         if(parent.subprocessAvailable):
             if(isOn):                
-                subprocess.Popen(shlex.split("sudo Scripts/turnScreenOn.sh"))         
+                subprocess.Popen(shlex.split("sudo /home/pi/Bedbot/Scripts/turnScreenOn.sh"))         
             else:
-                subprocess.Popen(shlex.split("sudo Scripts/turnScreenOff.sh")) 
+                subprocess.Popen(shlex.split("sudo /home/pi/Bedbot/Scripts/turnScreenOff.sh")) 
     
      
     def positionToggled(self):     
