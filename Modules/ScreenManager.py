@@ -145,7 +145,8 @@ class ScreenManager(QObject):
         ang = self.getCurrentAngle()
         if(ang == self.openAngle):
             parent.setCurrentLidState(ScreenState.CLOSED)
-            parent.currentAngleTracker = self.move(self.closeAngle)            
+            parent.emit(QtCore.SIGNAL('stopAllAudio'))     
+            parent.currentAngleTracker = self.move(self.closeAngle)       
             print("** CLOSED **")
         elif(ang == self.closeAngle):
             parent.setCurrentLidState(ScreenState.OPEN)

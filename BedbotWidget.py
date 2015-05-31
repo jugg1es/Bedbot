@@ -90,6 +90,9 @@ class BedbotWidget(QtGui.QWidget):
 
                 self.connect(m, QtCore.SIGNAL('requestButtonPrompt'), self.buttonPromptRequestCallback)
 
+                
+                self.connect(m, QtCore.SIGNAL('stopAllAudio'), self.stopAllAudioCallback)
+
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
@@ -104,6 +107,8 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)   
 
+    def stopAllAudioCallback(self):
+        self.stopAllAudio()
 
     def buttonPromptRequestCallback(self, buttonsToPrompt):
         print("requesting button prompts")        
