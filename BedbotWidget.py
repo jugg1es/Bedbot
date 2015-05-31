@@ -14,6 +14,7 @@ import json
 import shlex 
 import subprocess
 from Modules.Widgets.Popup import *
+from Modules.Widgets.ButtonIndicator import *
 
 hasIOLibraries = False
 
@@ -56,6 +57,7 @@ class BedbotWidget(QtGui.QWidget):
 
     pinCallbacks = []
     disabledPins = []
+    currentButtonIndicators = []
 
     pinStatusTimer = None
 
@@ -86,6 +88,8 @@ class BedbotWidget(QtGui.QWidget):
 
                 self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
 
+                self.connect(m, QtCore.SIGNAL('requestButtonPrompt'), self.buttonPromptRequestCallback)
+
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
@@ -100,6 +104,23 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)   
 
+
+    def buttonPromptRequestCallback(self, buttonsToPrompt):
+        print("requesting button prompts")        
+        self.clearButtonPrompts()
+        for x in buttonsToPrompt:
+            if(x == "ON"):
+                self.onButtonIndicator.setVisible(True)
+            elif(x == "CONTEXT"):
+                self.contextButtonIndicator.setVisible(True)
+            elif(x == "OFF"):
+                self.offButtonIndicator.setVisible(True)
+
+    def clearButtonPrompts(self):
+        self.onButtonIndicator.setVisible(False)
+        self.contextButtonIndicator.setVisible(False)
+        self.offButtonIndicator.setVisible(False)
+        
     def showPopupCallback(self, caller, msg):
         customPopup = Popup(self)
         self.connect(customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
@@ -154,10 +175,23 @@ class BedbotWidget(QtGui.QWidget):
         self.menuButton.setVisible(False)
 
 
+        self.onButtonIndicator = ButtonIndicator(self, 30, "green")
+        self.onButtonIndicator.setGeometry(QtCore.QRect(50,202,30,30))
+        self.onButtonIndicator.setVisible(False)
+
+        self.contextButtonIndicator = ButtonIndicator(self, 30, "blue")
+        self.contextButtonIndicator.setGeometry(QtCore.QRect(80,202,30,30))
+        self.contextButtonIndicator.setVisible(False)
+
+        self.offButtonIndicator = ButtonIndicator(self, 30, "red")
+        self.offButtonIndicator.setGeometry(QtCore.QRect(110,202,30,30))
+        self.offButtonIndicator.setVisible(False)
+
         font = QtGui.QFont()
         font.setPointSize(15)
+
         self.statusDisplay = QtGui.QLabel(self)
-        self.statusDisplay.setGeometry(QtCore.QRect(50, 200, 260, 35))
+        self.statusDisplay.setGeometry(QtCore.QRect(150, 200, 140, 35))
         self.statusDisplay.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
         self.statusDisplay.setStyleSheet('color: #eaf736')
         self.statusDisplay.setFont(font)
@@ -173,7 +207,7 @@ class BedbotWidget(QtGui.QWidget):
             self.hideMainWidgets()
             self.autoCloseTimer = QTimer()
             self.autoCloseTimer.timeout.connect(self.autoCloseMainMenu)
-            self.autoCloseTimer.start(5000)
+            self.autoCloseTimer.start(5000)            
         self.menuButton.setVisible(not showMenu)
         self.menu_widget.setVisible(showMenu)
 
@@ -205,6 +239,7 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(False)
 
     def hideMainWidgets(self):
+        self.clearButtonPrompts()
         for m in self.loadedModules:
             if(hasattr(m, "Enabled") == True and m.Enabled == True):
                 if(self.moduleHasFunction(m, "hideWidget")):

@@ -53,6 +53,8 @@ class Radio(QObject):
     def showWidget(self):
         self.radio_widget.setVisible(True)
         self.widgetVisible = True
+        self.showButtonIndicators()
+        
 
     def hideWidget(self):
         self.radio_widget.setVisible(False)
@@ -65,6 +67,7 @@ class Radio(QObject):
         self.connect(self.radio_widget, QtCore.SIGNAL('presetChanged'), self.presetChangedCallback)      
         self.connect(self.radio_widget, QtCore.SIGNAL('frequencyChanged'), self.frequencyChangedCallback)    
         self.initialize()
+        
 
 
     def getMenuIcon(self):
@@ -86,20 +89,28 @@ class Radio(QObject):
         
 
     def processPinEvent(self, pinNum):
-        if(self.radio_widget.settingPreset == True):
-                self.radio_widget.fillPresets(self.radioPresets)
+        if(self.widgetVisible and self.radio_widget.settingPreset == True):
+           self.radio_widget.fillPresets(self.radioPresets)
         else:
             if(self.offButton == pinNum):
                 self.stop()
-            elif(self.onButton == pinNum):
+            elif(self.widgetVisible and self.onButton == pinNum):
                 self.play()
-            elif(self.contextPin == pinNum):
+            elif(self.widgetVisible and self.contextPin == pinNum):
                 self.preparePresetChange()
 
     def initialize(self):
         self.loadRadioPresets()
         self.radio_widget.fillPresets(self.radioPresets)
 
+    def showButtonIndicators(self):
+        if(self.widgetVisible):
+            btns =[]
+            btns.append("ON")
+            btns.append("CONTEXT")
+            if(self.isPlaying):
+                btns.append("OFF")
+            self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
     def getAudioStatusDisplay(self):
         self.audioStatusDisplay = str(self.radio_widget.currentFrequency)
@@ -185,6 +196,7 @@ class Radio(QObject):
                 aplayStr =  self.aplayCommand.replace("@DEVICE", str(self.audioDeviceIdentifier))
                 rtlfm = subprocess.Popen(shlex.split(rtlfmStr), stdout=subprocess.PIPE)
                 subprocess.Popen(shlex.split(aplayStr), stdin=rtlfm.stdout, stdout=subprocess.PIPE)
+        self.showButtonIndicators()
                 
 
 
@@ -198,6 +210,7 @@ class Radio(QObject):
             self.emit(QtCore.SIGNAL('audioStopped'), self)
             if(self.subprocessAvailable):
                 self.sendKillCommand()
+        self.showButtonIndicators()
 
     def sendKillCommand(self):
         subprocess.Popen(shlex.split("sudo killall rtl_fm"))

@@ -63,6 +63,7 @@ class InternetRadio(QObject):
     def showWidget(self):
         self.inetradio_widget.setVisible(True)
         self.widgetVisible =  True
+        self.showButtonIndicators()
 
     def hideWidget(self):
         self.inetradio_widget.setVisible(False)
@@ -96,10 +97,21 @@ class InternetRadio(QObject):
             station = self.stations[stationID]
             self.currentPlaylist = self.retrievePlaylist(station.url)          
             if(self.currentPlaylist != None): 
+                self.isPlaying = True
                 self.play()
                 self.audioStatusDisplay = station.name
                 self.emit(QtCore.SIGNAL('audioStarted'), self)
                 self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
+                self.showButtonIndicators()
+
+
+    def showButtonIndicators(self):
+        if(self.widgetVisible):
+            btns =[]
+            btns.append("ON")
+            if(self.isPlaying):
+                btns.append("OFF")
+            self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
     def getAudioStatusDisplay(self):
         return self.audioStatusDisplay
@@ -111,6 +123,7 @@ class InternetRadio(QObject):
             for pl in self.currentPlaylist:
                 subprocess.Popen(shlex.split("mpc add " + pl)) 
                 subprocess.Popen(shlex.split("mpc play"))  
+        
                   
     def reset(self):
         print("resetting mpc")
@@ -124,6 +137,7 @@ class InternetRadio(QObject):
             self.inetradio_widget.deselectAllStations()
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
+        self.showButtonIndicators()
         
 
     def retrievePlaylist(self, url):       

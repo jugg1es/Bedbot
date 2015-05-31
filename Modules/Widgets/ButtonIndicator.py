@@ -5,15 +5,17 @@ import time
 class ButtonIndicator(QtGui.QWidget):
 
     diameter = 30
-    buttonColor = "#fff"
-    penWidth = 3
+    buttonColor = "white"
+    penWidth = 5
 
     fullDiameter = None
 
-    def __init__(self, parent=None,  diameter=30, color="#fff"):
+    def __init__(self, parent=None,  diameter=30, color="white"):
         QtGui.QWidget.__init__(self, parent)
-        self.diameter = diameter - (self.penWidth *2)
+
+        self.diameter = diameter - ((self.penWidth *2) +1)
         self.fullDiameter = diameter
+        self.buttonColor = color
         self.setGeometry(0, 0, self.diameter , self.diameter )
 
     def paintEvent(self, event):
@@ -32,9 +34,16 @@ class ButtonIndicator(QtGui.QWidget):
 
         pen = QtGui.QPen()
 
-        pen.setStyle(QtCore.Qt.SolidLine);
-        pen.setWidth(3);
-        pen.setBrush(QtCore.Qt.red);
+        pen.setStyle(QtCore.Qt.SolidLine)
+        pen.setWidth(self.penWidth);
+        if(self.buttonColor == "white"):
+            pen.setBrush(QtCore.Qt.white)
+        elif(self.buttonColor == "red"):
+            pen.setBrush(QtCore.Qt.red)
+        elif(self.buttonColor == "blue"):
+            pen.setBrush(QtCore.Qt.blue)
+        elif(self.buttonColor == "green"):
+            pen.setBrush(QtCore.Qt.green)
 
         paint.setPen(pen)
 

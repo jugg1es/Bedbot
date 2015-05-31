@@ -141,7 +141,7 @@ class RadioWidget(QtGui.QWidget):
 
     def clearPresets(self):
         for i in reversed(range(self.horizontalLayout.count())): 
-            self.horizontalLayout.itemAt(i).widget().setParent(None)
+            self.horizontalLayout.itemAt(i).widget().deleteLater()
 
         
     def updateRadioFrequency(self):

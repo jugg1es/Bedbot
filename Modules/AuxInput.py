@@ -27,6 +27,7 @@ class AuxInput(QObject):
     def showWidget(self):
         self.isVisible = True
         self.aux_widget.setVisible(True)
+        self.showButtonIndicators()
 
     def hideWidget(self):
         self.isVisible = False
@@ -58,7 +59,13 @@ class AuxInput(QObject):
             print("requested aux pin")
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
             self.emit(QtCore.SIGNAL('audioStarted'), self)
+            
 
+    def showButtonIndicators(self):
+        if(self.isVisible):
+            btns =[]
+            btns.append("ON")
+            self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
 
 
