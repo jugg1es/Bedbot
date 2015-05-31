@@ -41,8 +41,7 @@ class AudioPinSwitch(QObject):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.audioPin1, pigpio.OUTPUT)
             self.pi.set_mode(self.audioPin2, pigpio.OUTPUT)
-            self.pi.write(self.audioPin1,0)
-            self.pi.write(self.audioPin2,0)
+            self.doDisablePins()
             self.audioPinsInitialized = True
 
 
@@ -54,6 +53,16 @@ class AudioPinSwitch(QObject):
             elif(self.audioPin2 == pinNum):
                 self.pi.write(self.audioPin1,0)
                 self.pi.write(self.audioPin2,1)
+            self.doDisablePins()
+
+    def doDisablePins(self):
+        t = Thread(target=self._disablePins, args=(self,))        
+        t.start()
+
+    def _disablePins(self, parent):
+        time.sleep(0.5)
+        self.pi.write(self.audioPin1,0)
+        self.pi.write(self.audioPin2,0)
 
     def dispose(self):
         print("disposed of audio relay switch")
