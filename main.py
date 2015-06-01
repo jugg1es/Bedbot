@@ -134,7 +134,7 @@ class MyApplication(QtGui.QApplication):
   
 if __name__ == '__main__':
     #sets the current directory as the working directory
-    launchDir = str(os.path.dirname(os.path.realpath(__file__)));
+    launchDir = str(os.path.dirname(os.path.realpath(__file__)))
     os.chdir(launchDir)
     print("Setting working directory to:" + launchDir)
 

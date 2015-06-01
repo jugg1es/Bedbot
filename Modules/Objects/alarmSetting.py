@@ -5,9 +5,8 @@ import re
 
 class AlarmState(Enum):
     OFF = 0
-    BUZZ=1
-    RADIO=2
-    PANDORA=3
+    RADIO=1
+    INETRADIO=3
     
 class TimeOfDay(Enum):
     AM = 0
@@ -23,7 +22,7 @@ class ScanTarget(Enum):
     MINUTE=1
     NONE =2
 
-timeSaveFormat = "%H:%M";
+timeSaveFormat = "%H:%M"
 
     
 class alarmSetting(object):
@@ -66,7 +65,12 @@ class alarmSetting(object):
             return timeSince
         else:
             return None
-        
+    def setHour(self, h):
+        self.timeSetting = self.timeSetting.replace(hour=h)
+
+    def setMinute(self, m):
+        self.timeSetting = self.timeSetting.replace(minute=m)
+
     def changeHour(self, d):
         if(d == Direction.UP):
             self.timeSetting = self.timeSetting + datetime.timedelta(hours=1)
@@ -99,7 +103,7 @@ class alarmSetting(object):
         return str(self.timeSetting.strftime("%I:%M %p"))
     
     def getHourString(self):
-        return str(self.timeSetting.strftime("%I"))
+        return str(self.timeSetting.strftime("%I").lstrip('0'))
     
     def getMinuteString(self):
         return str(self.timeSetting.strftime("%M"))

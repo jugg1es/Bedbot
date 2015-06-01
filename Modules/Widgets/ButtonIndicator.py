@@ -6,7 +6,7 @@ class ButtonIndicator(QtGui.QWidget):
 
     diameter = 30
     buttonColor = "white"
-    penWidth = 5
+    penWidth = 3
 
     fullDiameter = None
 

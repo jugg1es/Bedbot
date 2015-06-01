@@ -38,6 +38,9 @@ class InternetRadio(QObject):
     subprocessAvailable = True
     widgetVisible = False
 
+    webserviceEnabled = False
+
+
     def __init__(self):
         super(InternetRadio, self).__init__()
         try:
@@ -91,6 +94,25 @@ class InternetRadio(QObject):
         self.loadFromJSON()
         self.inetradio_widget.fillStationList(self.stations)
         self.connect(self.inetradio_widget, QtCore.SIGNAL('stationSelected'), self.stationSelectedCallback)
+
+        if(self.webserviceEnabled):
+            currentLocation = str(os.path.dirname(os.path.realpath(__file__)))
+            location =self.findWebServiceFile("InetRadioWebService.py", currentLocation)
+            t = Thread(target=self.spinupWebService, args=(self,location,))
+            t.start()
+        
+    def findWebServiceFile(self, name, path):
+        for root, dirs, files in os.walk(path):
+            if name in files:
+                return os.path.join(root, name)
+
+    def spinupWebService(self, parent, location):        
+        if(location.find("\\")):
+            location = location.replace("\\", "\\\\")
+            parent.webservice = subprocess.Popen(shlex.split("python " + location)) 
+        else:
+            parent.webservice = subprocess.Popen(shlex.split("sudo python " + location)) 
+
 
     def stationSelectedCallback(self, stationID):
         if(stationID < len(self.stations)):
@@ -172,14 +194,29 @@ class InternetRadio(QObject):
     def getPlaylist(self, station):
         print("get playlist")
 
-    def loadFromJSON(self):      
-            
+    def loadFromJSON(self):                  
+        stationData = None
+        buildDefaultData = False
+
+        if(os.path.isfile(self.settingsFilename) == False):
+            buildDefaultData = True
+        try:
+            with open(self.settingsFilename) as data_file:    
+                stationData = json.load(data_file)
+        except:
+            buildDefaultData = True
+
+        if(buildDefaultData == True or stationData == None):
+            stationData = []
+            with open(self.settingsFilename, 'w') as outfile:
+                json.dump(stationData, outfile)
+
         with open(self.settingsFilename) as data_file:    
-            data = json.load(data_file)            
+            stationData = json.load(data_file)            
             
         self.stations = []
-        for x in range(0, len(data["Stations"])):
-            s = data["Stations"][x]
+        for x in range(0, len(stationData)):
+            s = stationData[x]
             sObj = internetStation(s, x)
             self.stations.append(sObj)
 

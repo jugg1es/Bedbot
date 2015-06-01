@@ -126,13 +126,20 @@ class BedbotWidget(QtGui.QWidget):
         self.contextButtonIndicator.setVisible(False)
         self.offButtonIndicator.setVisible(False)
         
-    def showPopupCallback(self, caller, msg):
+    def showPopupCallback(self, caller, msg=None, popupType=None, popupArgs=None):
         customPopup = Popup(self)
         self.connect(customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
-        customPopup.doWait(msg)
-        for m in self.loadedModules:
-            if(self.moduleHasFunction(m, "setCurrentPopup")):
-                m.setCurrentPopup(customPopup)
+        if(popupType == None):
+            customPopup.doWait(msg)            
+        else:
+            if(popupType == "optionSelect" and popupArgs != None):
+                customPopup.optionSelect(msg, popupArgs)
+            elif(popupType == "numberSelect"):
+                customPopup.numberSelect(msg, popupArgs)
+
+        if(self.moduleHasFunction(caller, "setCurrentPopup")):
+            caller.setCurrentPopup(customPopup)
+                
 
     def popupCallback(self, name, tag):
         for m in self.loadedModules:

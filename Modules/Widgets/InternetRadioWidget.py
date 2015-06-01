@@ -11,8 +11,8 @@ from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
     
 class InternetRadioWidget(QtGui.QWidget):
-    stationListingStyle = "font-size:12pt;background-color: #000;color:#fff;padding:5px;"
-    stationSelectedListingStyle = "font-size:12pt;background-color: #fff; color:#000;padding:5px;"
+    stationListingStyle = "font-size:18pt;background-color: #000;color:#fff;padding:5px;"
+    stationSelectedListingStyle = "font-size:18pt;background-color: #fff; color:#000;padding:5px;"
     
     stationObjects = []
 
