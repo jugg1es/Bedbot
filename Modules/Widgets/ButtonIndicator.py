@@ -13,6 +13,12 @@ class ButtonIndicator(QtGui.QWidget):
     def __init__(self, parent=None,  diameter=30, color="white"):
         QtGui.QWidget.__init__(self, parent)
 
+        self.setAutoFillBackground(True)
+        
+        p = self.palette()
+        p.setColor(self.backgroundRole(), QtCore.Qt.black)
+        self.setPalette(p)
+
         self.diameter = diameter - ((self.penWidth *2) +1)
         self.fullDiameter = diameter
         self.buttonColor = color

@@ -127,24 +127,26 @@ class BedbotWidget(QtGui.QWidget):
         self.offButtonIndicator.setVisible(False)
         
     def showPopupCallback(self, caller, msg=None, popupType=None, popupArgs=None):
-        customPopup = Popup(self)
-        self.connect(customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
+        self.customPopup = Popup(self)
+        self.connect(self.customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
         if(popupType == None):
-            customPopup.doWait(msg)            
+            self.customPopup.doWait(msg)            
         else:
             if(popupType == "optionSelect" and popupArgs != None):
-                customPopup.optionSelect(msg, popupArgs)
+                self.customPopup.optionSelect(msg, popupArgs)
             elif(popupType == "numberSelect"):
-                customPopup.numberSelect(msg, popupArgs)
+                self.customPopup.numberSelect(msg, popupArgs)
 
         if(self.moduleHasFunction(caller, "setCurrentPopup")):
-            caller.setCurrentPopup(customPopup)
+            caller.setCurrentPopup(self.customPopup)
                 
 
-    def popupCallback(self, name, tag):
+    def popupCallback(self, result):
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "popupResult")):
-                m.popupResult(name, tag)
+                m.popupResult(result)
+        if(self.customPopup != None):
+            self.customPopup = None
 
 
     def pinRequestedCallback(self, pin):
@@ -278,9 +280,12 @@ class BedbotWidget(QtGui.QWidget):
 
     def pinEventCallback(self, channel):
         self.logEvent("pin callback for channel: " + str(channel))
-        for m in self.loadedModules:
-            if(self.moduleHasFunction(m, "processPinEvent")):
-                m.processPinEvent(channel)
+        if(self.customPopup != None):
+            self.customPopup.processPin(self.pinConfig, channel)
+        else:
+            for m in self.loadedModules:
+                if(self.moduleHasFunction(m, "processPinEvent")):
+                    m.processPinEvent(channel)
 
     def pigpioCallback(self, gpio, level, tick):
        currentlyDisabled = gpio in self.disabledPins

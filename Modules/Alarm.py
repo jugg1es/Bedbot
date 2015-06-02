@@ -90,20 +90,20 @@ class Alarm(QObject):
         if(self.currentPopupType != None):
             self.screenPowerPopup = popup
 
-    def popupResult(self, name, tag):
+    def popupResult(self, result):
         if(self.currentPopupType != None):
             if(self.currentPopupType == "alarmType"):
-                print("received result: " + tag)
-                if(tag == "Off"):
+                print("received result: " + result)
+                if(result == "Off"):
                     self.alarm_widget.setAlarmStateCallback(AlarmState.OFF)
-                elif(tag == "Radio"):
+                elif(result == "Radio"):
                     self.alarm_widget.setAlarmStateCallback(AlarmState.RADIO)
-                elif(tag == "Internet Radio"):
+                elif(result == "Internet Radio"):
                     self.alarm_widget.setAlarmStateCallback(AlarmState.INETRADIO)
             elif(self.currentPopupType == "hour"):
-                self.alarm_widget.setHourCallback(tag)
+                self.alarm_widget.setHourCallback(result)
             elif(self.currentPopupType == "min"):
-                self.alarm_widget.setMinuteCallback(tag)
+                self.alarm_widget.setMinuteCallback(result)
 
             self.currentPopupType = None
 

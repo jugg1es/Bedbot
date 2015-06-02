@@ -4,26 +4,29 @@ import time
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
 from clickable import *
+from Modules.Widgets.ButtonIndicator import *
 
     
 class Popup(QtGui.QWidget):
 
     popupStyle = "border: 2px solid #fff;color: #fff;"
 
-    popupContentsStyle = "border: none; "
+    popupContentsStyle = "border: none;background-color:#000;  "
 
     popupButtonStyle = "QPushButton { font-size:20px;background-color:#000; border: 2px solid #fff;color:#fff; padding: 5px; } QPushButton:pressed { background-color:#fff; color: #000;  }"
 
     optionListingStyle = "font-size:15pt;background-color: #000;color:#fff;padding:5px;"
     optionSelectedListingStyle = "font-size:15pt;background-color: #fff; color:#000;padding:5px;"
 
-
     maxDigits = None
+
+    currentResult = None
+
 
     def __init__(self, parent):
         super(Popup, self).__init__(parent)
         
-        self.resize(320, 210)
+        self.resize(320, 240)
 
         self.setAutoFillBackground(True)
         p = self.palette()
@@ -31,18 +34,40 @@ class Popup(QtGui.QWidget):
         self.setPalette(p)
 
         self.popupFrame = QtGui.QFrame(self)        
-        self.popupFrame.setGeometry(QtCore.QRect(5, 0, 310, 190))  
+        self.popupFrame.setGeometry(QtCore.QRect(0, 0, 320, 240))  
         self.popupFrame.setFrameShape(QtGui.QFrame.Box)
         self.popupFrame.setFrameShadow(QtGui.QFrame.Plain)
-        self.popupFrame.setStyleSheet(self.popupStyle)
+
+        font = QtGui.QFont()
+        font.setPointSize(14)
+       
+
+        self.onButtonIndicator = ButtonIndicator(self.popupFrame, 30, "green")
+        self.onButtonIndicator.setGeometry(QtCore.QRect(10,202,30,30))
+        self.onButtonIndicator.setVisible(False)
+
+        self.offButtonIndicator = ButtonIndicator(self.popupFrame, 30, "red")
+        self.offButtonIndicator.setGeometry(QtCore.QRect(280,202,30,30))
+        self.offButtonIndicator.setVisible(False)
 
         QtCore.QMetaObject.connectSlotsByName(self)  
+
+
+    def processPin(self, pinConfig, pin):
+        if(pin == pinConfig["ON_BUTTON"]):
+            self.emit(QtCore.SIGNAL('popupResult'), self.currentResult)
+            self.closePopup()
+        elif(pin == pinConfig["OFF_BUTTON"]):
+            self.closePopup()
 
     def numberSelect(self, msg, maxDigits):
         self.maxDigits = maxDigits
 
+        self.onButtonIndicator.setVisible(True)
+        self.offButtonIndicator.setVisible(True)
+
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(17)
 
         self.prompt = QtGui.QLabel(self.popupFrame)
         self.prompt.setGeometry(QtCore.QRect(10,0,300,40))
@@ -51,83 +76,59 @@ class Popup(QtGui.QWidget):
         self.prompt.setFont(font)
         self.prompt.setText(msg)
 
-        self.verticalLayoutWidget = QtGui.QWidget(self)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect((320/2)-(220/2), 30, 220, 100))
-        self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setAlignment(self.verticalLayoutWidget, QtCore.Qt.AlignCenter)
-        self.verticalLayout.setMargin(0)
+        numberWidget = QtGui.QWidget(self)
+        numberWidget.setGeometry(QtCore.QRect((320/2)-(220/2), 30, 220, 150))
+        grid = QtGui.QGridLayout()
+        grid.setHorizontalSpacing(0)
+        grid.setVerticalSpacing(0)
+        numberWidget.setLayout(grid)
 
-        buttonHeight = 30
-       
-        numberTracker = 1
+        numbers = ['1', '2', '3', 
+                   '4', '5', '6', 
+                   '7', '8', '9',
+                   'CLR', '0']
 
-        for x in range(0,3):
-            
-            horizontalLayoutWidget = QtGui.QWidget()
-            horizontalLayout = QtGui.QHBoxLayout(horizontalLayoutWidget)
-            horizontalLayout.setAlignment(horizontalLayoutWidget, QtCore.Qt.AlignHCenter)
-            self.verticalLayout.addWidget(horizontalLayoutWidget)
-            horizontalLayout.setMargin(0)
-            for y in range(numberTracker, (numberTracker + 3)):
-                opt = QtGui.QLabel( str(y))             
-                opt.setStyleSheet("border: 2px solid #fff;color: #fff; font-size: 13pt; ")
-                opt.setAlignment(QtCore.Qt.AlignCenter)
-                opt.setGeometry(QtCore.QRect(0, 0, 30, buttonHeight))
-                opt.tag = y
-                pressableSender(opt).connect(self.numberSelected)
-                horizontalLayout.addWidget(opt)
-            numberTracker = numberTracker + 3
+        positions = [(i,j) for i in range(4) for j in range(3)]
 
-        horizontalLayoutWidget = QtGui.QWidget()
-        horizontalLayout = QtGui.QHBoxLayout(horizontalLayoutWidget)
-        horizontalLayout.setAlignment(horizontalLayoutWidget, QtCore.Qt.AlignHCenter)
-        self.verticalLayout.addWidget(horizontalLayoutWidget)
-        horizontalLayout.setMargin(0)
-
-        deleteButton = QtGui.QLabel("CLR")             
-        deleteButton.setStyleSheet("border: 2px solid #fff;color: #fff; font-size: 13pt;")
-        deleteButton.setAlignment(QtCore.Qt.AlignCenter)
-        deleteButton.setGeometry(QtCore.QRect(0, 0, 30, buttonHeight))
-        deleteButton.tag = "CLR"
-        pressableSender(deleteButton).connect(self.numberSelected)
-        horizontalLayout.addWidget(deleteButton)
-
-        opt = QtGui.QLabel("0")             
-        opt.setStyleSheet("border: 2px solid #fff;color: #fff; font-size: 13pt;")
-        opt.setAlignment(QtCore.Qt.AlignCenter)
-        opt.setGeometry(QtCore.QRect(0, 0, 30, buttonHeight))
-        opt.tag = "0"
-        pressableSender(opt).connect(self.numberSelected)
-        horizontalLayout.addWidget(opt)
-
-        okButton = QtGui.QLabel("OK")             
-        okButton.setStyleSheet("border: 2px solid #fff;color: #fff; font-size: 13pt;")
-        okButton.setAlignment(QtCore.Qt.AlignCenter)
-        okButton.setGeometry(QtCore.QRect(0, 0, 30, buttonHeight))
-        okButton.tag = "OK"
-        pressableSender(okButton).connect(self.numberSelected)
-        horizontalLayout.addWidget(okButton)
+        for position, num in zip(positions, numbers):            
+            if num == '':
+                continue
+            button = QtGui.QPushButton(num)
+            button.setFont(font)
+            button.clicked.connect(self.numberSelected)
+            grid.addWidget(button, *position)
 
         self.numberSelect = QtGui.QLabel(self.popupFrame)
-        self.numberSelect.setGeometry(QtCore.QRect(10,140,300,40))
+        self.numberSelect.setGeometry(QtCore.QRect(10,170,300,40))
         self.numberSelect.setAlignment(QtCore.Qt.AlignCenter)
         self.numberSelect.setStyleSheet("border: none; color: #eeff00; ")
         self.numberSelect.setFont(font)
-        self.numberSelect.setText("")
+        self.numberSelect.setText(self.getBlankString())
+
 
         self.show()
 
-    def numberSelected(self, obj):
-        if(obj.tag == "OK"):
-            txt = self.numberSelect.text()
-            self.emit(QtCore.SIGNAL('popupResult'), None,txt)
-            self.close()
-        elif(obj.tag == "CLR"):
-            self.numberSelect.setText("")
+    def getBlankString(self):
+        bs = []
+        for x in range(0,self.maxDigits):
+            bs.append("-")
+        return "".join(bs)
+
+    def numberSelected(self):
+        obj = self.sender()
+        if(obj.text() == "CLR"):
+            self.currentResult = ""
+            self.numberSelect.setText(self.getBlankString())
         else:
-            txt = self.numberSelect.text()
-            if(len(txt) < self.maxDigits):
-                self.numberSelect.setText(txt + str(obj.tag))
+            txtlist = list(str(self.numberSelect.text()))
+            for x in range(0,self.maxDigits):
+                if(txtlist[x] == "-"):
+                    txtlist[x] = str(obj.text())
+                    self.numberSelect.setText("".join(txtlist) )
+                    break
+            r = str(self.numberSelect.text()).translate(None, '-')
+            self.currentResult = r
+                
 
 
     def optionSelect(self, msg, options):
@@ -168,8 +169,8 @@ class Popup(QtGui.QWidget):
         self.show()
 
     def optionSelected(self, obj):
-        self.emit(QtCore.SIGNAL('popupResult'), None, obj.tag)
-        self.close()
+        self.emit(QtCore.SIGNAL('popupResult'),obj.tag)
+        self.closePopup()
 
     def doWait(self, msg):
         font = QtGui.QFont()
@@ -200,7 +201,7 @@ class Popup(QtGui.QWidget):
         self.show()
 
 
-
+    '''
     def doConfirm(self, promptText, tag):
 
         font = QtGui.QFont()
@@ -236,8 +237,12 @@ class Popup(QtGui.QWidget):
 
 
         self.show()
+    '''
         
     def buttonCallback(self):
         self.emit(QtCore.SIGNAL('popupResult'), [self.sender().name, self.sender().tag])
+        self.closePopup()
+
+    def closePopup(self):
         self.close()
-    
+        self = None
