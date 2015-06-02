@@ -280,7 +280,7 @@ class BedbotWidget(QtGui.QWidget):
 
     def pinEventCallback(self, channel):
         self.logEvent("pin callback for channel: " + str(channel))
-        if(self.customPopup != None):
+        if(hasattr(self, "customPopup") == True and self.customPopup != None):
             self.customPopup.processPin(self.pinConfig, channel)
         else:
             for m in self.loadedModules:

@@ -36,6 +36,8 @@ class Alarm(QObject):
     def showWidget(self):
         self.isVisible = True
         self.alarm_widget.setVisible(True)
+        btns =["CONTEXT"]
+        self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
     def hideWidget(self):
         self.isVisible = False
@@ -69,7 +71,10 @@ class Alarm(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.snoozeButtonPin == pinNum):
-            self.alarm_widget.doAlarmSnooze()
+            if(self.isVisible):
+               self.alarm_widget.cycleSelectedAlarm()
+            else:
+                self.alarm_widget.doAlarmSnooze()
 
     def selectTimeHourCallback(self):
         self.currentPopupType = "hour"

@@ -57,7 +57,18 @@ class AlarmWidget(QtGui.QWidget):
         self.lblHour.setText(self.currentPreset.getHourString())   
         self.lblMinute.setText(self.currentPreset.getMinuteString())  
         
+    def cycleSelectedAlarm(self):
+        index = self.alarmSettings.index(self.currentPreset)
+        print(len(self.alarmSettings))
+        if(index == len(self.alarmSettings)-1):
+            index = 0
+        else:
+            index += 1
+
+        self.setCurrentPreset(index)
+        self.currentPreset = self.alarmSettings[index]
         
+
     def setPresetStyle(self, preset, widget):
         widget.setText(preset.getDisplayTimeString())
         if(preset == self.currentPreset):
@@ -189,20 +200,20 @@ class AlarmWidget(QtGui.QWidget):
         timeFont.setStyleHint(QtGui.QFont.SansSerif)
         
         self.label = QtGui.QLabel(":", self)
-        self.label.setGeometry(QtCore.QRect(105, 50, 21, 61))
+        self.label.setGeometry(QtCore.QRect(115, 40, 21, 61))
         self.label.setFont(timeFont)
         self.label.setStyleSheet("color: #fff")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         
         self.lblHour = QtGui.QLabel(self)
-        self.lblHour.setGeometry(QtCore.QRect(25, 60, 81, 61))
+        self.lblHour.setGeometry(QtCore.QRect(35, 50, 81, 61))
         self.lblHour.setFont(timeFont)
         self.lblHour.setStyleSheet("color: #fff")
         pressable(self.lblHour).connect(self.setHour)
         self.lblHour.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         
         self.lblMinute = QtGui.QLabel(self)
-        self.lblMinute.setGeometry(QtCore.QRect(125, 60, 81, 61))
+        self.lblMinute.setGeometry(QtCore.QRect(135, 50, 81, 61))
         self.lblMinute.setFont(timeFont)
         self.lblMinute.setStyleSheet("color: #fff")
         pressable(self.lblMinute).connect(self.setMinute)
@@ -210,7 +221,7 @@ class AlarmWidget(QtGui.QWidget):
         
         
         self.verticalLayoutWidget = QtGui.QWidget(self)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(210, 60, 41, 61))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(230, 50, 41, 61))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setMargin(0)
         
@@ -229,7 +240,7 @@ class AlarmWidget(QtGui.QWidget):
         self.btnAlarmStatus = QtGui.QLabel("ALARM OFF", self)        
         self.btnAlarmStatus.setStyleSheet("color: #fff; font-size:22pt;")
         xLocation =  (320/2) - (150/2)
-        self.btnAlarmStatus.setGeometry(QtCore.QRect((320/2) - (250/2), 130, 250, 60))
+        self.btnAlarmStatus.setGeometry(QtCore.QRect((320/2) - (250/2), 120, 250, 25))
         pressable(self.btnAlarmStatus).connect(self.setAlarmState)
         self.btnAlarmStatus.setAlignment(QtCore.Qt.AlignCenter)     
            
