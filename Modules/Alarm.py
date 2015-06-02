@@ -5,7 +5,6 @@ from PyQt4.QtCore import QObject
 from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.AlarmWidget import *
-from Modules.Objects.alarm import *
 import json
 import datetime
 
