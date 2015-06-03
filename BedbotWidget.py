@@ -79,12 +79,11 @@ class BedbotWidget(QtGui.QWidget):
 
             '''
             For a widget to be used in the app, it must be located in the Modules folder and have 
-            an 'Enabled' attribute set to True.  If it's not there, or it's false, the widget 
-            is ignored
+            an 'Enabled' attribute set to True.  If it's not there, or it's false, the widget is ignored
             '''
             if(hasattr(m, "Enabled") == True and m.Enabled == True):     
                 '''
-                Scans all active widgets to see if they should be added to the menu
+                Scans all active widgets to see if they should be added to the menu.
                 Widget must have 'addMenuWidget' function 
                 '''
                 if(self.moduleHasFunction(m, "addMenuWidget")):
@@ -94,9 +93,8 @@ class BedbotWidget(QtGui.QWidget):
                        menuWidgets.insert(len(menuWidgets), m)
 
                 '''
-                Scans all active widgets to see if they require the pin configuration
-                Sends the pin configuration and adds a listener in case they need to know
-                when a pin is activated
+                Scans all active widgets to see if they require the pin configuration.
+                Sends the pin configuration and adds a listener in case they need to know when a pin is activated
                 '''
                 if(self.moduleHasFunction(m, "setPin")):
                     self.addPinBasedObject(m)
@@ -108,12 +106,12 @@ class BedbotWidget(QtGui.QWidget):
 
 
                 '''
-                Tells this to show a popup according to specifications provided
+                Tells this widget to show a popup according to specifications provided
                 '''
                 self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
 
                 '''
-                Tells this which colored circle indicators to display
+                Tells this widget which colored circle indicators to display
                 '''
                 self.connect(m, QtCore.SIGNAL('requestButtonPrompt'), self.buttonPromptRequestCallback)
 
