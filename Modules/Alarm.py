@@ -7,6 +7,15 @@ from threading import Timer,Thread,Event
 from Modules.Widgets.AlarmWidget import *
 import json
 import datetime
+from perpetualTimer import perpetualTimer
+from enum import Enum
+
+
+class AlarmPopupType(Enum):
+    ALARM_TYPE = 0
+    ALARM_DETAILS=1
+    HOUR=2
+    MINUTE=3
 
 
 
@@ -28,9 +37,15 @@ class Alarm(QObject):
 
     currentPopupType = None
 
+    isAlarmActive = False
+
+    possibleAlarms = None
+    currentAlarmType = None
+
     def __init__(self):
         super(Alarm, self).__init__()
-
+        self.alarmTimer = perpetualTimer(5, self.processAlarmTime)
+        self.alarmTimer.start()
     
 
     def showWidget(self):
@@ -71,46 +86,81 @@ class Alarm(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.snoozeButtonPin == pinNum):
-            if(self.isVisible):
+            if(self.isVisible and self.isAlarmActive == False):
                self.alarm_widget.cycleSelectedAlarm()
-            else:
+            elif(self.isAlarmActive):
                 self.alarm_widget.doAlarmSnooze()
 
+
+    def processAlarmTime(self):
+        activeAlarms = self.alarm_widget.checkAlarms()
+
     def selectTimeHourCallback(self):
-        self.currentPopupType = "hour"
+        self.currentPopupType =  AlarmPopupType.HOUR
         self.emit(QtCore.SIGNAL('showPopup'), self, "Select Hour", "numberSelect", 2)
 
     def selectTimeMinuteCallback(self):
-        self.currentPopupType = "min"
+        self.currentPopupType =AlarmPopupType.MINUTE
         self.emit(QtCore.SIGNAL('showPopup'), self, "Select Minute", "numberSelect", 2)
 
     def selectAlarmTypeCallback(self):
-        self.currentPopupType = "alarmType"
-        options = ["Off", "Radio", "Internet Radio"]
+        '''
+        Tells the main widget to poll all other active widgets for 'getPossibleAlarmDetails' method
+        and return the results to 'alarmDetailsCallback'
+        '''
+        self.possibleAlarms = None
+        self.emit(QtCore.SIGNAL('requestOtherWidgetData'), self, "getPossibleAlarmDetails", "alarmDetailsCallback")
+
+
+
+    def alarmDetailsCallback(self, alarmDetails):
+        self.possibleAlarms = alarmDetails
+        self.currentPopupType = AlarmPopupType.ALARM_TYPE
+        options = ["OFF"]
+        for x in self.possibleAlarms:
+            options.append(x["name"])
         self.emit(QtCore.SIGNAL('showPopup'), self, "Configure Alarm", "optionSelect", options)
 
-
-    def setCurrentPopup(self, popup):
-        if(self.currentPopupType != None):
-            self.screenPowerPopup = popup
+           
 
     def popupResult(self, result):
         if(self.currentPopupType != None):
-            if(self.currentPopupType == "alarmType"):
-                print("received result: " + result)
-                if(result == "Off"):
+            if(self.currentPopupType ==  AlarmPopupType.ALARM_DETAILS):
+                self.alarm_widget.setAlarmStateCallback(self.currentAlarmType, result)
+                self.currentAlarmType = None
+            elif(self.currentPopupType == AlarmPopupType.ALARM_TYPE):
+                '''
+                Once the alarm type is selected (assuming it's not OFF), it uses the data retrieved in 'alarmDetailsCallback' 
+                to then query the user for further details about how the alarm should work
+                '''
+                if(result == "OFF"):
                     self.alarm_widget.setAlarmStateCallback(AlarmState.OFF)
-                elif(result == "Radio"):
-                    self.alarm_widget.setAlarmStateCallback(AlarmState.RADIO)
-                elif(result == "Internet Radio"):
-                    self.alarm_widget.setAlarmStateCallback(AlarmState.INETRADIO)
-            elif(self.currentPopupType == "hour"):
-                self.alarm_widget.setHourCallback(result)
-            elif(self.currentPopupType == "min"):
-                self.alarm_widget.setMinuteCallback(result)
+                else:         
+                    #Find the selected alarm type in data retrieved from 'alarmDetailsCallback'                   
+                    selectedAlarm = None
+                    for x in self.possibleAlarms:
+                        if(x["name"] == str(result)):
+                            selectedAlarm = x            
+                            break
 
-            self.currentPopupType = None
+                    #setup for the alarm details popup
+                    self.currentPopupType = AlarmPopupType.ALARM_DETAILS
+                    self.currentAlarmType = None
+                    if(x["name"] == "RADIO"):
+                        self.currentAlarmType = AlarmState.RADIO
+                    elif(x["name"] == "INTERNET RADIO"):
+                        self.currentAlarmType = AlarmState.INETRADIO
+                    if(self.currentAlarmType != None):
+                        self.emit(QtCore.SIGNAL('showPopup'), self, "Select Alarm", "optionSelect", selectedAlarm["options"])
+
+            elif(self.currentPopupType == AlarmPopupType.HOUR):
+                self.alarm_widget.setHourCallback(result)
+                self.currentPopupType = None
+            elif(self.currentPopupType == AlarmPopupType.MINUTE):
+                self.alarm_widget.setMinuteCallback(result)
+                self.currentPopupType = None
 
     def dispose(self):
+        self.alarmTimer.cancel()
         print("Disposing of Alarm")
 

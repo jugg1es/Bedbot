@@ -29,20 +29,21 @@ class alarmSetting(object):
     
     timeSetting = None
     state = AlarmState.OFF
+    details = None
     
     alarmStartTime = None
     alarmSnoozeTime = None
     
     def __init__(self, settingName, config):
         if(config == None):
-            #self.timeSetting = datetime.time(0,0,0,0)
             self.timeSetting = datetime.date.today()
             self.state = AlarmState.OFF
+            self.details = None
         else:
             s = config.get(settingName, "time")
             self.timeSetting=datetime.datetime(*map(int, re.split('[^\d]', s)[:-1]))
-            #self.timeSetting = datetime.datetime.strptime(config.get(settingName, "time"), timeSaveFormat) 
             self.state = AlarmState(int(config.get(settingName, "status")))
+            self.details = config.get(settingName, "details")
            
     def setSnoozeTime(self, start):
         self.alarmSnoozeTime = start

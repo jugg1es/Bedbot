@@ -103,6 +103,17 @@ class Radio(QObject):
         self.loadRadioPresets()
         self.radio_widget.fillPresets(self.radioPresets)
 
+    def getPossibleAlarmDetails(self):
+        result = {}
+        result["name"] = "RADIO"
+        possible = []
+        for x in range(0, len(self.radioPresets)):
+            pre = self.radioPresets[x]
+            possible.append(str(pre.frequency))
+        result["options"] = possible
+        return result
+
+
     def showButtonIndicators(self):
         if(self.widgetVisible):
             btns =[]
@@ -133,8 +144,6 @@ class Radio(QObject):
     def presetChangedCallback(self, d):
         for x in range(0, len(self.radioPresets)):
             pre = self.radioPresets[x]
-            print(int(pre.id));
-            print(int(d[0]));
             if(int(pre.id) == int(d[0])):
                 pre.frequency = str(d[1])
         self.saveRadioPresets()

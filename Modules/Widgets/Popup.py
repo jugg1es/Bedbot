@@ -5,6 +5,13 @@ from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
 from clickable import *
 from Modules.Widgets.ButtonIndicator import *
+from enum import Enum
+
+
+class PopupType(Enum):
+    CONFIRM = 0
+    OPTIONS=1
+    NUMBER=2
 
     
 class Popup(QtGui.QWidget):
@@ -21,6 +28,8 @@ class Popup(QtGui.QWidget):
     maxDigits = None
 
     currentResult = None
+
+    currentType = None
 
 
     def __init__(self, parent):
@@ -44,10 +53,12 @@ class Popup(QtGui.QWidget):
 
         self.onButtonIndicator = ButtonIndicator(self.popupFrame, 30, "green")
         self.onButtonIndicator.setGeometry(QtCore.QRect(10,202,30,30))
+        pressableSender(self.onButtonIndicator).connect(self.greenIndicatorPressed)
         self.onButtonIndicator.setVisible(False)
 
         self.offButtonIndicator = ButtonIndicator(self.popupFrame, 30, "red")
         self.offButtonIndicator.setGeometry(QtCore.QRect(280,202,30,30))
+        pressableSender(self.offButtonIndicator).connect(self.redIndicatorPressed)
         self.offButtonIndicator.setVisible(False)
 
         QtCore.QMetaObject.connectSlotsByName(self)  
@@ -55,12 +66,30 @@ class Popup(QtGui.QWidget):
 
     def processPin(self, pinConfig, pin):
         if(pin == pinConfig["ON_BUTTON"]):
+            self.greenIndicatorPressed()
+        elif(pin == pinConfig["OFF_BUTTON"]):
+            self.redIndicatorPressed()
+
+    def greenIndicatorPressed(self):
+        sendResult = True
+        if(self.currentType == PopupType.NUMBER):     
+            try:
+                r = int(str(self.currentResult).translate(None, '-'))
+            except:
+                sendResult = False
+                self.numberSelect.setStyleSheet("border: 2px solid #ff0000; color: #eeff00; ")
+
+        if(sendResult):
             self.emit(QtCore.SIGNAL('popupResult'), self.currentResult)
             self.closePopup()
-        elif(pin == pinConfig["OFF_BUTTON"]):
-            self.closePopup()
+
+
+    def redIndicatorPressed(self):
+        self.closePopup()
+
 
     def numberSelect(self, msg, maxDigits):
+        self.currentType = PopupType.NUMBER
         self.maxDigits = maxDigits
 
         self.onButtonIndicator.setVisible(True)
@@ -95,13 +124,13 @@ class Popup(QtGui.QWidget):
                 continue
             button = QtGui.QPushButton(num)
             button.setFont(font)
-            button.clicked.connect(self.numberSelected)
+            pressableSender(button).connect(self.numberSelected)
             grid.addWidget(button, *position)
 
         self.numberSelect = QtGui.QLabel(self.popupFrame)
-        self.numberSelect.setGeometry(QtCore.QRect(10,170,300,40))
+        self.numberSelect.setGeometry(QtCore.QRect((320/2)-(80/2),175,80,40))
         self.numberSelect.setAlignment(QtCore.Qt.AlignCenter)
-        self.numberSelect.setStyleSheet("border: none; color: #eeff00; ")
+        self.numberSelect.setStyleSheet("border: 2px solid #000; color: #eeff00; ")
         self.numberSelect.setFont(font)
         self.numberSelect.setText(self.getBlankString())
 
@@ -114,8 +143,8 @@ class Popup(QtGui.QWidget):
             bs.append("-")
         return "".join(bs)
 
-    def numberSelected(self):
-        obj = self.sender()
+    def numberSelected(self, obj):
+        #obj = self.sender()
         if(obj.text() == "CLR"):
             self.currentResult = ""
             self.numberSelect.setText(self.getBlankString())
@@ -132,6 +161,7 @@ class Popup(QtGui.QWidget):
 
 
     def optionSelect(self, msg, options):
+        self.currentType = PopupType.OPTIONS
         font = QtGui.QFont()
         font.setPointSize(18)
 
@@ -203,7 +233,7 @@ class Popup(QtGui.QWidget):
 
     '''
     def doConfirm(self, promptText, tag):
-
+        self.currentType = PopupType.CONFIRM
         font = QtGui.QFont()
         font.setPointSize(20)
 

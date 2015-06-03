@@ -100,7 +100,18 @@ class InternetRadio(QObject):
             location =self.findWebServiceFile("InetRadioWebService.py", currentLocation)
             t = Thread(target=self.spinupWebService, args=(self,location,))
             t.start()
-        
+
+    def getPossibleAlarmDetails(self):
+        result = {}
+        result["name"] = "INTERNET RADIO"
+        possible = []
+        for x in range(0, len(self.stations)):
+            sta = self.stations[x]
+            possible.append(str(sta.name))
+        result["options"] = possible
+        return result
+
+
     def findWebServiceFile(self, name, path):
         for root, dirs, files in os.walk(path):
             if name in files:

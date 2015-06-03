@@ -30,6 +30,10 @@ class AlarmWidget(QtGui.QWidget):
     optionsUnselectedStyle = "font-size:11pt;border: 2px solid #000; color:#fff;"
     optionsSelectedStyle = "font-size:11pt; color:#fff;border: 2px solid #fff;"
 
+    alarmTimeSectionStyle = "border: 4px solid #444444; border-radius: 20px; padding:5px; color: #fff"
+    alarmTypeSectionStyle = "border: 4px solid #444444; border-radius: 20px; padding:5px; color: #fff; font-size:18pt;"
+    alarmDetailsSectionStyle = "color: #fff; font-size:13pt;"
+
     def __init__(self, parent):
         super(AlarmWidget, self).__init__(parent)
         self.resize(320, 210)
@@ -59,7 +63,6 @@ class AlarmWidget(QtGui.QWidget):
         
     def cycleSelectedAlarm(self):
         index = self.alarmSettings.index(self.currentPreset)
-        print(len(self.alarmSettings))
         if(index == len(self.alarmSettings)-1):
             index = 0
         else:
@@ -97,12 +100,18 @@ class AlarmWidget(QtGui.QWidget):
     def configureAlarmStateDisplay(self):
         self.loadPresetDisplay()
 
+        self.btnAlarmDetails.setVisible(False)
+
         if(self.currentPreset.state == AlarmState.OFF):
             self.btnAlarmStatus.setText("ALARM OFF")
         elif(self.currentPreset.state == AlarmState.RADIO):
             self.btnAlarmStatus.setText("RADIO")
+            self.btnAlarmDetails.setVisible(True)
+            self.btnAlarmDetails.setText(self.currentPreset.details)
         elif(self.currentPreset.state == AlarmState.INETRADIO):
             self.btnAlarmStatus.setText("INTERNET RADIO")
+            self.btnAlarmDetails.setVisible(True)
+            self.btnAlarmDetails.setText(self.currentPreset.details)
             
         self.lblAM.setStyleSheet(self.optionsUnselectedStyle)        
         self.lblPM.setStyleSheet(self.optionsUnselectedStyle)
@@ -115,21 +124,20 @@ class AlarmWidget(QtGui.QWidget):
     def setAlarmState(self):
         self.emit(QtCore.SIGNAL('selectAlarmType'))
 
-    def setAlarmStateCallback(self, state):
+    def setAlarmStateCallback(self, state, details=""):
         newState = AlarmState(state)
         self.currentPreset.state = state        
+        self.currentPreset.details = details
         self.configManager.saveSettings(self.alarmSettings)
         self.configureAlarmStateDisplay()
         
+
     def setTimeOfDay(self, obj):
         newTOD = TimeOfDay(obj.name)
         self.currentPreset.setTimeOfDayType(newTOD)
         self.configManager.saveSettings(self.alarmSettings)
         self.updateTimeDisplay()
         self.configureAlarmStateDisplay()
-        
-
-
 
     def alarmPresetsLoadedCallback(self):
         self.initializeControls()
@@ -195,33 +203,34 @@ class AlarmWidget(QtGui.QWidget):
         
         
         timeFont = QtGui.QFont()
-        timeFont.setPointSize(50)
+        timeFont.setPointSize(48)
         timeFont.setStyleStrategy(QtGui.QFont.PreferAntialias)
         timeFont.setStyleHint(QtGui.QFont.SansSerif)
         
         self.label = QtGui.QLabel(":", self)
-        self.label.setGeometry(QtCore.QRect(115, 40, 21, 61))
+        self.label.setGeometry(QtCore.QRect(120, 44, 21, 61))
         self.label.setFont(timeFont)
         self.label.setStyleSheet("color: #fff")
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         
         self.lblHour = QtGui.QLabel(self)
-        self.lblHour.setGeometry(QtCore.QRect(35, 50, 81, 61))
+
+        self.lblHour.setGeometry(QtCore.QRect(30, 42, 90,74))
         self.lblHour.setFont(timeFont)
-        self.lblHour.setStyleSheet("color: #fff")
+        self.lblHour.setStyleSheet(self.alarmTimeSectionStyle)
         pressable(self.lblHour).connect(self.setHour)
-        self.lblHour.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.lblHour.setAlignment(QtCore.Qt.AlignCenter)
         
         self.lblMinute = QtGui.QLabel(self)
-        self.lblMinute.setGeometry(QtCore.QRect(135, 50, 81, 61))
+        self.lblMinute.setGeometry(QtCore.QRect(140, 42, 90, 74))
         self.lblMinute.setFont(timeFont)
-        self.lblMinute.setStyleSheet("color: #fff")
+        self.lblMinute.setStyleSheet(self.alarmTimeSectionStyle)
         pressable(self.lblMinute).connect(self.setMinute)
-        self.lblMinute.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.lblMinute.setAlignment(QtCore.Qt.AlignCenter)
         
         
         self.verticalLayoutWidget = QtGui.QWidget(self)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(230, 50, 41, 61))
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(250, 50, 41, 61))
         self.verticalLayout = QtGui.QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setMargin(0)
         
@@ -238,13 +247,16 @@ class AlarmWidget(QtGui.QWidget):
 
 
         self.btnAlarmStatus = QtGui.QLabel("ALARM OFF", self)        
-        self.btnAlarmStatus.setStyleSheet("color: #fff; font-size:22pt;")
-        xLocation =  (320/2) - (150/2)
-        self.btnAlarmStatus.setGeometry(QtCore.QRect((320/2) - (250/2), 120, 250, 25))
+        self.btnAlarmStatus.setStyleSheet(self.alarmTypeSectionStyle)
+        self.btnAlarmStatus.setGeometry(QtCore.QRect((320/2) - (280/2), 120, 280, 40))
         pressable(self.btnAlarmStatus).connect(self.setAlarmState)
         self.btnAlarmStatus.setAlignment(QtCore.Qt.AlignCenter)     
            
-        
+        self.btnAlarmDetails = QtGui.QLabel("88.1", self)        
+        self.btnAlarmDetails.setStyleSheet(self.alarmDetailsSectionStyle)
+        self.btnAlarmDetails.setGeometry(QtCore.QRect((320/2) - (200/2), 160, 200, 30))
+        self.btnAlarmDetails.setAlignment(QtCore.Qt.AlignCenter)   
+        self.btnAlarmDetails.setVisible(False)
         
         self.setCurrentPreset(0)
         

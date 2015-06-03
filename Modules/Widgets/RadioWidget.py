@@ -61,7 +61,6 @@ class RadioWidget(QtGui.QWidget):
         self.slideUpButton = QSvgWidget("icons/forward3.svg", self.slideUpFrame)
         self.slideUpButton.setGeometry(QtCore.QRect(5, 5, 40, 40))  
 
-        #releaseable(self.slideUpButton).connect(self.doFreqUpReleased)
         pressable(self.slideUpButton).connect(self.doFreqUpPressed)        
         
         self.slideDownFrame = QFrame(self)        
@@ -72,7 +71,7 @@ class RadioWidget(QtGui.QWidget):
         
         self.slideDownButton = QSvgWidget("icons/backward2.svg", self.slideDownFrame)
         self.slideDownButton.setGeometry(QtCore.QRect(0, 5, 40, 40))    
-        #releaseable(self.slideDownButton).connect(self.doFreqDownReleased) 
+
         pressable(self.slideDownButton).connect(self.doFreqDownPressed)
 
 
@@ -125,19 +124,6 @@ class RadioWidget(QtGui.QWidget):
             self.currentFrequency = float(obj.freq)
             self.updateRadioFrequency()
             self.emit(QtCore.SIGNAL('frequencyChanged'),self.currentFrequency)
-             
-
-    def presetChangePressed(self, obj):   
-        confirm = Popup(self)
-        self.connect(confirm, QtCore.SIGNAL('popupResult'), self.confirmResultCallback)
-        confirm.doConfirm("Change Preset?", obj.preID)
-
-    def confirmResultCallback(self, obj):
-        args = obj;
-        if(args[0] == "OK"):
-            self.emit(QtCore.SIGNAL('presetChanged'), [args[1], self.currentFrequency])
-        self.changingPreset = False
-
 
     def clearPresets(self):
         for i in reversed(range(self.horizontalLayout.count())): 
