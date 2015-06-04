@@ -126,6 +126,8 @@ class Alarm(QObject):
                 t["name"] =  "INTERNET RADIO"
             parent.isAlarmActive = True
             parent.emit(QtCore.SIGNAL('callOtherWidgetMethod'), parent, "alarmFired", t)
+            btns =["ON","CONTEXT","OFF"]
+            parent.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
 
     def checkAlarms(self):
