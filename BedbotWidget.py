@@ -118,6 +118,8 @@ class BedbotWidget(QtGui.QWidget):
                 """
                 self.connect(m, QtCore.SIGNAL('requestOtherWidgetData'), self.otherWidgetDataRequestCallback)
 
+                self.connect(m, QtCore.SIGNAL('callOtherWidgetMethod'), self.callOtherWidgetMethodCallback)
+
                 """Allows active widgets to send signals to all other widgets to stop audio playback"""                
                 self.connect(m, QtCore.SIGNAL('stopAllAudio'), self.stopAllAudioCallback)
 
@@ -137,7 +139,13 @@ class BedbotWidget(QtGui.QWidget):
         self.menu_widget.configureMenu()          
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)
-           
+
+    def callOtherWidgetMethodCallback(self, caller, methodToCall, args):
+        for m in self.loadedModules:
+            if(hasattr(m, "Enabled") == True and m.Enabled == True):
+                if(self.moduleHasFunction(m, methodToCall)):
+                    getattr(m, methodToCall)(args)
+
     def otherWidgetDataRequestCallback(self, caller, methodToCall, callbackMethod):
         results = []
         for m in self.loadedModules:
@@ -170,9 +178,11 @@ class BedbotWidget(QtGui.QWidget):
         self.offButtonIndicator.setVisible(False)
         
     def showPopupCallback(self, caller, msg=None, popupType=None, popupArgs=None):  
+        '''
         if(hasattr(self, "customPopup") and self.customPopup != None):
             self.customPopup.close();
             self.customPopup = None   
+        '''
         self.customPopup = Popup(self)
         self.connect(self.customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
         if(popupType == None):
@@ -188,6 +198,7 @@ class BedbotWidget(QtGui.QWidget):
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "popupResult")):
                 m.popupResult(result)
+        self.customPopup = None  
         
 
 

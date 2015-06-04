@@ -41,6 +41,9 @@ class Radio(QObject):
     rtlfmCommand = "rtl_fm -M wbfm -f @FREQ"
     aplayCommand ="aplay -D @DEVICE -r 32000 -f S16_LE -t raw -c 1"
 
+    
+    alarmIdentifier = "RADIO"
+
 
     def __init__(self):
         super(Radio, self).__init__()
@@ -51,34 +54,38 @@ class Radio(QObject):
             self.subprocessAvailable = False
 
     def showWidget(self):
+        """Required for main widgets to be inserted into the menu"""
         self.radio_widget.setVisible(True)
         self.widgetVisible = True
         self.showButtonIndicators()
         
-
     def hideWidget(self):
+        """Required for main widgets to be inserted into the menu"""
         self.radio_widget.setVisible(False)
         self.widgetVisible = False
 
     def addMenuWidget(self, parent):
+        """Required for main widgets to be inserted into the menu"""
         self.radio_widget = RadioWidget(parent)       
         self.radio_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.radio_widget.setVisible(False)
         self.connect(self.radio_widget, QtCore.SIGNAL('presetChanged'), self.presetChangedCallback)      
         self.connect(self.radio_widget, QtCore.SIGNAL('frequencyChanged'), self.frequencyChangedCallback)    
         self.initialize()
-        
-
 
     def getMenuIcon(self):
+        """Required for main widgets to be inserted into the menu"""
         return "icons/radio-tower.svg"
 
     def getMenuIconSelected(self):
+        """Required for main widgets to be inserted into the menu"""
         return "icons/radio-towerSelected.svg"
 
     def getMenuIconHeight(self):
+        """Required for main widgets to be inserted into the menu"""
         return 65
     def getMenuIconWidth(self):
+        """Required for main widgets to be inserted into the menu"""
         return 65
 
     def setPin(self, pinConfig):
@@ -103,9 +110,16 @@ class Radio(QObject):
         self.loadRadioPresets()
         self.radio_widget.fillPresets(self.radioPresets)
 
+    def alarmFired(self, args):        
+        if(args["name"] == self.alarmIdentifier):
+            print("radio alarm fired: ");
+            print(args["details"]);
+            self.frequencyChangedCallback(args["details"])
+            self.play()
+        
     def getPossibleAlarmDetails(self):
         result = {}
-        result["name"] = "RADIO"
+        result["name"] = self.alarmIdentifier
         possible = []
         for x in range(0, len(self.radioPresets)):
             pre = self.radioPresets[x]

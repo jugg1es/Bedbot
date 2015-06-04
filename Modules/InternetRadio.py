@@ -40,6 +40,7 @@ class InternetRadio(QObject):
 
     webserviceEnabled = False
 
+    alarmIdentifier = "INTERNET RADIO"
 
     def __init__(self):
         super(InternetRadio, self).__init__()
@@ -64,29 +65,36 @@ class InternetRadio(QObject):
             self.stop()
 
     def showWidget(self):
+        """Required for main widgets to be inserted into the menu"""
         self.inetradio_widget.setVisible(True)
         self.widgetVisible =  True
         self.showButtonIndicators()
 
     def hideWidget(self):
+        """Required for main widgets to be inserted into the menu"""
         self.inetradio_widget.setVisible(False)
         self.widgetVisible =  False
 
     def addMenuWidget(self, parent):
+        """Required for main widgets to be inserted into the menu"""
         self.inetradio_widget = InternetRadioWidget(parent)       
         self.inetradio_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.inetradio_widget.setVisible(False)
         self.initialize()
 
     def getMenuIcon(self):
+        """Required for main widgets to be inserted into the menu"""
         return "icons/globe.svg"
 
     def getMenuIconSelected(self):
+        """Required for main widgets to be inserted into the menu"""
         return "icons/globeSelected.svg"
 
     def getMenuIconHeight(self):
+        """Required for main widgets to be inserted into the menu"""
         return 65
     def getMenuIconWidth(self):
+        """Required for main widgets to be inserted into the menu"""
         return 65
 
 
@@ -101,9 +109,19 @@ class InternetRadio(QObject):
             t = Thread(target=self.spinupWebService, args=(self,location,))
             t.start()
 
+    def alarmFired(self, args):
+        if(args["name"] == self.alarmIdentifier):
+            print("internet radio alarm fired: ");
+            print(args["details"]);
+            for x in range(0, len(self.stations)):
+                sta = self.stations[x]
+                if(sta.name == args["details"]):
+                    self.stationSelectedCallback(sta.id)
+                    break
+
     def getPossibleAlarmDetails(self):
         result = {}
-        result["name"] = "INTERNET RADIO"
+        result["name"] = self.alarmIdentifier
         possible = []
         for x in range(0, len(self.stations)):
             sta = self.stations[x]

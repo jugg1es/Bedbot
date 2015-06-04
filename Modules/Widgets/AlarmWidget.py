@@ -42,14 +42,7 @@ class AlarmWidget(QtGui.QWidget):
     def doAlarmSnooze(self):
         print("snooze")
         
-    def checkAlarms(self):
-        currentTime = datetime.datetime.now()
-        activeAlarms = []
-        for x in range(0, 3):
-            current = self.alarmSettings[x]
-            if(current.state != AlarmState.OFF and current.timeSetting.strftime("%I:%M %p") == currentTime.strftime("%I:%M %p")):
-                activeAlarms.append(current)
-        return activeAlarms
+    
     
     def setCurrentPreset(self, index):
         if(self.alarmSettings != None):
@@ -174,6 +167,25 @@ class AlarmWidget(QtGui.QWidget):
             self.updateTimeDisplay()  
             self.configureAlarmStateDisplay()
             self.configManager.saveSettings(self.alarmSettings)
+
+    def setTestAlarm(self):
+        """Sets an alarm in 1 minute for testing purposes"""
+        n = datetime.datetime.now()# + datetime.timedelta(minutes=1)
+        tod = TimeOfDay.AM
+        h = n.hour
+        if(h > 12):
+            h -= 12
+            tod = TimeOfDay.PM
+        m = n.minute
+
+        self.currentPreset.setHour(int(h))
+        self.currentPreset.setMinute(int(m))
+        self.currentPreset.setTimeOfDayType(tod)
+        self.updateTimeDisplay()  
+        self.configureAlarmStateDisplay()
+        self.configManager.saveSettings(self.alarmSettings)
+
+        
 
     def initializeControls(self):
 

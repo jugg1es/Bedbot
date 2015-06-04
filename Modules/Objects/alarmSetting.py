@@ -47,6 +47,9 @@ class alarmSetting(object):
            
     def setSnoozeTime(self, start):
         self.alarmSnoozeTime = start
+
+    def setAlarmStartTime(self):
+        self.alarmStartTime = datetime.datetime.now()
         
     def getTimeSinceSnooze(self):
         if(self.alarmSnoozeTime != None):
@@ -71,19 +74,7 @@ class alarmSetting(object):
 
     def setMinute(self, m):
         self.timeSetting = self.timeSetting.replace(minute=m)
-
-    def changeHour(self, d):
-        if(d == Direction.UP):
-            self.timeSetting = self.timeSetting + datetime.timedelta(hours=1)
-        elif(d == Direction.DOWN):
-            self.timeSetting = self.timeSetting + datetime.timedelta(hours=-1)
-            
-    def changeMinute(self, d):
-        if(d == Direction.UP):
-            self.timeSetting = self.timeSetting + datetime.timedelta(minutes=1)
-        elif(d == Direction.DOWN):
-            self.timeSetting = self.timeSetting + datetime.timedelta(minutes=-1)     
-    
+   
     def setTimeOfDayType(self, tod):
         if(self.timeSetting.strftime("%p") != tod.name ):
             if(tod == TimeOfDay.AM):

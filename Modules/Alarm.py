@@ -45,21 +45,24 @@ class Alarm(QObject):
 
     def __init__(self):
         super(Alarm, self).__init__()
-        self.alarmTimer = perpetualTimer(5, self.processAlarmTime)
+        self.alarmTimer = perpetualTimer(1, self.processAlarmTime)
         self.alarmTimer.start()
-    
+
 
     def showWidget(self):
+        """Required for main widgets to be inserted into the menu"""
         self.isVisible = True
         self.alarm_widget.setVisible(True)
         btns =["CONTEXT"]
         self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
     def hideWidget(self):
+        """Required for main widgets to be inserted into the menu"""
         self.isVisible = False
         self.alarm_widget.setVisible(False)
 
     def addMenuWidget(self, parent):
+        """Required for main widgets to be inserted into the menu"""
         self.alarm_widget = AlarmWidget(parent)       
         self.connect(self.alarm_widget, QtCore.SIGNAL('selectAlarmType'), self.selectAlarmTypeCallback)
         self.connect(self.alarm_widget, QtCore.SIGNAL('selectTimeHour'), self.selectTimeHourCallback)
@@ -71,14 +74,18 @@ class Alarm(QObject):
 
         
     def getMenuIcon(self):
+        """Required for main widgets to be inserted into the menu"""
         return "icons/bell.svg"
 
     def getMenuIconSelected(self):
+        """Required for main widgets to be inserted into the menu"""
         return "icons/bellSelected.svg"
 
     def getMenuIconHeight(self):
+        """Required for main widgets to be inserted into the menu"""
         return 65
     def getMenuIconWidth(self):
+        """Required for main widgets to be inserted into the menu"""
         return 70
 
     def setPin(self, pinConfig):
@@ -88,13 +95,46 @@ class Alarm(QObject):
     def processPinEvent(self, pinNum):
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
+               self.alarm_widget.setTestAlarm()
+            elif(self.isAlarmActive):
+                self.alarm_widget.doAlarmSnooze()
+        '''
+        if(self.contextButton == pinNum):
+            if(self.isVisible and self.isAlarmActive == False):
                self.alarm_widget.cycleSelectedAlarm()
             elif(self.isAlarmActive):
                 self.alarm_widget.doAlarmSnooze()
+        '''
 
 
     def processAlarmTime(self):
-        activeAlarms = self.alarm_widget.checkAlarms()
+        t = Thread(target=self.doProcessAlarm, args=(self,))        
+        t.start()     
+        
+            
+    def doProcessAlarm(self, parent):
+        newAlarms = parent.checkAlarms()
+        if(parent.isAlarmActive == False and len(newAlarms) > 0):
+            firedAlarm = newAlarms[0]
+            firedAlarm.setAlarmStartTime()
+            t = {}
+            t["details"] = str(firedAlarm.details)
+            if(firedAlarm.state == AlarmState.RADIO):
+                t["name"] = "RADIO"
+            elif(firedAlarm.state == AlarmState.INETRADIO):
+                t["name"] =  "INTERNET RADIO"
+            parent.isAlarmActive = True
+            parent.emit(QtCore.SIGNAL('callOtherWidgetMethod'), parent, "alarmFired", t)
+
+
+    def checkAlarms(self):
+        currentTime = datetime.datetime.now()
+        activeAlarms = []
+        for x in range(0, 3):
+            current = self.alarm_widget.alarmSettings[x]
+            if(current.state != AlarmState.OFF and current.timeSetting.strftime("%I:%M %p") == currentTime.strftime("%I:%M %p")):
+                activeAlarms.append(current)
+        return activeAlarms
 
     def selectTimeHourCallback(self):
         self.currentPopupType =  AlarmPopupType.HOUR

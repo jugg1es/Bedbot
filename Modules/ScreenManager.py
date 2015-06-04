@@ -196,7 +196,6 @@ class ScreenManager(QObject):
     def move(self, angle):
         currentAngle = self.getCurrentAngle()
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
-            #print("current angle: " + str(currentAngle))
             angleDiff = currentAngle - angle
             angleTracker = currentAngle
             angleDir = 0
@@ -212,14 +211,5 @@ class ScreenManager(QObject):
             return angleTracker
         return None
 
-    def dispose(self):
-        
-        print("disposing of screen manager pins")
-        '''
-        try: 
-            IO.cleanup() 
-        except Exception:
-            print("Problem disposing of IO in screen manager")
-
-        print("disposed screen manager")
-        '''
+    def dispose(self):        
+        print("Disposing of ScreenManager")
