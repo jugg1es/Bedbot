@@ -92,6 +92,7 @@ class ScreenManager(QObject):
         self.initialize()
 
     def processPinEvent(self, pinNum):
+        print("process pin event: " + str(pinNum))
         if(self._togglePin == pinNum):
             if(self.currentState != ScreenState.MOVING):
                 self.positionToggled()
