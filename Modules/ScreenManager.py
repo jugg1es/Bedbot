@@ -106,7 +106,7 @@ class ScreenManager(QObject):
             self.toggleButtonPower(False)
             self.setAngle(90)
             self.setCurrentLidState(ScreenState.OPEN)
-            self.currentAngleTracker = self.move(self._openAngle)
+            self._currentAngleTracker = self.move(self._openAngle)
             print("** OPENED **")
             
         
@@ -152,11 +152,11 @@ class ScreenManager(QObject):
         if(ang == self._openAngle):
             parent.setCurrentLidState(ScreenState.CLOSED)
             parent.emit(QtCore.SIGNAL('stopAllAudio'))     
-            parent.currentAngleTracker = self.move(self._closeAngle)       
+            parent._currentAngleTracker = self.move(self._closeAngle)       
             print("** CLOSED **")
         elif(ang == self._closeAngle):
             parent.setCurrentLidState(ScreenState.OPEN)
-            parent.currentAngleTracker = self.move(self._openAngle)            
+            parent._currentAngleTracker = self.move(self._openAngle)            
             print("** OPENED **")
 
     def getAngleFromPulseWidth(self):
