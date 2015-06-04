@@ -28,36 +28,53 @@ except ImportError:
 
 
 class ScreenManager(QObject):
+    """Controls the servo that lifts the screen up/down, the button LEDs and the screen backlight power"""
 
     Enabled = True
     ListenForPinEvent = True
 
-    servo = None
+    _servo = None
 
-    togglePin = None
-    toggleInitialized = False
+    _togglePin = None
+    _toggleInitialized = False
 
-    buttonPowerPin = None
+    _buttonPowerPin = None
 
-    screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    """This is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one"""
+    _screenGPIO = None 
     screenGPIOInitialized = False
 
-    bottomRange = 700
-    topRange = 2500
-    middle = 1500
-    moveSpeed = 0.02
+    """ Bottom range of pulse width for the servo (minimum is 500, but that may break the servo) """
+    _bottomRange = 700
 
-    openAngle = 60
-    closeAngle = 177
+    """ Top range of pulse width for the servo (minimum is 2500, but that may break the servo) """
+    _topRange = 2500
 
-    above90Range = topRange - middle
-    below90Range = middle - bottomRange
+    """Always represents the middle of the servo range of motion, should not be changed from 1500"""
+    _middle = 1500
 
-    subprocessAvailable = True
+    """specifies the amount of time it takes to move the screen (in seconds). Higher is slower, lower is faster"""
+    _moveSpeed = 0.02
 
-    currentAngleTracker = None
+    """_openAngle determines the angle at which the screen is open.  
+    This is not really the actual angle, since the angle limits are determined by the 'topRange' and 'bottomRange' values
+    """
+    _openAngle = 60
+    """_closeAngle determines the angle at which the screen is closed.  
+    This is not really the actual angle, since the angle limits are determined by the 'topRange' and 'bottomRange' values
+    """
+    _closeAngle = 177
 
-    screenPowerPopup = None
+    _above90Range = _topRange - _middle
+    _below90Range = _middle - _bottomRange
+
+    _subprocessAvailable = True
+
+    """Keeps track of the last angle set.  This is necessary because the angle is determined by pulse width, but the PW is 
+    set to zero after movement is complete to prevent the servo from constantly trying to correct itself
+    """
+    _currentAngleTracker = None
+
 
     def __init__(self):
         super(ScreenManager, self).__init__()
@@ -68,14 +85,14 @@ class ScreenManager(QObject):
             self.subprocessAvailable = False
 
     def setPin(self, pinConfig):
-        self.screenGPIO = pinConfig["SCREEN_POWER"]
-        self.servo = pinConfig["SERVO"]
-        self.togglePin = pinConfig["SCREEN_TOGGLE"]
-        self.buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
+        self._screenGPIO = pinConfig["SCREEN_POWER"]
+        self._servo = pinConfig["SERVO"]
+        self._togglePin = pinConfig["SCREEN_TOGGLE"]
+        self._buttonPowerPin = pinConfig["BUTTON_LED_POWER"]
         self.initialize()
 
     def processPinEvent(self, pinNum):
-        if(self.togglePin == pinNum):
+        if(self._togglePin == pinNum):
             if(self.currentState != ScreenState.MOVING):
                 self.positionToggled()
 
@@ -85,11 +102,11 @@ class ScreenManager(QObject):
         
         if(hasIOLibraries):
             self.pi = pigpio.pi()
-            self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
+            self.pi.set_mode(self._buttonPowerPin, pigpio.OUTPUT)
             self.toggleButtonPower(False)
             self.setAngle(90)
             self.setCurrentLidState(ScreenState.OPEN)
-            self.currentAngleTracker = self.move(self.openAngle)
+            self.currentAngleTracker = self.move(self._openAngle)
             print("** OPENED **")
             
         
@@ -110,9 +127,9 @@ class ScreenManager(QObject):
 
     def toggleButtonPower(self, isOn):
         if(isOn):            
-            self.pi.write(self.buttonPowerPin,1)
+            self.pi.write(self._buttonPowerPin,1)
         else:
-            self.pi.write(self.buttonPowerPin,0)
+            self.pi.write(self._buttonPowerPin,0)
 
     def changeScreenState(self, parent, isOn):
         
@@ -120,76 +137,67 @@ class ScreenManager(QObject):
             if(isOn):         
                 subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
             else:
-                #parent.emit(QtCore.SIGNAL('showPopup'),[self, "Turning Screen Off"])
                 offproc = subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
                 offproc.communicate()
             
-    '''
-    def setCurrentPopup(self, popup):
-        self.screenPowerPopup = popup
-
-    def popupResult(self, name, tag):
-        t = Thread(target=self.changeScreenState, args=(self,True,))
-        t.start()
-    '''
      
     def positionToggled(self):     
         currentAngle = self.getCurrentAngle()
-        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
+        if(currentAngle == self._openAngle or currentAngle == self._closeAngle or currentAngle == 90):
             t = Thread(target=self.togglePosition, args=(self,))
             t.start()
      
     def togglePosition(self, parent):
         ang = self.getCurrentAngle()
-        if(ang == self.openAngle):
+        if(ang == self._openAngle):
             parent.setCurrentLidState(ScreenState.CLOSED)
             parent.emit(QtCore.SIGNAL('stopAllAudio'))     
-            parent.currentAngleTracker = self.move(self.closeAngle)       
+            parent.currentAngleTracker = self.move(self._closeAngle)       
             print("** CLOSED **")
-        elif(ang == self.closeAngle):
+        elif(ang == self._closeAngle):
             parent.setCurrentLidState(ScreenState.OPEN)
-            parent.currentAngleTracker = self.move(self.openAngle)            
+            parent.currentAngleTracker = self.move(self._openAngle)            
             print("** OPENED **")
 
     def getAngleFromPulseWidth(self):
-        pw = self.pi.get_servo_pulsewidth(self.servo)
+        pw = self.pi.get_servo_pulsewidth(self._servo)
         if(pw == 0):
             return None
-        elif(pw == self.middle):
+        elif(pw == self._middle):
             return 90
-        elif(pw >= self.bottomRange and pw < self.middle):		
-            adj = float((pw - float(self.bottomRange))) / self.below90Range
+        elif(pw >= self._bottomRange and pw < self._middle):		
+            adj = float((pw - float(self._bottomRange))) / self._below90Range
             adj = adj * 90
             return int(round(adj))
-        elif(pw > self.middle and pw <= self.topRange):
-            adj = float((pw - float(self.middle))) / self.above90Range
+        elif(pw > self._middle and pw <= self._topRange):
+            adj = float((pw - float(self._middle))) / self._above90Range
             adj = (adj * 90) + 90
             return int(round(adj))
 
     def getCurrentAngle(self):
         pwa = self.getAngleFromPulseWidth()
         if(pwa == None):
-            pwa = self.currentAngleTracker
+            pwa = self._currentAngleTracker
         return pwa
 
     def getPulseWidth(self, angle):	
-        mod = self.middle
+        mod = self._middle
         if(angle > 90 and angle <= 180):		
             percent = float((angle - 90)) / 90
-            mod = math.trunc(self.middle + (float(percent) * self.above90Range))
+            mod = math.trunc(self._middle + (float(percent) * self._above90Range))
         elif(angle < 90 and angle >= 0):
             percent = float(angle) / 90
-            mod = math.trunc(self.bottomRange + (float(percent) * self.below90Range))
+            mod = math.trunc(self._bottomRange + (float(percent) * self._below90Range))
         return mod
 
     def setAngle(self, angle):
         mod = self.getPulseWidth(angle)
-        self.pi.set_servo_pulsewidth(self.servo, mod)
+        self.pi.set_servo_pulsewidth(self._servo, mod)
 
 
     def move(self, angle):
         currentAngle = self.getCurrentAngle()
-        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
+        if(currentAngle == self._openAngle or currentAngle == self._closeAngle or currentAngle == 90):
             #print("current angle: " + str(currentAngle))
             angleDiff = currentAngle - angle
             angleTracker = currentAngle
@@ -201,8 +209,8 @@ class ScreenManager(QObject):
             for angle in range(abs(angleDiff)):		
                 angleTracker += angleDir		
                 self.setAngle(angleTracker)	
-                time.sleep(self.moveSpeed)
-            self.pi.set_servo_pulsewidth(self.servo,0)
+                time.sleep(self._moveSpeed)
+            self.pi.set_servo_pulsewidth(self._servo,0)
             return angleTracker
         return None
 

@@ -70,8 +70,8 @@ class BedbotWidget(QtGui.QWidget):
 
         self.loadedModules = modules
 
-        """  """
-        self.connect(self, QtCore.SIGNAL('processPigpioEvent'), self.pinEventCallback)
+        
+        #self.connect(self, QtCore.SIGNAL('processPigpioEvent'), self.pinEventCallback)
 
 
         self.initializeMenu()
@@ -207,7 +207,7 @@ class BedbotWidget(QtGui.QWidget):
         if(self.moduleHasFunction(self.currentAudioModule, "getAudioStatusDisplay")):
             self.statusDisplay.setText(self.currentAudioModule.getAudioStatusDisplay())
 
-    def stopAllAudio(self, ignoredModule):
+    def stopAllAudio(self, ignoredModule=None):
         for m in self.loadedModules:
             if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True and (ignoredModule == None or (ignoredModule != None and m != ignoredModule))):
                 if(self.moduleHasFunction(m, "stop")):
@@ -303,24 +303,19 @@ class BedbotWidget(QtGui.QWidget):
         self.menu_widget.setVisible(False)
 
     def moduleHasFunction(self, m, functionName):
+        """Helper to determine if a module has a specific function available"""
         funct = getattr(m, functionName, None)
         if(callable(funct)):
             return True
         return False
 
     def addMainWidget(self, w):
+        """Adds a widget that has Enabled set to true, has a method called 'addMenuWidget' and has an optional menuOrder parameter"""
         w.addMenuWidget(self)
         self.menu_widget.addMenuItem(w)
 
-    #def addPinBasedObject(self, w):
-        """  
-        If an active Widget has 'ListenForPinEvent' set to true, connect the event
-        """
-        
-        #if(hasattr(w, "ListenForPinEvent") == True and w.ListenForPinEvent == True):
-        #    self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
-
     def simulateButton(self, buttonDesc):
+        """Simulates a button call, usually for debug purposes"""
         self.pinEventCallback(self.pinConfig[buttonDesc])        
 
     def pinEventCallback(self, channel):
@@ -341,12 +336,14 @@ class BedbotWidget(QtGui.QWidget):
            t.start()
 
     def reenablePin(self, parent, pin):
+        """Renables a pin after it fires to prevent extra event from firing"""
         time.sleep(1)
         print("reenable pin: " + str(pin))
         parent.disabledPins.remove(pin)
 
 
     def loadPinConfig(self):      
+        """Loads the pinConfig.json file that specifies the pins used and a name"""
         with open("pinConfig.json") as data_file:    
             data = json.load(data_file)    
         self.pinConfig = {}

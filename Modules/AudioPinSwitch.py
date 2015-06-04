@@ -18,6 +18,7 @@ except ImportError:
 
 
 class AudioPinSwitch(QObject):
+    """Controls the dual-pole relay that switches between the external auxiliary input and the audio output from the raspberry pi"""
 
     Enabled = True    
     ListenForPinEvent = True
