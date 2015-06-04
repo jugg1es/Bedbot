@@ -28,6 +28,7 @@ except ImportError:
 
 
 class ScreenManager(QObject):
+    """Controls the servo that lifts the screen up/down, the button LEDs and the screen backlight power"""
 
     Enabled = True
     ListenForPinEvent = True
@@ -39,15 +40,29 @@ class ScreenManager(QObject):
 
     buttonPowerPin = None
 
-    screenGPIO = None #this is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one
+    """This is dependant on the PiTFT kernel version.  252 is for the earlier one, 508 is for the newer one"""
+    screenGPIO = None 
     screenGPIOInitialized = False
 
+    """ Bottom range of pulse width for the servo (minimum is 500, but that may break the servo) """
     bottomRange = 700
+
+    """ Top range of pulse width for the servo (minimum is 2500, but that may break the servo) """
     topRange = 2500
+
+    """Always represents the middle of the servo range of motion, should not be changed from 1500"""
     middle = 1500
+
+    """specifies the amount of time it takes to move the screen (in seconds). Higher is slower, lower is faster"""
     moveSpeed = 0.02
 
+    """_openAngle determines the angle at which the screen is open.  
+    This is not really the actual angle, since the angle limits are determined by the 'topRange' and 'bottomRange' values
+    """
     openAngle = 60
+    """_closeAngle determines the angle at which the screen is closed.  
+    This is not really the actual angle, since the angle limits are determined by the 'topRange' and 'bottomRange' values
+    """
     closeAngle = 177
 
     above90Range = topRange - middle
@@ -55,9 +70,10 @@ class ScreenManager(QObject):
 
     subprocessAvailable = True
 
+    """Keeps track of the last angle set.  This is necessary because the angle is determined by pulse width, but the PW is 
+    set to zero after movement is complete to prevent the servo from constantly trying to correct itself
+    """
     currentAngleTracker = None
-
-    screenPowerPopup = None
 
     def __init__(self):
         super(ScreenManager, self).__init__()
@@ -120,19 +136,9 @@ class ScreenManager(QObject):
             if(isOn):         
                 subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
             else:
-                #parent.emit(QtCore.SIGNAL('showPopup'),[self, "Turning Screen Off"])
                 offproc = subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
                 offproc.communicate()
             
-    '''
-    def setCurrentPopup(self, popup):
-        self.screenPowerPopup = popup
-
-    def popupResult(self, name, tag):
-        t = Thread(target=self.changeScreenState, args=(self,True,))
-        t.start()
-    '''
-     
     def positionToggled(self):     
         currentAngle = self.getCurrentAngle()
         if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
