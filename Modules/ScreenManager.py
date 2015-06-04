@@ -85,6 +85,7 @@ class ScreenManager(QObject):
             self._subprocessAvailable = False
 
     def setPin(self, pinConfig):
+        print("setting pins: " + str(pinConfig["SERVO"]))
         self._screenGPIO = pinConfig["SCREEN_POWER"]
         self._servo = pinConfig["SERVO"]
         self._togglePin = pinConfig["SCREEN_TOGGLE"]

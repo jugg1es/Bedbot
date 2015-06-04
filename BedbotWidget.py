@@ -71,7 +71,7 @@ class BedbotWidget(QtGui.QWidget):
         self.loadedModules = modules
 
         
-        #self.connect(self, QtCore.SIGNAL('processPigpioEvent'), self.pinEventCallback)
+        self.connect(self, QtCore.SIGNAL('processPigpioEvent'), self.pinEventCallback)
 
 
         self.initializeMenu()
