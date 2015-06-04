@@ -104,10 +104,10 @@ class Alarm(QObject):
         self.emit(QtCore.SIGNAL('showPopup'), self, "Select Minute", "numberSelect", 2)
 
     def selectAlarmTypeCallback(self):
-        '''
+        """
         Tells the main widget to poll all other active widgets for 'getPossibleAlarmDetails' method
         and return the results to 'alarmDetailsCallback'
-        '''
+        """
         self.possibleAlarms = None
         self.emit(QtCore.SIGNAL('requestOtherWidgetData'), self, "getPossibleAlarmDetails", "alarmDetailsCallback")
 
@@ -129,21 +129,21 @@ class Alarm(QObject):
                 self.alarm_widget.setAlarmStateCallback(self.currentAlarmType, result)
                 self.currentAlarmType = None
             elif(self.currentPopupType == AlarmPopupType.ALARM_TYPE):
-                '''
+                """
                 Once the alarm type is selected (assuming it's not OFF), it uses the data retrieved in 'alarmDetailsCallback' 
                 to then query the user for further details about how the alarm should work
-                '''
+                """
                 if(result == "OFF"):
                     self.alarm_widget.setAlarmStateCallback(AlarmState.OFF)
                 else:         
-                    #Find the selected alarm type in data retrieved from 'alarmDetailsCallback'                   
+                    """Find the selected alarm type in data retrieved from 'alarmDetailsCallback'       """            
                     selectedAlarm = None
                     for x in self.possibleAlarms:
                         if(x["name"] == str(result)):
                             selectedAlarm = x            
                             break
 
-                    #setup for the alarm details popup
+                    """setup for the alarm details popup"""
                     self.currentPopupType = AlarmPopupType.ALARM_DETAILS
                     self.currentAlarmType = None
                     if(x["name"] == "RADIO"):

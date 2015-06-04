@@ -70,34 +70,35 @@ class BedbotWidget(QtGui.QWidget):
 
         self.loadedModules = modules
 
+        """  """
         self.connect(self, QtCore.SIGNAL('processPigpioEvent'), self.pinEventCallback)
+
+
         self.initializeMenu()
 
         menuWidgets = []
         for m in self.loadedModules:
             self.connect(m, QtCore.SIGNAL('logEvent'), self.logEvent)
 
-            '''
-            For a widget to be used in the app, it must be located in the Modules folder and have 
+            """For a widget to be used in the app, it must be located in the Modules folder and have 
             an 'Enabled' attribute set to True.  If it's not there, or it's false, the widget is ignored
-            '''
+            """
             if(hasattr(m, "Enabled") == True and m.Enabled == True):     
-                '''
-                Scans all active widgets to see if they should be added to the menu.
+
+                """Scans all active widgets to see if they should be added to the menu.
                 Widget must have 'addMenuWidget' function 
-                '''
+                """
                 if(self.moduleHasFunction(m, "addMenuWidget")):
                     if(hasattr(m, "menuOrder") == True): 
                         menuWidgets.insert(m.menuOrder, m)   
                     else:
                        menuWidgets.insert(len(menuWidgets), m)
 
-                '''
-                Scans all active widgets to see if they require the pin configuration.
+                """Scans all active widgets to see if they require the pin configuration.
                 Sends the pin configuration and adds a listener in case they need to know when a pin is activated
-                '''
+                """
                 if(self.moduleHasFunction(m, "setPin")):
-                    self.addPinBasedObject(m)
+                    m.setPin(self.pinConfig)
 
                 '''
                 Allows a widget to simulate a pin activation
@@ -105,39 +106,30 @@ class BedbotWidget(QtGui.QWidget):
                 self.connect(m, QtCore.SIGNAL('pinRequested'), self.pinRequestedCallback)
 
 
-                '''
-                Tells this widget to show a popup according to specifications provided
-                '''
+                """Tells this widget to show a popup according to specifications provided"""               
                 self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
 
-                '''
-                Tells this widget which colored circle indicators to display
-                '''
+                
+                """Tells this widget which colored circle indicators to display"""                
                 self.connect(m, QtCore.SIGNAL('requestButtonPrompt'), self.buttonPromptRequestCallback)
 
-                '''
-                Tells this widget to poll all other active widgets for a widget-defined method
+                """ Tells this widget to poll all other active widgets for a widget-defined method
                 and return the results to the widget-defined callback method
-                '''
+                """
                 self.connect(m, QtCore.SIGNAL('requestOtherWidgetData'), self.otherWidgetDataRequestCallback)
 
-                '''
-                Allows active widgets to send signals to all other widgets to stop audio playback
-                '''
+                """Allows active widgets to send signals to all other widgets to stop audio playback"""                
                 self.connect(m, QtCore.SIGNAL('stopAllAudio'), self.stopAllAudioCallback)
 
-                '''
-                If a widget uses the audio output, it must have the attribute 'UsesAudio' and have it set to True
+                """If a widget uses the audio output, it must have the attribute 'UsesAudio' and have it set to True
                 If it does, than it can use the audio status display in this widget to display it's current status
-                '''
+                """
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
                     
 
-        '''
-        After all widgets are loaded, use the attribute 'menuOrder' on active widgets to organize the menu icons
-        '''
+        """ After all widgets are loaded, use the attribute 'menuOrder' on active widgets to organize the menu icons"""
         for i in range(0,len(menuWidgets)):
             menuWidgets[i].menuOrder = i
             self.addMainWidget(menuWidgets[i])
@@ -192,8 +184,7 @@ class BedbotWidget(QtGui.QWidget):
                 self.customPopup.numberSelect(msg, popupArgs)
 
 
-    def popupCallback(self, result):
-        
+    def popupCallback(self, result):        
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "popupResult")):
                 m.popupResult(result)
@@ -321,10 +312,13 @@ class BedbotWidget(QtGui.QWidget):
         w.addMenuWidget(self)
         self.menu_widget.addMenuItem(w)
 
-    def addPinBasedObject(self, w):
-        w.setPin(self.pinConfig)
-        if(hasattr(w, "ListenForPinEvent") == True and w.ListenForPinEvent == True):
-            self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
+    #def addPinBasedObject(self, w):
+        """  
+        If an active Widget has 'ListenForPinEvent' set to true, connect the event
+        """
+        
+        #if(hasattr(w, "ListenForPinEvent") == True and w.ListenForPinEvent == True):
+        #    self.connect(w, QtCore.SIGNAL('pinEventCallback'), self.pinEventCallback)
 
     def simulateButton(self, buttonDesc):
         self.pinEventCallback(self.pinConfig[buttonDesc])        
@@ -335,7 +329,7 @@ class BedbotWidget(QtGui.QWidget):
             self.customPopup.processPin(self.pinConfig, channel)
         else:
             for m in self.loadedModules:
-                if(self.moduleHasFunction(m, "processPinEvent")):
+                if(hasattr(m, "ListenForPinEvent") == True and m.ListenForPinEvent == True and self.moduleHasFunction(m, "processPinEvent")):
                     m.processPinEvent(channel)
 
     def pigpioCallback(self, gpio, level, tick):
