@@ -115,7 +115,7 @@ class Radio(QObject):
             print("radio alarm fired: ");
             print(args["details"]);
             self.frequencyChangedCallback(args["details"])
-            self.play()
+            self.play(True)
         
     def getPossibleAlarmDetails(self):
         result = {}
@@ -207,8 +207,8 @@ class Radio(QObject):
         with open(self.radioPresetFile, 'w') as outfile:
              json.dump(data, outfile)
 
-    def play(self):
-        if(self.widgetVisible == True and self.radio_widget.currentFrequency):         
+    def play(self, forcePlay=False):
+        if((self.widgetVisible == True or forcePlay == True) and self.radio_widget.currentFrequency):         
             self.isPlaying = True
             self.emit(QtCore.SIGNAL('audioStarted'), self)
             self.emit(QtCore.SIGNAL('pinRequested'), self.audioRelayPin)
