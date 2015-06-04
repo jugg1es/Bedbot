@@ -59,7 +59,7 @@ class MainWindow(QtGui.QMainWindow):
                     loaded_class = getattr(loaded_mod, mod_name)
                     loadedModules.append(loaded_class())
                 except Exception:
-                    print("problem loading " + str(mod_name))
+                   print("problem loading " + str(mod_name))
 
         self.primary_widget = BedbotWidget(self,loadedModules)
         self.setCentralWidget(self.primary_widget)
