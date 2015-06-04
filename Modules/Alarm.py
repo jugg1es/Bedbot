@@ -45,8 +45,7 @@ class Alarm(QObject):
 
     def __init__(self):
         super(Alarm, self).__init__()
-        self.alarmTimer = perpetualTimer(1, self.processAlarmTime)
-        self.alarmTimer.start()
+        
 
 
     def showWidget(self):
@@ -70,6 +69,8 @@ class Alarm(QObject):
         self.alarm_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.alarm_widget.setVisible(False)
         self.alarm_widget.initialize()
+        self.alarmTimer = perpetualTimer(1, self.processAlarmTime)
+        self.alarmTimer.start()
         
 
         
