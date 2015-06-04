@@ -82,7 +82,7 @@ class ScreenManager(QObject):
             subprocess.Popen(shlex.split("echo Checking if subprocess module is available")) 
         except:
             print("** subprocess module unavailable **")
-            self.subprocessAvailable = False
+            self._subprocessAvailable = False
 
     def setPin(self, pinConfig):
         self._screenGPIO = pinConfig["SCREEN_POWER"]
@@ -133,7 +133,7 @@ class ScreenManager(QObject):
 
     def changeScreenState(self, parent, isOn):
         
-        if(parent.subprocessAvailable):
+        if(parent._subprocessAvailable):
             if(isOn):         
                 subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
             else:
