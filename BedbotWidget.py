@@ -72,37 +72,27 @@ class BedbotWidget(QtGui.QWidget):
             """
             if(hasattr(m, "Enabled") == True and m.Enabled == True):     
 
-                """Scans all active modules to see if they should be added to the menu.
-                Module must have 'addMenuWidget' function 
-                """
+                """Scans all active modules to see if they should be added to the menu.  Module must have 'addMenuWidget' function """
                 if(self.moduleHasFunction(m, "addMenuWidget")):
                     if(hasattr(m, "menuOrder") == True): 
                         menuWidgets.insert(m.menuOrder, m)   
                     else:
                        menuWidgets.insert(len(menuWidgets), m)
 
-                """Scans all active modules to see if they require the pin configuration.
-                Sends the pin configuration and adds a listener in case they need to know when a pin is activated
-                """
+                """Scans all active modules to see if they require the pin configuration."""
                 if(self.moduleHasFunction(m, "setPin")):
                     m.setPin(self.pinConfig)
 
-                '''
-                Allows a module to simulate a pin activation
-                '''
+                """Allows a module to tell other modules to send output on a specific pin (for the audio relay)"""                
                 self.connect(m, QtCore.SIGNAL('pinRequested'), self.pinRequestedCallback)
-
 
                 """Tells BedbotWidget to show a popup according to specifications provided"""               
                 self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
-
                 
                 """Tells BedbotWidget which colored circle indicators to display"""                
                 self.connect(m, QtCore.SIGNAL('requestButtonPrompt'), self.buttonPromptRequestCallback)
 
-                """ Event that modules can call to invoke methods on other modules
-                without knowing about them beforehand
-                """
+                """Event that modules can call to invoke methods on other modules without knowing about them beforehand """
                 self.connect(m, QtCore.SIGNAL('broadcastModuleRequest'), self.broadcastModuleRequestCallback)
 
                 """Allows active modules to send signals to all other modules to stop audio playback"""                
@@ -154,7 +144,6 @@ class BedbotWidget(QtGui.QWidget):
         self.stopAllAudio()
 
     def buttonPromptRequestCallback(self, buttonsToPrompt):
-        print("requesting button prompts")        
         self.clearButtonPrompts()
         for x in buttonsToPrompt:
             if(x == "ON"):
