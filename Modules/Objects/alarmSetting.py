@@ -1,12 +1,9 @@
 import datetime
 from enum import Enum
 import re
+from Modules.Objects.AlarmState import *
 
 
-class AlarmState(Enum):
-    OFF = 0
-    RADIO=1
-    INETRADIO=3
     
 class TimeOfDay(Enum):
     AM = 0
@@ -30,6 +27,8 @@ class alarmSetting(object):
     timeSetting = None
     state = AlarmState.OFF
     details = None
+    moduleName = None
+
     
     alarmStartTime = None
     alarmSnoozeTime = None
@@ -39,11 +38,13 @@ class alarmSetting(object):
             self.timeSetting = datetime.date.today()
             self.state = AlarmState.OFF
             self.details = None
+            self.moduleName = None
         else:
             s = config.get(settingName, "time")
             self.timeSetting=datetime.datetime(*map(int, re.split('[^\d]', s)[:-1]))
             self.state = AlarmState(int(config.get(settingName, "status")))
             self.details = config.get(settingName, "details")
+            self.moduleName = config.get(settingName, "moduleName")
            
     def setSnoozeTime(self, start):
         self.alarmSnoozeTime = start

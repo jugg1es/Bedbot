@@ -18,25 +18,12 @@ from Modules.Widgets.ButtonIndicator import *
 
 hasIOLibraries = False
 
-
 try:
     import pigpio
     hasIOLibraries = True
 except ImportError:
     print('PIGPIO library not found')
 
-
-#Required pins
-#    Amplifier Power (to transistor)
-#    Screen Toggle
-#    Sound On
-#    Sound Off
-#    Snooze
-#    Servo Control  (must be pin 18)
-#    Open Sensor (servo)
-#    Close Sensor (servo)
-#    OLED pins (6?)
-#    Buzzer
 
 class BedbotWidget(QtGui.QWidget):
     
@@ -80,13 +67,13 @@ class BedbotWidget(QtGui.QWidget):
         for m in self.loadedModules:
             self.connect(m, QtCore.SIGNAL('logEvent'), self.logEvent)
 
-            """For a widget to be used in the app, it must be located in the Modules folder and have 
-            an 'Enabled' attribute set to True.  If it's not there, or it's false, the widget is ignored
+            """For a module to be used in the app, it must be located in the Modules folder and have 
+            an 'Enabled' attribute set to True.  If it's not there, or it's false, the module is ignored
             """
             if(hasattr(m, "Enabled") == True and m.Enabled == True):     
 
-                """Scans all active widgets to see if they should be added to the menu.
-                Widget must have 'addMenuWidget' function 
+                """Scans all active modules to see if they should be added to the menu.
+                Module must have 'addMenuWidget' function 
                 """
                 if(self.moduleHasFunction(m, "addMenuWidget")):
                     if(hasattr(m, "menuOrder") == True): 
@@ -94,44 +81,42 @@ class BedbotWidget(QtGui.QWidget):
                     else:
                        menuWidgets.insert(len(menuWidgets), m)
 
-                """Scans all active widgets to see if they require the pin configuration.
+                """Scans all active modules to see if they require the pin configuration.
                 Sends the pin configuration and adds a listener in case they need to know when a pin is activated
                 """
                 if(self.moduleHasFunction(m, "setPin")):
                     m.setPin(self.pinConfig)
 
                 '''
-                Allows a widget to simulate a pin activation
+                Allows a module to simulate a pin activation
                 '''
                 self.connect(m, QtCore.SIGNAL('pinRequested'), self.pinRequestedCallback)
 
 
-                """Tells this widget to show a popup according to specifications provided"""               
+                """Tells BedbotWidget to show a popup according to specifications provided"""               
                 self.connect(m, QtCore.SIGNAL('showPopup'), self.showPopupCallback)
 
                 
-                """Tells this widget which colored circle indicators to display"""                
+                """Tells BedbotWidget which colored circle indicators to display"""                
                 self.connect(m, QtCore.SIGNAL('requestButtonPrompt'), self.buttonPromptRequestCallback)
 
-                """ Tells this widget to poll all other active widgets for a widget-defined method
-                and return the results to the widget-defined callback method
+                """ Event that modules can call to invoke methods on other modules
+                without knowing about them beforehand
                 """
-                self.connect(m, QtCore.SIGNAL('requestOtherWidgetData'), self.otherWidgetDataRequestCallback)
+                self.connect(m, QtCore.SIGNAL('broadcastModuleRequest'), self.broadcastModuleRequestCallback)
 
-                self.connect(m, QtCore.SIGNAL('callOtherWidgetMethod'), self.callOtherWidgetMethodCallback)
-
-                """Allows active widgets to send signals to all other widgets to stop audio playback"""                
+                """Allows active modules to send signals to all other modules to stop audio playback"""                
                 self.connect(m, QtCore.SIGNAL('stopAllAudio'), self.stopAllAudioCallback)
 
-                """If a widget uses the audio output, it must have the attribute 'UsesAudio' and have it set to True
-                If it does, than it can use the audio status display in this widget to display it's current status
+                """If a modules uses the audio output, it must have the attribute 'UsesAudio' and have it set to True
+                If it does, than it can use the audio status display in BedbotWidget to display it's current status
                 """
                 if(hasattr(m, "UsesAudio") == True and m.UsesAudio == True): 
                     self.connect(m, QtCore.SIGNAL('audioStarted'), self.audioStartedCallback)
                     self.connect(m, QtCore.SIGNAL('audioStopped'), self.audioStoppedCallback)
                     
 
-        """ After all widgets are loaded, use the attribute 'menuOrder' on active widgets to organize the menu icons"""
+        """ After all modules are loaded, use the attribute 'menuOrder' on active modules to organize the menu icons"""
         for i in range(0,len(menuWidgets)):
             menuWidgets[i].menuOrder = i
             self.addMainWidget(menuWidgets[i])
@@ -140,20 +125,27 @@ class BedbotWidget(QtGui.QWidget):
         self.toggleMainMenu(True)
         QtCore.QMetaObject.connectSlotsByName(self)
 
-    def callOtherWidgetMethodCallback(self, caller, methodToCall, args):
-        for m in self.loadedModules:
-            if(hasattr(m, "Enabled") == True and m.Enabled == True):
-                if(self.moduleHasFunction(m, methodToCall)):
-                    getattr(m, methodToCall)(args)
 
-    def otherWidgetDataRequestCallback(self, caller, methodToCall, callbackMethod):
+    def broadcastModuleRequestCallback(self, caller, methodToCall, methodArgs=None, callbackMethod=None, targetModuleName=None):
+        """Callback for the 'broadcastModuleRequest' event that modules can call to invoke methods on other modules
+        without knowing about them beforehand
+        """
         results = []
         for m in self.loadedModules:
+            if(targetModuleName != None and type(m).__name__ != targetModuleName):
+                continue
             if(hasattr(m, "Enabled") == True and m.Enabled == True):
                 if(self.moduleHasFunction(m, methodToCall)):
-                    results.append(getattr(m, methodToCall)())
-        
-        if(hasattr(caller, "Enabled") == True and caller.Enabled == True):
+                    if(callbackMethod != None):
+                        if(methodArgs != None):
+                            results.append(getattr(m, methodToCall)(methodArgs))
+                        else:
+                            results.append(getattr(m, methodToCall)())
+                    else:
+                        getattr(m, methodToCall)(methodArgs)
+
+
+        if(callbackMethod != None and hasattr(caller, "Enabled") == True and caller.Enabled == True):
             if(self.moduleHasFunction(caller, callbackMethod)):
                 getattr(caller, callbackMethod)(results)
 
@@ -178,11 +170,7 @@ class BedbotWidget(QtGui.QWidget):
         self.offButtonIndicator.setVisible(False)
         
     def showPopupCallback(self, caller, msg=None, popupType=None, popupArgs=None):  
-        '''
-        if(hasattr(self, "customPopup") and self.customPopup != None):
-            self.customPopup.close();
-            self.customPopup = None   
-        '''
+      
         self.customPopup = Popup(self)
         self.connect(self.customPopup, QtCore.SIGNAL('popupResult'), self.popupCallback)
         if(popupType == None):
@@ -192,6 +180,8 @@ class BedbotWidget(QtGui.QWidget):
                 self.customPopup.optionSelect(msg, popupArgs)
             elif(popupType == "numberSelect"):
                 self.customPopup.numberSelect(msg, popupArgs)
+            elif(popupType == "alarm"):
+                self.customPopup.alarm()
 
 
     def popupCallback(self, result):        

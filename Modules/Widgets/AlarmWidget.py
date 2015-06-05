@@ -117,10 +117,11 @@ class AlarmWidget(QtGui.QWidget):
     def setAlarmState(self):
         self.emit(QtCore.SIGNAL('selectAlarmType'))
 
-    def setAlarmStateCallback(self, state, details=""):
+    def setAlarmStateCallback(self, state, details="", moduleName=""):
         newState = AlarmState(state)
         self.currentPreset.state = state        
         self.currentPreset.details = details
+        self.currentPreset.moduleName = moduleName
         self.configManager.saveSettings(self.alarmSettings)
         self.configureAlarmStateDisplay()
         

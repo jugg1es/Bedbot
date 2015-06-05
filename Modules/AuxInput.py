@@ -25,35 +25,35 @@ class AuxInput(QObject):
         super(AuxInput, self).__init__()
 
     def showWidget(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.isVisible = True
         self.aux_widget.setVisible(True)
         self.showButtonIndicators()
 
     def hideWidget(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.isVisible = False
         self.aux_widget.setVisible(False)
 
     def addMenuWidget(self, parent):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.aux_widget = AuxWidget(parent)       
         self.aux_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.aux_widget.setVisible(False)
 
     def getMenuIcon(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return "icons/ipod.svg"
 
     def getMenuIconSelected(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return "icons/ipodSelected.svg"
 
     def getMenuIconHeight(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return 65
     def getMenuIconWidth(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return 65
 
     def getAudioStatusDisplay(self):

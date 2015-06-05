@@ -6,14 +6,15 @@ from PyQt4.Qt import QBrush
 from clickable import *
 from Modules.Widgets.ButtonIndicator import *
 from enum import Enum
+from perpetualTimer import perpetualTimer
 
 
 class PopupType(Enum):
     CONFIRM = 0
     OPTIONS=1
     NUMBER=2
+    ALARM=3
 
-    
 class Popup(QtGui.QWidget):
 
     popupStyle = "border: 2px solid #fff;color: #fff;"
@@ -85,8 +86,30 @@ class Popup(QtGui.QWidget):
 
 
     def redIndicatorPressed(self):
+        
+        if(hasattr(self, "alarmDisplayTimer") and self.alarmDisplayTimer != None):
+            self.alarmDisplayTimer.cancel()
+
         self.closePopup()
 
+
+    def alarm(self):
+        self.currentType = PopupType.ALARM
+
+        font = QtGui.QFont()
+        font.setPointSize(60)
+        self.prompt = QtGui.QLabel(self.popupFrame)
+        self.prompt.setGeometry(QtCore.QRect((320/2)-(300/2),10,300,180))
+        self.prompt.setAlignment(QtCore.Qt.AlignCenter)
+        self.prompt.setStyleSheet("border: none; color: #eeff00; ")
+        self.prompt.setFont(font)
+        self.prompt.setText("WAKE\nUP")        
+                
+        p = self.palette()
+        p.setColor(self.backgroundRole(), QtCore.Qt.red)        
+        self.setPalette(p)
+
+        self.show()
 
     def numberSelect(self, msg, maxDigits):
         self.currentType = PopupType.NUMBER

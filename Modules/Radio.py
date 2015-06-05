@@ -6,10 +6,12 @@ from perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.RadioWidget import *
 from Modules.Objects.radioPreset import *
+from Modules.Objects.AlarmState import *
 import json
 import os.path
 import subprocess
 import shlex
+
 
 
 class Radio(QObject):
@@ -42,7 +44,7 @@ class Radio(QObject):
     aplayCommand ="aplay -D @DEVICE -r 32000 -f S16_LE -t raw -c 1"
 
     
-    alarmIdentifier = "RADIO"
+    alarmTypeDisplay = "RADIO"
 
 
     def __init__(self):
@@ -54,18 +56,18 @@ class Radio(QObject):
             self.subprocessAvailable = False
 
     def showWidget(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.radio_widget.setVisible(True)
         self.widgetVisible = True
         self.showButtonIndicators()
         
     def hideWidget(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.radio_widget.setVisible(False)
         self.widgetVisible = False
 
     def addMenuWidget(self, parent):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.radio_widget = RadioWidget(parent)       
         self.radio_widget.setGeometry(QtCore.QRect(0, 0, 320, 210))  
         self.radio_widget.setVisible(False)
@@ -74,18 +76,18 @@ class Radio(QObject):
         self.initialize()
 
     def getMenuIcon(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return "icons/radio-tower.svg"
 
     def getMenuIconSelected(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return "icons/radio-towerSelected.svg"
 
     def getMenuIconHeight(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return 65
     def getMenuIconWidth(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return 65
 
     def setPin(self, pinConfig):
@@ -110,16 +112,15 @@ class Radio(QObject):
         self.loadRadioPresets()
         self.radio_widget.fillPresets(self.radioPresets)
 
-    def alarmFired(self, args):        
-        if(args["name"] == self.alarmIdentifier):
-            print("radio alarm fired: ");
-            print(args["details"]);
-            self.frequencyChangedCallback(args["details"])
-            self.play(True)
+    def alarmFired(self, args):     
+        self.frequencyChangedCallback(args["details"])
+        self.play(True)
         
     def getPossibleAlarmDetails(self):
         result = {}
-        result["name"] = self.alarmIdentifier
+        result["name"] = self.alarmTypeDisplay
+        result["moduleName"] = type(self).__name__
+        result["alarmType"] = AlarmState.RADIO
         possible = []
         for x in range(0, len(self.radioPresets)):
             pre = self.radioPresets[x]

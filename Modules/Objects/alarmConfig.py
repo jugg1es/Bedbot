@@ -25,6 +25,7 @@ class alarmConfig(object):
                 self.config.set(section, "time", current.getSaveTimeString())
                 self.config.set(section, "status", str(current.state.value))
                 self.config.set(section, "details", current.details)
+                self.config.set(section, "moduleName", current.moduleName)
         with open(self.settingsFilename, 'w') as f:
             self.config.write(f)
             
@@ -42,6 +43,7 @@ class alarmConfig(object):
                     self.config.set(section, "time", defaultTime)
                     self.config.set(section, "status", str(AlarmState.OFF.value))   
                     self.config.set(section, "details", "")     
+                    self.config.set(section, "moduleName","")
         self.alarmSettings = []          
         for x in range(0, 3):
             section = "alarm" + str(x)

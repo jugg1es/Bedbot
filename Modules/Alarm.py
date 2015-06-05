@@ -9,6 +9,7 @@ import json
 import datetime
 from perpetualTimer import perpetualTimer
 from enum import Enum
+from Modules.Objects.AlarmState import *
 
 
 class AlarmPopupType(Enum):
@@ -42,6 +43,8 @@ class Alarm(QObject):
 
     possibleAlarms = None
     currentAlarmType = None
+    currentAlarmModule = None
+
 
     def __init__(self):
         super(Alarm, self).__init__()
@@ -49,19 +52,19 @@ class Alarm(QObject):
 
 
     def showWidget(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.isVisible = True
         self.alarm_widget.setVisible(True)
         btns =["CONTEXT"]
         self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
 
     def hideWidget(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.isVisible = False
         self.alarm_widget.setVisible(False)
 
     def addMenuWidget(self, parent):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         self.alarm_widget = AlarmWidget(parent)       
         self.connect(self.alarm_widget, QtCore.SIGNAL('selectAlarmType'), self.selectAlarmTypeCallback)
         self.connect(self.alarm_widget, QtCore.SIGNAL('selectTimeHour'), self.selectTimeHourCallback)
@@ -75,18 +78,18 @@ class Alarm(QObject):
 
         
     def getMenuIcon(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return "icons/bell.svg"
 
     def getMenuIconSelected(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return "icons/bellSelected.svg"
 
     def getMenuIconHeight(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return 65
     def getMenuIconWidth(self):
-        """Required for main widgets to be inserted into the menu"""
+        """Required for main modules to be inserted into the menu"""
         return 70
 
     def setPin(self, pinConfig):
@@ -120,14 +123,9 @@ class Alarm(QObject):
             firedAlarm.setAlarmStartTime()
             t = {}
             t["details"] = str(firedAlarm.details)
-            if(firedAlarm.state == AlarmState.RADIO):
-                t["name"] = "RADIO"
-            elif(firedAlarm.state == AlarmState.INETRADIO):
-                t["name"] =  "INTERNET RADIO"
+            parent.emit(QtCore.SIGNAL('broadcastModuleRequest'), parent, "alarmFired", t, None, str(firedAlarm.moduleName))
             parent.isAlarmActive = True
-            parent.emit(QtCore.SIGNAL('callOtherWidgetMethod'), parent, "alarmFired", t)
-            btns =["ON","CONTEXT","OFF"]
-            parent.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
+            parent.emit(QtCore.SIGNAL('showPopup'), self, None, "alarm")
 
 
     def checkAlarms(self):
@@ -148,11 +146,11 @@ class Alarm(QObject):
         self.emit(QtCore.SIGNAL('showPopup'), self, "Select Minute", "numberSelect", 2)
 
     def selectAlarmTypeCallback(self):
-        """Tells the main widget to poll all other active widgets for 'getPossibleAlarmDetails' method
+        """Tells the main module to poll all other active modules for 'getPossibleAlarmDetails' method
         and return the results to 'alarmDetailsCallback'
         """
         self.possibleAlarms = None
-        self.emit(QtCore.SIGNAL('requestOtherWidgetData'), self, "getPossibleAlarmDetails", "alarmDetailsCallback")
+        self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "getPossibleAlarmDetails", None, "alarmDetailsCallback")
 
 
 
@@ -169,32 +167,32 @@ class Alarm(QObject):
     def popupResult(self, result):
         if(self.currentPopupType != None):
             if(self.currentPopupType ==  AlarmPopupType.ALARM_DETAILS):
-                self.alarm_widget.setAlarmStateCallback(self.currentAlarmType, result)
+                self.alarm_widget.setAlarmStateCallback(self.currentAlarmType, result,self.currentAlarmModule)
                 self.currentAlarmType = None
             elif(self.currentPopupType == AlarmPopupType.ALARM_TYPE):
                 """Once the alarm type is selected (assuming it's not OFF), it uses the data retrieved in 'alarmDetailsCallback' 
-                to then query the user for further details about how the alarm should work
+                to then query the user for further details about how the alarm should work using 'showPopup'
                 """
                 if(result == "OFF"):
                     self.alarm_widget.setAlarmStateCallback(AlarmState.OFF)
                 else:         
                     """Find the selected alarm type in data retrieved from 'alarmDetailsCallback'       """            
                     selectedAlarm = None
+                    selectedAlarmModule = None
+                    selectedAlarmState = None
                     for x in self.possibleAlarms:
                         if(x["name"] == str(result)):
-                            selectedAlarm = x            
+                            selectedAlarm = x         
+                            selectedAlarmModule  =x["moduleName"]
+                            selectedAlarmState = x["alarmType"]
                             break
 
                     """setup for the alarm details popup"""
                     self.currentPopupType = AlarmPopupType.ALARM_DETAILS
-                    self.currentAlarmType = None
-                    if(x["name"] == "RADIO"):
-                        self.currentAlarmType = AlarmState.RADIO
-                    elif(x["name"] == "INTERNET RADIO"):
-                        self.currentAlarmType = AlarmState.INETRADIO
+                    self.currentAlarmType = selectedAlarmState
+                    self.currentAlarmModule = selectedAlarmModule
                     if(self.currentAlarmType != None):
                         self.emit(QtCore.SIGNAL('showPopup'), self, "Select Alarm", "optionSelect", selectedAlarm["options"])
-
             elif(self.currentPopupType == AlarmPopupType.HOUR):
                 self.alarm_widget.setHourCallback(result)
                 self.currentPopupType = None
