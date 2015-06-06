@@ -39,11 +39,6 @@ class AlarmWidget(QtGui.QWidget):
         self.resize(320, 210)
         self.connect(self, QtCore.SIGNAL('alarmPresetsLoaded'), self.alarmPresetsLoadedCallback)
 
-    def doAlarmSnooze(self):
-        print("snooze")
-        
-    
-    
     def setCurrentPreset(self, index):
         if(self.alarmSettings != None):
             self.currentPreset = self.alarmSettings[index]

@@ -9,15 +9,19 @@ class ButtonIndicator(QtGui.QWidget):
     penWidth = 3
 
     fullDiameter = None
+    
+    setBackground = True
 
-    def __init__(self, parent=None,  diameter=30, color="white"):
+    def __init__(self, parent=None,  diameter=30, color="white", setBackground=True):
         QtGui.QWidget.__init__(self, parent)
 
-        self.setAutoFillBackground(True)
-        
-        p = self.palette()
-        p.setColor(self.backgroundRole(), QtCore.Qt.black)
-        self.setPalette(p)
+        self.setBackground = setBackground
+
+        if(self.setBackground):
+            self.setAutoFillBackground(True)        
+            p = self.palette()
+            p.setColor(self.backgroundRole(), QtCore.Qt.black)
+            self.setPalette(p)
 
         self.diameter = diameter - ((self.penWidth *2) +1)
         self.fullDiameter = diameter
@@ -29,8 +33,9 @@ class ButtonIndicator(QtGui.QWidget):
         paint.begin(self)
         paint.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        paint.setBrush(QtCore.Qt.black)
-        paint.drawRect(event.rect())
+        if(self.setBackground):
+            paint.setBrush(QtCore.Qt.black)
+            paint.drawRect(event.rect())
 
         radx = self.diameter / 2
         rady = self.diameter / 2

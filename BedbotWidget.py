@@ -170,14 +170,17 @@ class BedbotWidget(QtGui.QWidget):
             elif(popupType == "numberSelect"):
                 self.customPopup.numberSelect(msg, popupArgs)
             elif(popupType == "alarm"):
-                self.customPopup.alarm()
+                self.customPopup.alarm(popupArgs)
+            elif(popupType == "snooze"):
+                self.customPopup.snooze(popupArgs)
 
 
-    def popupCallback(self, result):        
+    def popupCallback(self, result):    
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "popupResult")):
                 m.popupResult(result)
-        self.customPopup = None  
+        #self.customPopup = None    
+        
         
 
 
@@ -310,12 +313,12 @@ class BedbotWidget(QtGui.QWidget):
 
     def pinEventCallback(self, channel):
         self.logEvent("pin callback for channel: " + str(channel))
-        if(hasattr(self, "customPopup") == True and self.customPopup != None):
+        if(hasattr(self, "customPopup") == True):
             self.customPopup.processPin(self.pinConfig, channel)
-        else:
-            for m in self.loadedModules:
-                if(hasattr(m, "ListenForPinEvent") == True and m.ListenForPinEvent == True and self.moduleHasFunction(m, "processPinEvent")):
-                    m.processPinEvent(channel)
+        #else:
+        for m in self.loadedModules:
+            if(hasattr(m, "ListenForPinEvent") == True and m.ListenForPinEvent == True and self.moduleHasFunction(m, "processPinEvent")):
+                m.processPinEvent(channel)
 
     def pigpioCallback(self, gpio, level, tick):
        currentlyDisabled = gpio in self.disabledPins
@@ -353,7 +356,8 @@ class BedbotWidget(QtGui.QWidget):
 
 
     def doClose(self):        
-        
+        if(hasattr(self, "customPopup") == True and self.customPopup != None):
+            self.customPopup.closePopup()
 
         for m in self.loadedModules:
             try:

@@ -51,6 +51,10 @@ class alarmSetting(object):
 
     def setAlarmStartTime(self):
         self.alarmStartTime = datetime.datetime.now()
+
+    def resetAlarm(self):
+        self.alarmStartTime = None
+        self.alarmSnoozeTime = None
         
     def getTimeSinceSnooze(self):
         if(self.alarmSnoozeTime != None):

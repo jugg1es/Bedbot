@@ -17,6 +17,8 @@ class AlarmPopupType(Enum):
     ALARM_DETAILS=1
     HOUR=2
     MINUTE=3
+    ALARM_ON =4
+    SNOOZING=5
 
 
 
@@ -40,11 +42,17 @@ class Alarm(QObject):
     currentPopupType = None
 
     isAlarmActive = False
+    isSnoozeActive = False
+
 
     possibleAlarms = None
     currentAlarmType = None
     currentAlarmModule = None
 
+    snoozeDurationSec = 0.2 * 60
+    alarmDurationSec = 60 * 60
+
+    firedAlarm = None
 
     def __init__(self):
         super(Alarm, self).__init__()
@@ -98,16 +106,12 @@ class Alarm(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.contextButton == pinNum):
-            if(self.isVisible and self.isAlarmActive == False):
+            if(self.isVisible ):
                self.alarm_widget.setTestAlarm()
-            elif(self.isAlarmActive):
-                self.alarm_widget.doAlarmSnooze()
         '''
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
                self.alarm_widget.cycleSelectedAlarm()
-            elif(self.isAlarmActive):
-                self.alarm_widget.doAlarmSnooze()
         '''
 
 
@@ -119,15 +123,27 @@ class Alarm(QObject):
     def doProcessAlarm(self, parent):
         newAlarms = parent.checkAlarms()
         if(parent.isAlarmActive == False and len(newAlarms) > 0):
-            firedAlarm = newAlarms[0]
-            firedAlarm.setAlarmStartTime()
-            t = {}
-            t["details"] = str(firedAlarm.details)
-            parent.emit(QtCore.SIGNAL('broadcastModuleRequest'), parent, "alarmFired", t, None, str(firedAlarm.moduleName))
-            parent.isAlarmActive = True
-            parent.emit(QtCore.SIGNAL('showPopup'), self, None, "alarm")
+            self.firedAlarm = newAlarms[0]
+            """Prevent alarms from firing twice in the same minute"""
+            continueFiringAlarm = True
+            if(self.firedAlarm.alarmStartTime != None):
+                diff = datetime.datetime.now() - self.firedAlarm.alarmStartTime
+                if(diff.total_seconds() < 60):
+                    continueFiringAlarm = False
 
+            if(continueFiringAlarm):
+                parent.fireAlarm(self.firedAlarm)
 
+    def fireAlarm(self, alarm):
+        print("FIRING ALARM")
+        alarm.setAlarmStartTime()
+        t = {}
+        t["details"] = str(alarm.details)
+        self.isAlarmActive = True
+        self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "alarmFired", t, None, str(alarm.moduleName))        
+        self.currentPopupType = AlarmPopupType.ALARM_ON
+        self.emit(QtCore.SIGNAL('showPopup'), self, None, "alarm", self.alarmDurationSec)
+            
     def checkAlarms(self):
         currentTime = datetime.datetime.now()
         activeAlarms = []
@@ -162,13 +178,54 @@ class Alarm(QObject):
             options.append(x["name"])
         self.emit(QtCore.SIGNAL('showPopup'), self, "Configure Alarm", "optionSelect", options)
 
-           
+    def doAlarmSnooze(self):
+        if(self.isAlarmActive):
+            self.isSnoozeActive = True
+            self.currentPopupType = AlarmPopupType.SNOOZING
+            self.emit(QtCore.SIGNAL('stopAllAudio'))   
+            self.emit(QtCore.SIGNAL('showPopup'), self, None, "snooze", self.snoozeDurationSec)
+            
+
+    def doAlarmOff(self):
+        if(self.isAlarmActive):
+            self.isSnoozeActive = False
+            self.isAlarmActive = False
+            self.emit(QtCore.SIGNAL('stopAllAudio'))   
+            
+
+    def doAlarmDisable(self):
+        if(self.isAlarmActive):
+            self.isSnoozeActive = False
+            self.isAlarmActive = False
+
+    def doAlarmSnoozeExpired(self):
+        print("snooze expired")
+        if(self.isAlarmActive):
+            self.isSnoozeActive = False
+            self.fireAlarm(self.firedAlarm)
+
+
+    
+    def processAlarmPopupResult(self, result):
+        time.sleep(0.3)
+        if(str(result) == "alarmSnooze"):
+            self.doAlarmSnooze()
+        elif(str(result) == "alarmOff"):
+            self.doAlarmOff()
+        elif(str(result) == "alarmDisable"):
+            self.doAlarmDisable()
 
     def popupResult(self, result):
         if(self.currentPopupType != None):
-            if(self.currentPopupType ==  AlarmPopupType.ALARM_DETAILS):
+            if(self.currentPopupType == AlarmPopupType.ALARM_ON):
+                t = Thread(target=self.processAlarmPopupResult, args=(result,))        
+                t.start()  
+            elif(self.currentPopupType == AlarmPopupType.SNOOZING):
+                self.doAlarmSnoozeExpired()
+            elif(self.currentPopupType ==  AlarmPopupType.ALARM_DETAILS):
                 self.alarm_widget.setAlarmStateCallback(self.currentAlarmType, result,self.currentAlarmModule)
                 self.currentAlarmType = None
+
             elif(self.currentPopupType == AlarmPopupType.ALARM_TYPE):
                 """Once the alarm type is selected (assuming it's not OFF), it uses the data retrieved in 'alarmDetailsCallback' 
                 to then query the user for further details about how the alarm should work using 'showPopup'

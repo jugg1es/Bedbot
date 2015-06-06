@@ -7,13 +7,14 @@ from clickable import *
 from Modules.Widgets.ButtonIndicator import *
 from enum import Enum
 from perpetualTimer import perpetualTimer
-
+import datetime
 
 class PopupType(Enum):
     CONFIRM = 0
     OPTIONS=1
     NUMBER=2
     ALARM=3
+    SNOOZE=4
 
 class Popup(QtGui.QWidget):
 
@@ -31,6 +32,11 @@ class Popup(QtGui.QWidget):
     currentResult = None
 
     currentType = None
+
+    alarmScreenImage = "alarmScreen.png"
+    snoozeScreenImage = "snoozeScreen.png"
+
+    popupTimerEndTime = None
 
 
     def __init__(self, parent):
@@ -52,12 +58,17 @@ class Popup(QtGui.QWidget):
         font.setPointSize(14)
        
 
-        self.onButtonIndicator = ButtonIndicator(self.popupFrame, 30, "green")
+        self.onButtonIndicator = ButtonIndicator(self.popupFrame, 30, "green", False)
         self.onButtonIndicator.setGeometry(QtCore.QRect(10,202,30,30))
         pressableSender(self.onButtonIndicator).connect(self.greenIndicatorPressed)
         self.onButtonIndicator.setVisible(False)
 
-        self.offButtonIndicator = ButtonIndicator(self.popupFrame, 30, "red")
+        self.contextButtonIndicator = ButtonIndicator(self.popupFrame, 30, "blue", False)
+        self.contextButtonIndicator.setGeometry(QtCore.QRect((320/2)-(30/2),202,30,30))
+        pressableSender(self.contextButtonIndicator).connect(self.blueIndicatorPressed)
+        self.contextButtonIndicator.setVisible(False)
+
+        self.offButtonIndicator = ButtonIndicator(self.popupFrame, 30, "red", False)
         self.offButtonIndicator.setGeometry(QtCore.QRect(280,202,30,30))
         pressableSender(self.offButtonIndicator).connect(self.redIndicatorPressed)
         self.offButtonIndicator.setVisible(False)
@@ -70,9 +81,17 @@ class Popup(QtGui.QWidget):
             self.greenIndicatorPressed()
         elif(pin == pinConfig["OFF_BUTTON"]):
             self.redIndicatorPressed()
+        elif(pin == pinConfig["CONTEXT_BUTTON"]):
+            self.blueIndicatorPressed()
 
     def greenIndicatorPressed(self):
         sendResult = True
+
+        if(self.currentType == PopupType.ALARM or self.currentResult == PopupType.SNOOZE): 
+            if(hasattr(self, "popupTimer") and self.popupTimer != None):
+                self.popupTimer.cancel()           
+            self.emit(QtCore.SIGNAL('popupResult'), "alarmDisable")
+
         if(self.currentType == PopupType.NUMBER):     
             try:
                 r = int(str(self.currentResult).translate(None, '-'))
@@ -85,31 +104,95 @@ class Popup(QtGui.QWidget):
             self.closePopup()
 
 
-    def redIndicatorPressed(self):
-        
+    def redIndicatorPressed(self):        
         if(hasattr(self, "alarmDisplayTimer") and self.alarmDisplayTimer != None):
             self.alarmDisplayTimer.cancel()
-
+        if(self.currentType == PopupType.ALARM or self.currentResult == PopupType.SNOOZE):                        
+            self.emit(QtCore.SIGNAL('popupResult'), "alarmOff")
         self.closePopup()
+        
+
+    def blueIndicatorPressed(self):
+        if(self.currentType == PopupType.ALARM):
+            self.emit(QtCore.SIGNAL('popupResult'), "alarmSnooze")
+            self.closePopup()
 
 
-    def alarm(self):
-        self.currentType = PopupType.ALARM
+    def startPopupTimer(self):
+        self.popupTimer = perpetualTimer(1, self.popupTimerCallback)
+        self.popupTimer.start()
+
+    def popupTimerCallback(self):
+        remaining =self.popupTimerEndTime - datetime.datetime.now()
+        if(remaining.seconds <= 0):
+            if(self.currentType == PopupType.ALARM):
+                self.emit(QtCore.SIGNAL('popupResult'), "alarmOff")
+            elif(self.currentType == PopupType.SNOOZE):
+                self.emit(QtCore.SIGNAL('popupResult'), "snoozeExpired")
+            self.popupTimer.cancel()
+            self.closePopup()
+        elif(hasattr(self, "prompt") and self.prompt != None):
+            hours, remainder = divmod(remaining.seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            remainingTime = str(minutes) + ":" + str(seconds)
+            self.prompt.setText(remainingTime)
+
+
+
+
+    def snooze(self, duration):
+        self.currentType = PopupType.SNOOZE
+        hbox = QtGui.QHBoxLayout(self)
+        hbox.setGeometry(QtCore.QRect(0,0,310,220))
+        pixmap = QtGui.QPixmap(self.snoozeScreenImage)
+
+        lbl = QtGui.QLabel(self)
+        lbl.setGeometry(QtCore.QRect(0,0,310,220))
+        lbl.setPixmap(pixmap)
+
+        hbox.addWidget(lbl)
 
         font = QtGui.QFont()
-        font.setPointSize(60)
+        font.setPointSize(17)
+
         self.prompt = QtGui.QLabel(self.popupFrame)
-        self.prompt.setGeometry(QtCore.QRect((320/2)-(300/2),10,300,180))
+        self.prompt.setGeometry(QtCore.QRect((320/2)-(300/2),(240/2)-(40/2)-30,300,40))
         self.prompt.setAlignment(QtCore.Qt.AlignCenter)
-        self.prompt.setStyleSheet("border: none; color: #eeff00; ")
+        self.prompt.setStyleSheet("border: none; color: #ededed; ")
         self.prompt.setFont(font)
-        self.prompt.setText("WAKE\nUP")        
-                
-        p = self.palette()
-        p.setColor(self.backgroundRole(), QtCore.Qt.red)        
-        self.setPalette(p)
+        self.prompt.setText(str(duration) + ":" + "00")
+
+
+        self.onButtonIndicator.setVisible(True)
+        self.offButtonIndicator.setVisible(True)
+        self.popupFrame.raise_()
 
         self.show()
+
+        self.popupTimerEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(duration))
+        self.startPopupTimer()
+
+
+    def alarm(self, duration):
+        self.currentType = PopupType.ALARM
+        hbox = QtGui.QHBoxLayout(self)
+        hbox.setGeometry(QtCore.QRect(0,0,310,220))
+        pixmap = QtGui.QPixmap(self.alarmScreenImage)
+
+        lbl = QtGui.QLabel(self)
+        lbl.setGeometry(QtCore.QRect(0,0,310,220))
+        lbl.setPixmap(pixmap)
+
+        hbox.addWidget(lbl)
+
+        self.onButtonIndicator.setVisible(True)
+        self.contextButtonIndicator.setVisible(True)
+        self.offButtonIndicator.setVisible(True)
+        self.popupFrame.raise_()
+        self.show()
+
+        self.popupTimerEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(duration))
+        self.startPopupTimer()
 
     def numberSelect(self, msg, maxDigits):
         self.currentType = PopupType.NUMBER
@@ -167,7 +250,6 @@ class Popup(QtGui.QWidget):
         return "".join(bs)
 
     def numberSelected(self, obj):
-        #obj = self.sender()
         if(obj.text() == "CLR"):
             self.currentResult = ""
             self.numberSelect.setText(self.getBlankString())
@@ -218,6 +300,10 @@ class Popup(QtGui.QWidget):
             opt.tag = x
             pressableSender(opt).connect(self.optionSelected)
             self.verticalLayout.addWidget(opt)
+
+
+        self.offButtonIndicator.setVisible(True)
+
 
         self.show()
 
@@ -297,5 +383,7 @@ class Popup(QtGui.QWidget):
         self.closePopup()
 
     def closePopup(self):
+        if(hasattr(self, "popupTimer") and self.popupTimer != None):
+            self.popupTimer.cancel()
         self.close()
         self = None
