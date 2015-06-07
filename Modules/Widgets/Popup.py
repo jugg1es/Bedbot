@@ -59,17 +59,17 @@ class Popup(QtGui.QWidget):
        
 
         self.onButtonIndicator = ButtonIndicator(self.popupFrame, 30, "green", False)
-        self.onButtonIndicator.setGeometry(QtCore.QRect(10,202,30,30))
+        self.onButtonIndicator.setGeometry(QtCore.QRect(10,200,30,30))
         pressableSender(self.onButtonIndicator).connect(self.greenIndicatorPressed)
         self.onButtonIndicator.setVisible(False)
 
         self.contextButtonIndicator = ButtonIndicator(self.popupFrame, 30, "blue", False)
-        self.contextButtonIndicator.setGeometry(QtCore.QRect((320/2)-(30/2),202,30,30))
+        self.contextButtonIndicator.setGeometry(QtCore.QRect((320/2)-(30/2),200,30,30))
         pressableSender(self.contextButtonIndicator).connect(self.blueIndicatorPressed)
         self.contextButtonIndicator.setVisible(False)
 
         self.offButtonIndicator = ButtonIndicator(self.popupFrame, 30, "red", False)
-        self.offButtonIndicator.setGeometry(QtCore.QRect(280,202,30,30))
+        self.offButtonIndicator.setGeometry(QtCore.QRect(280,200,30,30))
         pressableSender(self.offButtonIndicator).connect(self.redIndicatorPressed)
         self.offButtonIndicator.setVisible(False)
 
