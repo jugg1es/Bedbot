@@ -356,8 +356,11 @@ class BedbotWidget(QtGui.QWidget):
 
 
     def doClose(self):        
-        if(hasattr(self, "customPopup") == True and self.customPopup != None):
+
+        try:
             self.customPopup.closePopup()
+        except Exception:
+            print("problem disposing of popup")
 
         for m in self.loadedModules:
             try:

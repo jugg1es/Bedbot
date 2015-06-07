@@ -379,11 +379,16 @@ class Popup(QtGui.QWidget):
     '''
         
     def buttonCallback(self):
+
         self.emit(QtCore.SIGNAL('popupResult'), [self.sender().name, self.sender().tag])
         self.closePopup()
 
     def closePopup(self):
-        if(hasattr(self, "popupTimer") and self.popupTimer != None):
+
+        try:
             self.popupTimer.cancel()
+        except Exception:
+            print("problem disposing of popup")
+
         self.close()
         self = None
