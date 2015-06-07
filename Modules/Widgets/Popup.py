@@ -132,16 +132,14 @@ class Popup(QtGui.QWidget):
             self.popupTimer.cancel()
             self.closePopup()
         elif(hasattr(self, "prompt") and self.prompt != None):
-            hours, remainder = divmod(remaining.seconds, 3600)
-            minutes, seconds = divmod(remainder, 60)
-            remainingTime = str(minutes) + ":" + str(seconds)
-            self.prompt.setText(remainingTime)
+            self.prompt.setText(self.getTimeString())
 
 
 
 
     def snooze(self, duration):
         self.currentType = PopupType.SNOOZE
+
         hbox = QtGui.QHBoxLayout(self)
         hbox.setGeometry(QtCore.QRect(0,0,310,220))
         pixmap = QtGui.QPixmap(self.snoozeScreenImage)
@@ -160,7 +158,7 @@ class Popup(QtGui.QWidget):
         self.prompt.setAlignment(QtCore.Qt.AlignCenter)
         self.prompt.setStyleSheet("border: none; color: #ededed; ")
         self.prompt.setFont(font)
-        self.prompt.setText(str(duration) + ":" + "00")
+        self.prompt.setText(self.getTimeString())
 
 
         self.onButtonIndicator.setVisible(True)
@@ -172,6 +170,8 @@ class Popup(QtGui.QWidget):
         self.popupTimerEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(duration))
         self.startPopupTimer()
 
+    def getTimeString(self):
+        return time.strftime("%I:%M").lstrip('0')
 
     def alarm(self, duration):
         self.currentType = PopupType.ALARM
@@ -184,6 +184,17 @@ class Popup(QtGui.QWidget):
         lbl.setPixmap(pixmap)
 
         hbox.addWidget(lbl)
+
+
+        font = QtGui.QFont()
+        font.setPointSize(17)
+
+        self.prompt = QtGui.QLabel(self.popupFrame)
+        self.prompt.setGeometry(QtCore.QRect((320/2)-(300/2),(240/2)-(40/2)+30,300,40))
+        self.prompt.setAlignment(QtCore.Qt.AlignCenter)
+        self.prompt.setStyleSheet("border: none; color: #def70a; ")
+        self.prompt.setFont(font)
+        self.prompt.setText(self.getTimeString())
 
         self.onButtonIndicator.setVisible(True)
         self.contextButtonIndicator.setVisible(True)
