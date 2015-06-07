@@ -187,10 +187,10 @@ class Popup(QtGui.QWidget):
 
 
         font = QtGui.QFont()
-        font.setPointSize(17)
+        font.setPointSize(20)
 
         self.prompt = QtGui.QLabel(self.popupFrame)
-        self.prompt.setGeometry(QtCore.QRect((320/2)-(300/2),(240/2)-(40/2)+30,300,40))
+        self.prompt.setGeometry(QtCore.QRect((320/2)-(300/2),(240/2)-(40/2)+38,300,40))
         self.prompt.setAlignment(QtCore.Qt.AlignCenter)
         self.prompt.setStyleSheet("border: none; color: #def70a; ")
         self.prompt.setFont(font)
