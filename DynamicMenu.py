@@ -5,7 +5,7 @@ from threading import Timer,Thread,Event
 import sys
 from PyQt4.QtGui import *
 from PyQt4.Qt import QBrush
-from clickable import *
+from Helpers.clickable import *
 from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
 

@@ -4,7 +4,7 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 
-from perpetualTimer import perpetualTimer
+from Helpers.perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Objects.internetStation import *
 from Modules.Widgets.InternetRadioWidget import *
@@ -123,7 +123,7 @@ class InternetRadio(QObject):
         result = {}
         result["name"] = self.alarmTypeDisplay
         result["moduleName"] = type(self).__name__
-        result["alarmType"] = AlarmState.RADIO
+        result["alarmType"] = AlarmState.INETRADIO
         possible = []
         for x in range(0, len(self.stations)):
             sta = self.stations[x]

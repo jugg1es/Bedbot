@@ -3,10 +3,10 @@ from PyQt4 import QtCore, QtGui, uic
 import time
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
-from clickable import *
+from Helpers.clickable import *
 from Modules.Widgets.ButtonIndicator import *
 from enum import Enum
-from perpetualTimer import perpetualTimer
+from Helpers.perpetualTimer import perpetualTimer
 import datetime
 
 class PopupType(Enum):

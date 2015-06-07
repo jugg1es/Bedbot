@@ -2,12 +2,11 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 
-from perpetualTimer import perpetualTimer
+from Helpers.perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.AlarmWidget import *
 import json
 import datetime
-from perpetualTimer import perpetualTimer
 from enum import Enum
 from Modules.Objects.AlarmState import *
 

@@ -4,7 +4,7 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import QObject
 
-from perpetualTimer import perpetualTimer
+from Helpers.perpetualTimer import perpetualTimer
 from threading import Timer,Thread,Event
 from Modules.Widgets.AuxWidget import *
 

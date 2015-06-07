@@ -4,7 +4,7 @@ from PyQt4 import QtCore, QtGui, uic
 import time
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
-from clickable import *
+from Helpers.clickable import *
 from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
 import logging
