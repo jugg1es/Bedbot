@@ -108,7 +108,7 @@ class Alarm(QObject):
         if(self.contextButton == pinNum):
             if(self.isVisible ):
                self.alarm_widget.setTestAlarm()
-               self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.CLOSED, None, "ScreenManager") 
+               #self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.CLOSED, None, "ScreenManager") 
         '''
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
