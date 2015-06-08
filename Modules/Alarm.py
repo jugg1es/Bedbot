@@ -184,7 +184,9 @@ class Alarm(QObject):
         if(self.isAlarmActive):
             self.isSnoozeActive = True
             self.currentPopupType = AlarmPopupType.SNOOZING
-            self.emit(QtCore.SIGNAL('stopAllAudio'))   
+            """Don't use 'stopAllAudio' here because it automatically closes the screen"""
+            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "stop", False)  
+            #self.emit(QtCore.SIGNAL('stopAllAudio'))   
             self.emit(QtCore.SIGNAL('showPopup'), self, None, "snooze", self.snoozeDurationSec)
             
 

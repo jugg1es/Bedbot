@@ -226,17 +226,20 @@ class Radio(QObject):
 
 
                 
-    def stop(self):
+    def stop(self, closeScreen=True):
         self.radio_widget.fillPresets(self.radioPresets)
         if(self.isPlaying == True):
             print("stopping radio")
             self.audioStatusDisplay = ""
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
-            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
+            if(closeScreen):
+                self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
             if(self.subprocessAvailable):
                 self.sendKillCommand()
         self.showButtonIndicators()
+
+
 
     def sendKillCommand(self):
         subprocess.Popen(shlex.split("sudo killall rtl_fm"))
