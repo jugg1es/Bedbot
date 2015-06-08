@@ -76,7 +76,7 @@ class ScreenManager(QObject):
     
     audioOffScreenTimoutEndTime = None
     
-    audioOffScreenTimeoutDuration = 0.5 * 60
+    audioOffScreenTimeoutDuration = 0.1 * 60
 
     def __init__(self):
         super(ScreenManager, self).__init__()
@@ -136,7 +136,13 @@ class ScreenManager(QObject):
         if(self.audioOffScreenTimoutEndTime != None):
             remaining =self.audioOffScreenTimoutEndTime - datetime.datetime.now()
             if(remaining.seconds <= 0):
-                 self.requestScreenPosition(ScreenState.CLOSED)
+                self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "getIsAlarmActive", None, "checkAlarmStatusCallback", "Alarm") 
+                 
+
+    def checkAlarmStatusCallback(self, arg):
+        print(arg)
+        if(arg == False):
+            self.requestScreenPosition(ScreenState.CLOSED)
        
 
     def setCurrentLidState(self, state):

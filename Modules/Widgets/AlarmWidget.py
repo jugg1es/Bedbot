@@ -172,7 +172,7 @@ class AlarmWidget(QtGui.QWidget):
         if(h > 12):
             h -= 12
             tod = TimeOfDay.PM
-        m = n.minute +1
+        m = n.minute 
 
         self.currentPreset.setHour(int(h))
         self.currentPreset.setMinute(int(m))
