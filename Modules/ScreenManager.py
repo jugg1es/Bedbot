@@ -109,7 +109,7 @@ class ScreenManager(QObject):
             self.setAngle(90)
             self.setCurrentLidState(ScreenState.OPEN)
             self.currentAngleTracker = self.move(self.openAngle)
-            print("** OPENED **")
+            self.audioStatusChange("off")
             
         
     def requestScreenPosition(self, arg):

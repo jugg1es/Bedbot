@@ -103,6 +103,7 @@ class InternetRadio(QObject):
         self.loadFromJSON()
         self.inetradio_widget.fillStationList(self.stations)
         self.connect(self.inetradio_widget, QtCore.SIGNAL('stationSelected'), self.stationSelectedCallback)
+        self.reset()
 
         if(self.webserviceEnabled):
             currentLocation = str(os.path.dirname(os.path.realpath(__file__)))
