@@ -186,14 +186,13 @@ class InternetRadio(QObject):
             subprocess.Popen(shlex.split("mpc stop")) 
             subprocess.Popen(shlex.split("mpc clear"))        
 
-    def stop(self, closeScreen=True):
+    def stop(self):
         if(self.isPlaying):
             self.reset()   
             self.inetradio_widget.deselectAllStations()
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
-            if(closeScreen):
-                self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
+            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
         self.showButtonIndicators()
         
 
