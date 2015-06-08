@@ -140,8 +140,11 @@ class ScreenManager(QObject):
                  
 
     def checkAlarmStatusCallback(self, arg):
-        print(arg)
-        if(arg == False):
+        val = arg
+        if(hasattr(arg, "__len__")):
+            val = arg[0]
+        print(val)
+        if(val == False):
             self.requestScreenPosition(ScreenState.CLOSED)
        
 
