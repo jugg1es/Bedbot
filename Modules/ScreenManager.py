@@ -142,6 +142,7 @@ class ScreenManager(QObject):
     def setCurrentLidState(self, state):
         self.currentState = state        
         if(self.currentState == ScreenState.OPEN):
+            self.audioStatusChange("off")
             self.toggleButtonPower(True)
             t = Thread(target=self.changeScreenState, args=(self,True,))
             t.start()
