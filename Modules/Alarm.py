@@ -56,7 +56,6 @@ class Alarm(QObject):
 
     def __init__(self):
         super(Alarm, self).__init__()
-        
 
 
     def showWidget(self):
@@ -120,7 +119,7 @@ class Alarm(QObject):
         t = Thread(target=self.doProcessAlarm, args=(self,))        
         t.start()     
         
-    def isAlarmActive(self):
+    def getIsAlarmActive(self):
         if(self.isAlarmActive or self.isSnoozeActive):
             return True
         return False
