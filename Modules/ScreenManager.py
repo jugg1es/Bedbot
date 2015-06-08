@@ -12,11 +12,8 @@ import os
 import sys
 import subprocess
 import shlex
+from Modules.Objects.ScreenState import *
 
-class ScreenState(Enum):
-    CLOSED = 0
-    MOVING = 1
-    OPEN = 2
 
 hasIOLibraries = False
 
@@ -109,7 +106,15 @@ class ScreenManager(QObject):
             print("** OPENED **")
             
         
-        
+    def requestScreenPosition(self, arg):
+        print("screen position requested: " + str(arg))
+        if(hasIOLibraries):
+            ang = self.getCurrentAngle()
+            if(arg == ScreenState.OPEN and ang != self.openAngle):
+                self.positionToggled()
+            elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
+                self.positionToggled()
+
 
     def setCurrentLidState(self, state):
         self.currentState = state

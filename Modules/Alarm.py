@@ -9,6 +9,7 @@ import json
 import datetime
 from enum import Enum
 from Modules.Objects.AlarmState import *
+from Modules.Objects.ScreenState import *
 
 
 class AlarmPopupType(Enum):
@@ -107,6 +108,7 @@ class Alarm(QObject):
         if(self.contextButton == pinNum):
             if(self.isVisible ):
                self.alarm_widget.setTestAlarm()
+               self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.CLOSED, None, "ScreenManager") 
         '''
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
@@ -134,7 +136,8 @@ class Alarm(QObject):
                 parent.fireAlarm(self.firedAlarm)
 
     def fireAlarm(self, alarm):
-        print("FIRING ALARM")
+        self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.OPEN, None, "ScreenManager")  
+
         alarm.setAlarmStartTime()
         t = {}
         t["details"] = str(alarm.details)
@@ -187,6 +190,7 @@ class Alarm(QObject):
 
     def doAlarmOff(self):
         if(self.isAlarmActive):
+            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.CLOSED, None, "ScreenManager")  
             self.isSnoozeActive = False
             self.isAlarmActive = False
             self.emit(QtCore.SIGNAL('stopAllAudio'))   
