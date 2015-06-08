@@ -176,6 +176,7 @@ class InternetRadio(QObject):
             for pl in self.currentPlaylist:
                 subprocess.Popen(shlex.split("mpc add " + pl)) 
                 subprocess.Popen(shlex.split("mpc play"))  
+                self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "on", None, "ScreenManager") 
         
                   
     def reset(self):
@@ -190,6 +191,7 @@ class InternetRadio(QObject):
             self.inetradio_widget.deselectAllStations()
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
+            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
         self.showButtonIndicators()
         
 

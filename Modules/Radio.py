@@ -220,6 +220,7 @@ class Radio(QObject):
                 aplayStr =  self.aplayCommand.replace("@DEVICE", str(self.audioDeviceIdentifier))
                 rtlfm = subprocess.Popen(shlex.split(rtlfmStr), stdout=subprocess.PIPE)
                 subprocess.Popen(shlex.split(aplayStr), stdin=rtlfm.stdout, stdout=subprocess.PIPE)
+                self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "on", None, "ScreenManager")
         self.showButtonIndicators()
                 
 
@@ -232,6 +233,7 @@ class Radio(QObject):
             self.audioStatusDisplay = ""
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
+            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
             if(self.subprocessAvailable):
                 self.sendKillCommand()
         self.showButtonIndicators()

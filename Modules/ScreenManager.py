@@ -13,7 +13,7 @@ import sys
 import subprocess
 import shlex
 from Modules.Objects.ScreenState import *
-
+from Helpers.perpetualTimer import perpetualTimer
 
 hasIOLibraries = False
 
@@ -72,6 +72,12 @@ class ScreenManager(QObject):
     """
     currentAngleTracker = None
 
+    audioOffScreenTimoutTimer = None
+    
+    audioOffScreenTimoutEndTime = None
+    
+    audioOffScreenTimeoutDuration = 0.5 * 60
+
     def __init__(self):
         super(ScreenManager, self).__init__()
         try:
@@ -114,11 +120,27 @@ class ScreenManager(QObject):
                 self.positionToggled()
             elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
                 self.positionToggled()
+                
+    def audioStatusChange(self, arg):
+        print("screen position requested: " + str(arg))
+        if(hasIOLibraries):
+            if(self.audioOffScreenTimoutTimer != None):
+                self.audioOffScreenTimoutEndTime = None
+                self.audioOffScreenTimoutTimer.cancel()
+            if(str(arg) == "off"):
+                self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
+                self.audioOffScreenTimoutTimer = perpetualTimer(1, self.audioTimoutTimerCallback)
+                self.audioOffScreenTimoutTimer.start()            
 
+    def audioTimoutTimerCallback(self):
+        if(self.audioOffScreenTimoutEndTime != None):
+            remaining =self.audioOffScreenTimoutEndTime - datetime.datetime.now()
+            if(remaining.seconds <= 0):
+                 self.requestScreenPosition(ScreenState.CLOSED)
+       
 
     def setCurrentLidState(self, state):
-        self.currentState = state
-        
+        self.currentState = state        
         if(self.currentState == ScreenState.OPEN):
             self.toggleButtonPower(True)
             t = Thread(target=self.changeScreenState, args=(self,True,))
@@ -217,4 +239,6 @@ class ScreenManager(QObject):
         return None
 
     def dispose(self):        
+        if(self.audioOffScreenTimoutTimer != None):
+            self.audioOffScreenTimoutTimer.cancel()
         print("Disposing of ScreenManager")
