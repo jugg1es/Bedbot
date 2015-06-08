@@ -50,7 +50,7 @@ class Alarm(QObject):
     currentAlarmModule = None
 
     snoozeDurationSec = 0.2 * 60
-    alarmDurationSec = 60 * 60
+    alarmDurationSec = 0.5 * 60
 
     firedAlarm = None
 
