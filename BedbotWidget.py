@@ -98,6 +98,10 @@ class BedbotWidget(QtGui.QWidget):
                 """Allows active modules to send signals to all other modules to stop audio playback"""                
                 self.connect(m, QtCore.SIGNAL('stopAllAudio'), self.stopAllAudioCallback)
 
+
+                """Allows active modules to close all visible popups"""                
+                self.connect(m, QtCore.SIGNAL('closeAllPopups'), self.closeAllPopupsCallback)
+
                 """If a modules uses the audio output, it must have the attribute 'UsesAudio' and have it set to True
                 If it does, than it can use the audio status display in BedbotWidget to display it's current status
                 """
@@ -179,8 +183,6 @@ class BedbotWidget(QtGui.QWidget):
         for m in self.loadedModules:
             if(self.moduleHasFunction(m, "popupResult")):
                 m.popupResult(result)
-        #self.customPopup = None    
-        
         
 
 
@@ -206,6 +208,9 @@ class BedbotWidget(QtGui.QWidget):
                 if(self.moduleHasFunction(m, "stop")):
                     m.stop()
 
+    def closeAllPopupsCallback(self):
+        if(hasattr(self, "customPopup") == True):
+            self.customPopup.closePopup()
 
     def logEvent(self, evtStr):
         print(evtStr)
