@@ -107,15 +107,16 @@ class Alarm(QObject):
         
 
     def processPinEvent(self, pinNum):
+        
         if(self.contextButton == pinNum):
             if(self.isVisible ):
                self.alarm_widget.setTestAlarm()
-               #self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.CLOSED, None, "ScreenManager") 
-        '''
+        
+        """
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
                self.alarm_widget.cycleSelectedAlarm()
-        '''
+        """
 
 
     def processAlarmTime(self):
@@ -196,7 +197,6 @@ class Alarm(QObject):
 
     def doAlarmOff(self):
         if(self.isAlarmActive):
-            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "requestScreenPosition", ScreenState.CLOSED, None, "ScreenManager")  
             self.isSnoozeActive = False
             self.isAlarmActive = False
             self.emit(QtCore.SIGNAL('stopAllAudio'))   

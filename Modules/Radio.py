@@ -233,7 +233,7 @@ class Radio(QObject):
             self.audioStatusDisplay = ""
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
-            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
+            #self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
             if(self.subprocessAvailable):
                 self.sendKillCommand()
         self.showButtonIndicators()
