@@ -132,7 +132,9 @@ class ScreenManager(QObject):
             if(str(arg) == "off"):
                 self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
                 self.audioOffScreenTimoutTimer = perpetualTimer(1, self.audioTimoutTimerCallback)
-                self.audioOffScreenTimoutTimer.start()            
+                self.audioOffScreenTimoutTimer.start()          
+            else:
+                self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
 
     def audioTimoutTimerCallback(self):
         if(self.audioOffScreenTimoutEndTime != None):
