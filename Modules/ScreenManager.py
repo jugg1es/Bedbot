@@ -44,7 +44,7 @@ class ScreenManager(QObject):
     """ Bottom range of pulse width for the servo (minimum is 500, but that may break the servo) """
     bottomRange = 700
 
-    """ Top range of pulse width for the servo (minimum is 2500, but that may break the servo) """
+    """ Top range of pulse width for the servo (maximum is 2500, but that may break the servo) """
     topRange = 2500
 
     """Always represents the middle of the servo range of motion, should not be changed from 1500"""
@@ -97,13 +97,14 @@ class ScreenManager(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.togglePin == pinNum):
-            if(self.currentState != ScreenState.MOVING):
-                self.positionToggled()
+            if(self.currentState == ScreenState.OPEN):
+                self.positionToggled(ScreenState.CLOSED)
+            elif(self.currentState == ScreenState.CLOSED):
+                self.positionToggled(ScreenState.OPEN)
 
 
     def initialize(self):
-        print("has IO libraries (screen manager): " + str(hasIOLibraries))
-        
+        print("has IO libraries (screen manager): " + str(hasIOLibraries))        
         if(hasIOLibraries):
             self.pi = pigpio.pi()
             self.pi.set_mode(self.buttonPowerPin, pigpio.OUTPUT)
@@ -119,9 +120,9 @@ class ScreenManager(QObject):
         if(hasIOLibraries):
             ang = self.getCurrentAngle()
             if(arg == ScreenState.OPEN and ang != self.openAngle):
-                self.positionToggled()
+                self.positionToggled(ScreenState.CLOSED)
             elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
-                self.positionToggled()
+                self.positionToggled(ScreenState.OPEN)
                 
     def audioStatusChange(self, arg):
         print("screen position requested: " + str(arg))
@@ -172,8 +173,7 @@ class ScreenManager(QObject):
         else:
             self.pi.write(self.buttonPowerPin,0)
 
-    def changeScreenState(self, parent, isOn):
-        
+    def changeScreenState(self, parent, isOn):        
         if(parent.subprocessAvailable):
             if(isOn):         
                 subprocess.Popen(shlex.split("sudo sh -c \"echo '1' > /sys/class/gpio/gpio508/value\""))         
@@ -181,9 +181,10 @@ class ScreenManager(QObject):
                 offproc = subprocess.Popen(shlex.split("sudo sh -c \"echo '0' > /sys/class/gpio/gpio508/value\"")) 
                 offproc.communicate()
             
-    def positionToggled(self):     
+    def positionToggled(self, desiredState):     
         currentAngle = self.getCurrentAngle()
-        if(currentAngle == self.openAngle or currentAngle == self.closeAngle or currentAngle == 90):
+        if((currentAngle == self.openAngle and desiredState == ScreenState.OPEN) or 
+           (currentAngle == self.closeAngle and desiredState == ScreenState.CLOSED) or currentAngle == 90):
             t = Thread(target=self.togglePosition, args=(self,))
             t.start()
      

@@ -75,7 +75,6 @@ class AuxInput(QObject):
             btns =[]
             btns.append("ON")
             self.emit(QtCore.SIGNAL('requestButtonPrompt'),btns)
-            self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "on", None, "ScreenManager")
 
 
 

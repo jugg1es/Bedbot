@@ -1,13 +1,17 @@
 [
-		
-	{
+
+    {
         "name": "NPR (WYPR)",
-        "url":  "http://live.str3am.com:2410/wypr.m3u"
-			
-	},
-	{
-		"name": "NPR (WAMU)",
-		"url": "http://wamu.org/streams/live/1/live.m3u"
-			
-	}	
+        "url": "http://live.str3am.com:2410/wypr.m3u"
+
+    },
+    {
+        "name": "NPR (WAMU)",
+        "url": "http://wamu.org/streams/live/1/live.m3u"
+
+    },
+    {
+        "name": "Noise FM", 
+        "url":  "http://dir.xiph.org/listen/1185947/listen.m3u"
+    }
 ]
