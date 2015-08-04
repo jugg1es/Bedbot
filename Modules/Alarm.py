@@ -106,17 +106,11 @@ class Alarm(QObject):
         self.contextButton =  pinConfig["CONTEXT_BUTTON"]
         
 
-    def processPinEvent(self, pinNum):
-        
-        if(self.contextButton == pinNum):
-            if(self.isVisible ):
-               self.alarm_widget.setTestAlarm()
-        
-        """
+    def processPinEvent(self, pinNum):       
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
                self.alarm_widget.cycleSelectedAlarm()
-        """
+       
 
 
     def processAlarmTime(self):
