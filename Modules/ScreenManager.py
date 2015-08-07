@@ -117,7 +117,6 @@ class ScreenManager(QObject):
             
         
     def requestScreenPosition(self, arg):
-        print("screen position requested: " + str(arg))
         if(hasIOLibraries):
             ang = self.getCurrentAngle()
             if(arg == ScreenState.OPEN and ang != self.openAngle):
@@ -126,7 +125,6 @@ class ScreenManager(QObject):
                 self.positionToggled(ScreenState.OPEN)
                 
     def audioStatusChange(self, arg):
-        print("screen position requested: " + str(arg))
         if(hasIOLibraries):
             if(self.audioOffScreenTimoutTimer != None):
                 self.audioOffScreenTimoutEndTime = None
@@ -184,14 +182,12 @@ class ScreenManager(QObject):
             
     def positionToggled(self, desiredState):     
         currentAngle = self.getCurrentAngle()
-        print("position toggled  current angle: " + str(currentAngle) + " desired: " + str(desiredState))
         if((currentAngle == self.openAngle and desiredState == ScreenState.CLOSED) or 
            (currentAngle == self.closeAngle and desiredState == ScreenState.OPEN) or currentAngle == 90):
             t = Thread(target=self.togglePosition, args=(self,))
             t.start()
      
     def togglePosition(self, parent):
-        print("Toggle position")
         ang = self.getCurrentAngle()
         if(ang == self.openAngle):
             parent.setCurrentLidState(ScreenState.CLOSED)
