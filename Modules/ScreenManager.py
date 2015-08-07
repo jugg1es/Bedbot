@@ -97,6 +97,7 @@ class ScreenManager(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.togglePin == pinNum):
+            print("Screen toggle")
             if(self.currentState == ScreenState.OPEN):
                 self.positionToggled(ScreenState.CLOSED)
             elif(self.currentState == ScreenState.CLOSED):
@@ -189,6 +190,7 @@ class ScreenManager(QObject):
             t.start()
      
     def togglePosition(self, parent):
+        print("Toggle position")
         ang = self.getCurrentAngle()
         if(ang == self.openAngle):
             parent.setCurrentLidState(ScreenState.CLOSED)
