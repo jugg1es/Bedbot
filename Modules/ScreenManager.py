@@ -184,7 +184,7 @@ class ScreenManager(QObject):
             
     def positionToggled(self, desiredState):     
         currentAngle = self.getCurrentAngle()
-        print("position toggled  current angle: " + str(currentAngle))
+        print("position toggled  current angle: " + str(currentAngle) + " desired: " + str(desiredState))
         if((currentAngle == self.openAngle and desiredState == ScreenState.OPEN) or 
            (currentAngle == self.closeAngle and desiredState == ScreenState.CLOSED) or currentAngle == 90):
             t = Thread(target=self.togglePosition, args=(self,))
