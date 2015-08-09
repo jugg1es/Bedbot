@@ -125,16 +125,15 @@ class ScreenManager(QObject):
                 self.positionToggled(ScreenState.OPEN)
                 
     def audioStatusChange(self, arg):
-        if(hasIOLibraries):
-            if(self.audioOffScreenTimoutTimer != None):
-                self.audioOffScreenTimoutEndTime = None
-                self.audioOffScreenTimoutTimer.cancel()
-            if(str(arg) == "off"):
-                self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
-                self.audioOffScreenTimoutTimer = perpetualTimer(1, self.audioTimoutTimerCallback)
-                self.audioOffScreenTimoutTimer.start()          
-            else:
-                self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
+        if(self.audioOffScreenTimoutTimer != None):
+            self.audioOffScreenTimoutEndTime = None
+            self.audioOffScreenTimoutTimer.cancel()
+        if(str(arg) == "off"):
+            self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
+            self.audioOffScreenTimoutTimer = perpetualTimer(1, self.audioTimoutTimerCallback)
+            self.audioOffScreenTimoutTimer.start()          
+        else:
+            self.audioOffScreenTimoutEndTime = datetime.datetime.now() + datetime.timedelta(seconds = int(self.audioOffScreenTimeoutDuration))
 
     def audioTimoutTimerCallback(self):
         if(self.audioOffScreenTimoutEndTime != None):

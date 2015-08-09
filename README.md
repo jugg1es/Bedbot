@@ -47,7 +47,11 @@ python main.py
 * [Audio Input Source switch](Modules/AudioPinSwitch.py)
 * [Servo controller](Modules/ScreenManager.py)
 
+##Screenshots ##
 
+###Main Menu ###
+
+<img src="http://peterroca.com/bedbot/assets/img/menu.jpg" width="320" height="240" />
 
 
 ##To-do list ##
