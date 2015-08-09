@@ -9,7 +9,7 @@ Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://ww
 
 <img src="http://peterroca.com/bedbot/assets/img/main.jpg" width="320" height="240" />
 
-![alt tag](http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg)
+<img src="http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg" width="320" height="240" />
 
 
 ##Prerequisites ##
