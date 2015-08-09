@@ -27,9 +27,9 @@ Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://ww
 
 ##Included Modules ##
 * [Persistant clock display (via OLED)](Modules/OLED.py)
-* Programmable Alarm Clock
-* FM radio tuner
-* Internet Radio Streaming
-* Audio Input Source switch
-* Servo controller
+* [Programmable Alarm Clock](Modules/Alarm.py)
+* [FM radio tuner](Modules/Radio.py)
+* [Internet Radio Streaming](Modules/InternetRadio.py)
+* [Audio Input Source switch](Modules/AudioPinSwitch.py)
+* [Servo controller](Modules/ScreenManager.py)
 
