@@ -1,13 +1,16 @@
 # Bedbot #
-Embedded Alarm/Clock/Radio application for Raspberry Pi for use in customized bed-side table written in Python.  
+
+##Introduction ##
+Bedbot is an embedded Alarm/Clock/Radio application for Raspberry Pi for use in customized bed-side table written in Python.  
 
 Designed to be displayed on [320x240 TFT+Touchscreen](https://www.adafruit.com/products/1601) with several buttons for control.
+
+Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://www.peterroca.com/bedbot)
 
 ![alt tag](http://peterroca.com/bedbot/assets/img/main.jpg)
 
 ![alt tag](http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg)
 
-Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://www.peterroca.com/bedbot)
 
 ##Prerequisites ##
 
