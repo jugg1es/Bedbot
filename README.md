@@ -7,7 +7,7 @@ Designed to be displayed on [320x240 TFT+Touchscreen](https://www.adafruit.com/p
 
 Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://www.peterroca.com/bedbot)
 
-![alt tag](http://peterroca.com/bedbot/assets/img/main.jpg)
+![alt tag](http://peterroca.com/bedbot/assets/img/main.jpg =250x)
 
 ![alt tag](http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg)
 
