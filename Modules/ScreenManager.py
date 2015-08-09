@@ -120,6 +120,7 @@ class ScreenManager(QObject):
     def requestScreenPosition(self, arg):
         if(hasIOLibraries):
             ang = self.getCurrentAngle()
+            print("angle: " + str(ang) + " requested: " + arg)
             if(arg == ScreenState.OPEN and ang != self.openAngle):
                 self.positionToggled(ScreenState.CLOSED)
             elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
