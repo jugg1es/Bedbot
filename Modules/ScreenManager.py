@@ -150,8 +150,11 @@ class ScreenManager(QObject):
         val = arg
         if(hasattr(arg, "__len__")):
             val = arg[0]
-        print(val)
+        print("Alarm status: " + str(val))
         if(val == False):
+            if(self.audioOffScreenTimoutTimer != None):
+                self.audioOffScreenTimoutEndTime = None
+                self.audioOffScreenTimoutTimer.cancel()
             self.requestScreenPosition(ScreenState.CLOSED)
        
 
