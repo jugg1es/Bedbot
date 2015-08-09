@@ -7,6 +7,8 @@ Designed to be displayed on [320x240 TFT+Touchscreen](https://www.adafruit.com/p
 
 ![alt tag](http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg)
 
+Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://www.peterroca.com/bedbot)
+
 ##Prerequisites ##
 
 * Python 2.7
