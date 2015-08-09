@@ -3,6 +3,9 @@ Embedded Alarm/Clock/Radio application for Raspberry Pi for use in customized be
 
 Designed to be displayed on [320x240 TFT+Touchscreen](https://www.adafruit.com/products/1601) with several buttons for control.
 
+![alt tag](http://peterroca.com/bedbot/assets/img/main.jpg)
+
+![alt tag](http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg)
 
 ##Prerequisites ##
 
