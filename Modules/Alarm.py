@@ -118,7 +118,7 @@ class Alarm(QObject):
         t.start()     
         
     def getIsAlarmActive(self):
-        print("alarm active: " + self.isAlarmActive + " snooze active: " + self.isSnoozeActive)
+        print("alarm active: " + str(self.isAlarmActive) + " snooze active: " + str(self.isSnoozeActive))
         if(self.isAlarmActive or self.isSnoozeActive):
             return True
         return False
