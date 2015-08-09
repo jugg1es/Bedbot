@@ -23,3 +23,13 @@ Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://ww
 ###Optional libraries ###
 * [MPC/MPD](http://www.musicpd.org/clients/mpc/)
 * [RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
+
+
+##Included Modules ##
+* [Persistant clock display (via OLED)](Modules/OLED.py)
+* Programmable Alarm Clock
+* FM radio tuner
+* Internet Radio Streaming
+* Audio Input Source switch
+* Servo controller
+
