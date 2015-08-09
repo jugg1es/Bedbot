@@ -98,7 +98,6 @@ class ScreenManager(QObject):
 
     def processPinEvent(self, pinNum):
         if(self.togglePin == pinNum):
-            print("Screen toggle")
             if(self.currentState == ScreenState.OPEN):
                 self.positionToggled(ScreenState.CLOSED)
             elif(self.currentState == ScreenState.CLOSED):
@@ -140,7 +139,6 @@ class ScreenManager(QObject):
     def audioTimoutTimerCallback(self):
         if(self.audioOffScreenTimoutEndTime != None):
             remaining =self.audioOffScreenTimoutEndTime - datetime.datetime.now()
-            print("remaining time left: " + str(remaining))
             if(remaining.seconds <= 0):
                 self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "getIsAlarmActive", None, "checkAlarmStatusCallback", "Alarm") 
                  
