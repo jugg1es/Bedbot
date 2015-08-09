@@ -18,6 +18,8 @@ Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://ww
 
 * Python 2.7
 * [PyQT4](http://www.riverbankcomputing.com/software/pyqt/download)
-* [RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
 * [PIGPIO](http://abyz.co.uk/rpi/pigpio/)
+
+###Optional libraries ###
 * [MPC/MPD](http://www.musicpd.org/clients/mpc/)
+* [RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
