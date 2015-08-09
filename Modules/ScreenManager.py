@@ -122,9 +122,9 @@ class ScreenManager(QObject):
             ang = self.getCurrentAngle()
             print("angle: " + str(ang) + " requested: " + str(arg))
             if(arg == ScreenState.OPEN and ang != self.openAngle):
-                self.positionToggled(ScreenState.CLOSED)
-            elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
                 self.positionToggled(ScreenState.OPEN)
+            elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
+                self.positionToggled(ScreenState.CLOSED)
                 
     def audioStatusChange(self, arg):
         if(self.audioOffScreenTimoutTimer != None):
