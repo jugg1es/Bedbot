@@ -120,15 +120,13 @@ class ScreenManager(QObject):
     def requestScreenPosition(self, arg):
         if(hasIOLibraries):
             ang = self.getCurrentAngle()
-            print("angle: " + str(ang) + " requested: " + arg)
+            print("angle: " + str(ang) + " requested: " + str(arg))
             if(arg == ScreenState.OPEN and ang != self.openAngle):
                 self.positionToggled(ScreenState.CLOSED)
             elif(arg == ScreenState.CLOSED and ang != self.closeAngle):
                 self.positionToggled(ScreenState.OPEN)
                 
     def audioStatusChange(self, arg):
-        print("AUDIO STATUS: " + str(arg))
-        print("Duration: " + str(self.audioOffScreenTimeoutDuration))
         if(self.audioOffScreenTimoutTimer != None):
             self.audioOffScreenTimoutEndTime = None
             self.audioOffScreenTimoutTimer.cancel()
@@ -151,7 +149,6 @@ class ScreenManager(QObject):
         val = arg
         if(hasattr(arg, "__len__")):
             val = arg[0]
-        print("Alarm status: " + str(val))
         if(val == False):
             if(self.audioOffScreenTimoutTimer != None):
                 self.audioOffScreenTimoutEndTime = None
