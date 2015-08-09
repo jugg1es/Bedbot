@@ -14,15 +14,29 @@ Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://ww
 <img src="http://peterroca.com/bedbot/assets/img/topCloseupOpen.jpg" width="320" height="240" />
 
 
-##Prerequisites ##
+##Give it a try! ##
+This application can be run without a Raspberry Pi on Windows/OSX/Linux without any special hardware.  Just make sure you have the following things installed:
+* Python 2.7
+* [PyQT4](http://www.riverbankcomputing.com/software/pyqt/download)
 
+Then download the repository and run 
+
+```
+python main.py
+```
+
+
+
+###Prerequisites ###
 * Python 2.7
 * [PyQT4](http://www.riverbankcomputing.com/software/pyqt/download)
 * [PIGPIO](http://abyz.co.uk/rpi/pigpio/)
 
 ###Optional libraries ###
-* [MPC/MPD](http://www.musicpd.org/clients/mpc/)
-* [RTL_FM_PYTHON](https://github.com/th0ma5w/rtl_fm_python)
+* [MPC/MPD](http://www.musicpd.org/clients/mpc/) (Internet stream player)
+* [RTL_SDR](http://sdr.osmocom.org/trac/wiki/rtl-sdr) (FM Radio player)
+
+
 
 
 ##Included Modules ##
@@ -33,3 +47,10 @@ Here is the full hardware write-up:  [http://www.peterroca.com/bedbot](http://ww
 * [Audio Input Source switch](Modules/AudioPinSwitch.py)
 * [Servo controller](Modules/ScreenManager.py)
 
+
+
+
+##To-do list ##
+* Finish debugging
+* Radio recorder (like a radio DVR)
+* Create python setup script 
