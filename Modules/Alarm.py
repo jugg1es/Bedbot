@@ -34,6 +34,8 @@ class Alarm(QObject):
     """Context button is used for either snoozing or scrolling through alarm presets"""
     contextButton = None
 
+    stopButton = None
+
     alarmSettings = None
     settingsFilename = "alarmConfig.json"
 
@@ -104,12 +106,16 @@ class Alarm(QObject):
 
     def setPin(self, pinConfig):
         self.contextButton =  pinConfig["CONTEXT_BUTTON"]
+        self.stopButton = pinConfig["OFF_BUTTON"]
         
 
     def processPinEvent(self, pinNum):       
         if(self.contextButton == pinNum):
             if(self.isVisible and self.isAlarmActive == False):
                self.alarm_widget.cycleSelectedAlarm()
+        elif(self.stopButton == pinNum):
+            self.doAlarmOff()
+            
        
 
 

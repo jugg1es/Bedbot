@@ -193,6 +193,7 @@ class InternetRadio(QObject):
             self.isPlaying = False
             self.emit(QtCore.SIGNAL('audioStopped'), self)
             self.emit(QtCore.SIGNAL('broadcastModuleRequest'), self, "audioStatusChange", "off", None, "ScreenManager")
+
         self.showButtonIndicators()
         
 
