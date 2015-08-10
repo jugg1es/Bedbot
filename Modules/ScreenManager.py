@@ -76,9 +76,8 @@ class ScreenManager(QObject):
     
     audioOffScreenTimoutEndTime = None
     
-    """10 minutes of no audio before the lid closes"""
-    #audioOffScreenTimeoutDuration = 10 * 60
-    audioOffScreenTimeoutDuration = 30
+    """2 minutes of no audio before the lid closes"""
+    audioOffScreenTimeoutDuration = 2 * 60
 
 
     def __init__(self):
