@@ -1,7 +1,7 @@
 
 import datetime
 import time
-from configparser import SafeConfigParser
+from ConfigParser import SafeConfigParser
 import os.path
 from Modules.Objects.alarmSetting import *
 

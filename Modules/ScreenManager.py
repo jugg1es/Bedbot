@@ -27,7 +27,7 @@ except ImportError:
 class ScreenManager(QObject):
     """Controls the servo that lifts the screen up/down, the button LEDs and the screen backlight power"""
 
-    Enabled = True
+    Enabled = False
     ListenForPinEvent = True
 
     servo = None

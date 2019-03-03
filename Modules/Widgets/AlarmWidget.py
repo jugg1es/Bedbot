@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui, uic
 import datetime
 from threading import Timer,Thread,Event
 from PyQt4.Qt import QBrush
-from configparser import SafeConfigParser
+from ConfigParser import SafeConfigParser
 from Helpers.clickable import *
 from PyQt4 import QtSvg
 from PyQt4.QtSvg import QSvgWidget
